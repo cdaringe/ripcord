@@ -1,0 +1,42 @@
+#!/usr/bin/env node
+
+'use strict'
+
+const app = require('../src/app')
+const program = require('commander')
+const path = require('path');
+const pkgPath = path.resolve(__dirname, '../package.json')
+const pkg = require(pkgPath);
+const ripcord = require('../src/')
+const counsel = require('counsel')
+
+let action = { name: null, arg: null, options: null }
+
+program
+  .option('-l, --log-level [error|warn|info|verbose|debug|silly]', 'set the log level. default info')
+
+program
+  .command('report [arg]')
+  //.option('-o, --output [path]', 'path to dump the report')
+  .description('generate tw dependency report')
+  .action((arg, opts) => { action = { name: 'report', arg: null, options: opts } })
+
+program
+  .command('counsel [apply|check]')
+  .description('deploy tripwire project conventions via counsel')
+  .action((arg, opts) => { action = { name: 'counsel', arg: arg, options: opts } })
+
+
+program.parse(process.argv)
+
+counsel.logger.transports.console.level = program.logLevel || app.logLevel
+
+if (!program.args || program.args.length === 0) {
+  program.help()
+  process.exit(1);
+}
+
+// giddy up.
+ripcord[action.name].apply(ripcord, [action.arg, action.options])
+
+module.exports = program
