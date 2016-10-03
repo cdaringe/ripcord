@@ -15,7 +15,8 @@
     "counsel-script": "*"
   },
   "devDependencies": {
-    "jsdoc": "^3.4.1",
+    "concat-stream": "^1.5.2",
+    "jsdoc": "^3.4.2",
     "nyc": "^8.3.0",
     "standard": "^8.3.0"
   },
@@ -25,14 +26,14 @@
     "install": "node bin/ripcord counsel apply",
     "validate": "npm ls",
     "lint": "standard",
-    "test": "node test/",
-    "coverage": "nyc check-coverage --lines 90 --functions 90 --branches 90",
-    "docs": "jsdoc -c .jsdoc.json -R README.md -d docs src/"
+    "test": "nyc --reporter=lcov node test/",
+    "check-coverage": "nyc check-coverage --lines 90 --functions 90 --branches 90",
+    "docs": "jsdoc -c jsdoc.json -R README.md -d docs src/"
   },
   "pre-commit": [
     "validate",
     "lint",
     "test",
-    "coverage"
+    "check-coverage"
   ]
 }

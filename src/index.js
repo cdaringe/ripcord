@@ -19,16 +19,18 @@ module.exports = {
    * @param {Commander} opts
    * @returns {Promise}
    */
-  counsel(action, opts) {
+  counsel (action, opts) {
+    /* istanbul ignore next */
     if (action === 'apply') {
       return counsel.apply(this.rules)
     } else if (action === 'check') {
       return counsel.logger.error('check not yet implemented')
+    } else {
+      let errMsg = `"${action}" not a valid ripcord counsel argument`
+      if (!action) errMsg = 'ripcord counsel requires an argument'
+      counsel.logger.error(errMsg)
+      process.exit(1)
     }
-    let errMsg = `"${action}" not a valid ripcord counsel argument`
-    if (!action) errMsg = 'ripcord counsel requires an argument'
-    counsel.logger.error(errMsg)
-    process.exit(1)
   },
 
   /**
@@ -36,13 +38,14 @@ module.exports = {
    * @param {null} action
    * @param {Commander} opts
    */
-  report(action, opts) {
+  report (action, opts) {
     let prd
     let dev
     try {
       prd = JSON.parse(cp.execSync('npm ls --prod --json', { cwd: this._projectRoot }).toString())
       dev = JSON.parse(cp.execSync('npm ls --prod --json', { cwd: this._projectRoot }).toString())
     } catch (err) {
+      /* istanbul ignore next */
       if (err.message.match(/extraneous/)) {
         counsel.logger.error([
           'uh oh, we can\'t run the dependency report. this is generally',
@@ -53,47 +56,54 @@ module.exports = {
         process.exit(1)
       }
     }
-    process.stdout.write(JSON.stringify({
+    return {
       compile: prd,
       testCompile: dev
-    }, null, 2))
+    }
   },
 
   rules: [
-    {
+
+    // validate!
+    new ScriptRule({
       scriptName: 'validate',
       scriptCommand: 'npm ls'
-    },
-    {
+    }),
+
+    // lint!
+    new ScriptRule({
       devDependencies: ['standard'],
       scriptName: 'lint',
       scriptCommand: 'standard'
-    },
-    {
+    }),
+
+    // test and coverage!
+    new ScriptRule({
       scriptName: 'test',
-      scriptCommand: 'node test/',
-      scriptCommandVariants: ['tape test/**/*.js', 'node test/**/*.js']
-    },
-    {
+      scriptCommand: 'nyc --reporter=lcov node test/',
+      scriptCommandVariants: ['node test/', 'tape test/**/*.js', 'node test/**/*.js']
+    }),
+    new ScriptRule({
       devDependencies: ['nyc'],
-      scriptName: 'coverage',
+      scriptName: 'check-coverage',
       scriptCommand: 'nyc check-coverage --lines 90 --functions 90 --branches 90',
       scriptCommandVariants: ['*']
-    }
-  ].map(s => new ScriptRule(s)).concat([
-    new PreCommitRule({
-      preCommitTasks: ['validate', 'lint', 'test', 'coverage']
     }),
 
     // docs
     new ScriptRule({
       devDependencies: 'jsdoc',
       scriptName: 'docs',
-      scriptCommand: 'jsdoc -c .jsdoc.json -R README.md -d docs src/',
+      scriptCommand: 'jsdoc -c jsdoc.json -R README.md -d docs src/'
     }),
     new CopyRule({
-      copySource: './templates/.jsdoc.json',
+      copySource: './templates/jsdoc.json',
       copyTarget: './'
+    }),
+
+    // tie 'em up!
+    new PreCommitRule({
+      preCommitTasks: ['validate', 'lint', 'test', 'check-coverage']
     })
-  ])
+  ]
 }

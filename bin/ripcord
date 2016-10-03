@@ -4,9 +4,10 @@
 
 const app = require('../src/app')
 const program = require('commander')
-const path = require('path');
+const path = require('path')
+const fs = require('fs')
 const pkgPath = path.resolve(__dirname, '../package.json')
-const pkg = require(pkgPath);
+const pkg = require(pkgPath)
 const ripcord = require('../src/')
 const counsel = require('counsel')
 
@@ -17,9 +18,9 @@ program
 
 program
   .command('report [arg]')
-  //.option('-o, --output [path]', 'path to dump the report')
+  .option('-o, --output [path]', 'path to dump the report')
   .description('generate tw dependency report')
-  .action((arg, opts) => { action = { name: 'report', arg: null, options: opts } })
+  .action((arg, opts) => { action = { name: 'report', arg: arg, options: opts } })
 
 program
   .command('counsel [apply|check]')
@@ -33,10 +34,22 @@ counsel.logger.transports.console.level = program.logLevel || app.logLevel
 
 if (!program.args || program.args.length === 0) {
   program.help()
-  process.exit(1);
+  process.exit(1)
 }
 
 // giddy up.
-ripcord[action.name].apply(ripcord, [action.arg, action.options])
+let result = ripcord[action.name].apply(ripcord, [action.arg, action.options])
+
+if (action.name === 'report') {
+  const output = action.options.output
+  if (output) {
+    const REPORT_NAME_DEFAULT = 'tw-dependencies.json'
+    let dest = path.isAbsolute(output) ? output : path.resolve(process.cwd(), output)
+    dest = counsel.project.isDir(dest) ? path.join(dest, REPORT_NAME_DEFAULT) : dest
+    fs.writeFileSync(dest, JSON.stringify(result, null, 2))
+  } else {
+    process.stdout.write(result)
+  }
+}
 
 module.exports = program

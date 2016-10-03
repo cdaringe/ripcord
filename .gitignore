@@ -30,3 +30,4 @@ test-db*
 bundle*
 docs
 .nyc_output
+coverage
