@@ -2,6 +2,7 @@
 
 'use strict'
 
+require('perish')
 const app = require('../src/app')
 const program = require('commander')
 const path = require('path')

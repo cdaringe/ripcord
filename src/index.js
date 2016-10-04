@@ -1,6 +1,7 @@
 'use strict'
 
 const counsel = require('counsel')
+const Rule = require('counsel-rule')
 const ScriptRule = require('counsel-script')
 const CopyRule = require('counsel-copy')
 const PreCommitRule = require('counsel-precommit')
@@ -67,7 +68,15 @@ module.exports = {
     // validate!
     new ScriptRule({
       scriptName: 'validate',
-      scriptCommand: 'npm ls'
+      scriptCommand: 'npm ls && ripcord counsel check',
+      scriptCommandVariants: [/npm ls/]
+    }),
+
+    // secure!
+    new ScriptRule({
+      devDependencies: ['nsp'],
+      scriptName: 'secure',
+      scriptCommand: 'nsp check'
     }),
 
     // lint!
@@ -90,15 +99,22 @@ module.exports = {
       scriptCommandVariants: ['*']
     }),
 
-    // docs
+    // developer docs
     new ScriptRule({
-      devDependencies: 'jsdoc',
+      devDependencies: ['jsdoc', 'minami', 'perish'],
       scriptName: 'docs',
-      scriptCommand: 'jsdoc -c jsdoc.json -R README.md -d docs src/'
+      scriptCommand: 'node scripts/doc.js'
+    }),
+    new Rule({
+      devDependencies: ['gh-pages'] // <== auto deploy docs
     }),
     new CopyRule({
       copySource: './templates/jsdoc.json',
-      copyTarget: './'
+      copyTarget: './scripts'
+    }),
+    new CopyRule({
+      copySource: './templates/docs.js',
+      copyTarget: './scripts'
     }),
 
     // tie 'em up!

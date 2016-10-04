@@ -10,14 +10,19 @@
   "dependencies": {
     "counsel": "*",
     "counsel-copy": "*",
-    "counsel-rule": "*",
     "counsel-precommit": "*",
-    "counsel-script": "*"
+    "counsel-rule": "*",
+    "counsel-script": "*",
+    "perish": "0.0.3"
   },
   "devDependencies": {
     "concat-stream": "^1.5.2",
+    "gh-pages": "^0.11.0",
     "jsdoc": "^3.4.2",
+    "minami": "^1.1.1",
+    "nsp": "^2.6.2",
     "nyc": "^8.3.0",
+    "perish": "0.0.3",
     "standard": "^8.3.0"
   },
   "description": "",
@@ -28,7 +33,8 @@
     "lint": "standard",
     "test": "nyc --reporter=lcov node test/",
     "check-coverage": "nyc check-coverage --lines 90 --functions 90 --branches 90",
-    "docs": "jsdoc -c jsdoc.json -R README.md -d docs src/"
+    "secure": "nsp check",
+    "docs": "node scripts/doc.js"
   },
   "pre-commit": [
     "validate",
