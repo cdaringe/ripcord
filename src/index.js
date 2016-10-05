@@ -7,6 +7,7 @@ const CopyRule = require('counsel-copy')
 const PreCommitRule = require('counsel-precommit')
 const pkg = require('../package.json')
 const cp = require('child_process')
+const path = require('path')
 
 counsel.configKey = pkg.name
 
@@ -37,6 +38,7 @@ module.exports = {
   },
 
   /**
+   * @TODO `npm ls` ==> https://snyk.io/blog/tackling-the-new-npm@3-dependency-tree/
    * generate tw project dependency report
    * @param {null} action
    * @param {Commander} opts
@@ -46,7 +48,7 @@ module.exports = {
     let dev
     try {
       prd = JSON.parse(cp.execSync('npm ls --prod --json', { cwd: this._projectRoot }).toString())
-      dev = JSON.parse(cp.execSync('npm ls --prod --json', { cwd: this._projectRoot }).toString())
+      dev = JSON.parse(cp.execSync('npm ls --dev --json', { cwd: this._projectRoot }).toString())
     } catch (err) {
       /* istanbul ignore next */
       if (err.message.match(/extraneous/)) {
