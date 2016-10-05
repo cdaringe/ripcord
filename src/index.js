@@ -10,6 +10,8 @@ const cp = require('child_process')
 
 counsel.configKey = pkg.name
 
+const COPY_CONTENT_ROOT = path.resolve(__dirname, '..')
+
 module.exports = {
   _counsel: counsel,
   _projectRoot: counsel.project.findProjectRoot(),
@@ -109,17 +111,19 @@ module.exports = {
       devDependencies: ['gh-pages'] // <== auto deploy docs
     }),
     new CopyRule({
+      copyContentRoot: COPY_CONTENT_ROOT,
       copySource: './templates/jsdoc.json',
       copyTarget: './scripts'
     }),
     new CopyRule({
+      copyContentRoot: COPY_CONTENT_ROOT,
       copySource: './templates/docs.js',
       copyTarget: './scripts'
     }),
 
     // tie 'em up!
     new PreCommitRule({
-      preCommitTasks: ['validate', 'lint', 'test', 'check-coverage']
+      preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'secure']
     })
   ]
 }
