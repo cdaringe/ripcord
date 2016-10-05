@@ -14,13 +14,21 @@ const counsel = require('counsel')
 
 let action = { name: null, arg: null, options: null }
 
+// attempt usage of local ripcord, if present
+try {
+  let localRipcordFilneame = path.join(process.cwd(), 'node_modules', 'ripcord', "bin", "ripcord")
+	localRipcordFilneame = require.resolve(localRipcordFilneame)
+	if(__filename !== localWebpack) return require(localWebpack)
+} catch(err) { /* pass */ }
+
+// expose and digest CLI
 program
   .option('-l, --log-level [error|warn|info|verbose|debug|silly]', 'set the log level. default info')
 
 program
   .command('report [arg]')
   .option('-o, --output [path]', 'path to dump the report')
-  .description('generate tw dependency report')
+  .description('generate tripwire dependency report')
   .action((arg, opts) => { action = { name: 'report', arg: arg, options: opts } })
 
 program
@@ -28,17 +36,16 @@ program
   .description('deploy tripwire project conventions via counsel')
   .action((arg, opts) => { action = { name: 'counsel', arg: arg, options: opts } })
 
-
 program.parse(process.argv)
 
-counsel.logger.transports.console.level = program.logLevel || app.logLevel
-
+// process command line input
 if (!program.args || program.args.length === 0) {
   program.help()
   process.exit(1)
 }
 
-// giddy up.
+counsel.logger.transports.console.level = program.logLevel || app.logLevel
+
 let result = ripcord[action.name].apply(ripcord, [action.arg, action.options])
 
 if (action.name === 'report') {
