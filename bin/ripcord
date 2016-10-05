@@ -24,6 +24,7 @@ try {
 // expose and digest CLI
 program
   .option('-l, --log-level [error|warn|info|verbose|debug|silly]', 'set the log level. default info')
+  .option('--verbose', 'set the log level to verbose')
 
 program
   .command('report [arg]')
@@ -39,12 +40,14 @@ program
 program.parse(process.argv)
 
 // process command line input
-if (!program.args || program.args.length === 0) {
+const noArgsPassed = !program.args || program.args.length === 0
+const isValidArg = program.args && program.args[1] ? program.args[1] instanceof program.Command : false
+if (noArgsPassed || !isValidArg) {
   program.help()
   process.exit(1)
 }
 
-counsel.logger.transports.console.level = program.logLevel || app.logLevel
+counsel.logger.transports.console.level = program.verbose ? 'verbose' : program.logLevel || app.logLevel
 
 let result = ripcord[action.name].apply(ripcord, [action.arg, action.options])
 
