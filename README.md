@@ -61,3 +61,7 @@ pro tip: you can `[sudo] npm i -g ripcord` and run `ripcord [cmd]` in your proje
   - summarization of the above
   - on pre-commit: `['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure']`
 })
+
+## considerations
+
+- [semantic-release](https://github.com/semantic-release/semantic-release)
