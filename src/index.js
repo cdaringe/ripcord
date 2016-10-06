@@ -111,16 +111,19 @@ module.exports = {
     }),
 
     // readme
-    {
-      name: 'guaranteed README.md it!',
-      apply () {},
-      check (counsel) {
-        const readmeFilename = path.resolve(counsel.targetProjectRoot, 'README.md')
-        if (!fs.existsSync(readmeFilename)) {
-          throw new Error(`README.md not found at: ${readmeFilename}`)
+    (function () {
+      /* istanbul ignore next */
+      return {
+        name: 'guaranteed README.md it!',
+        apply () {},
+        check (counsel) {
+          const readmeFilename = path.resolve(counsel.targetProjectRoot, 'README.md')
+          if (!fs.existsSync(readmeFilename)) {
+            throw new Error(`README.md not found at: ${readmeFilename}`)
+          }
         }
       }
-    },
+    })(),
 
     // developer docs
     new ScriptRule({
