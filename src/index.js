@@ -31,7 +31,7 @@ module.exports = {
 
   /**
    * apply or check ripcord's counsel rules in project.
-   * @param {string} action
+   * @param {string} action 'apply' or 'check'
    * @param {Commander} opts
    * @returns {Promise}
    */
@@ -52,8 +52,8 @@ module.exports = {
   /**
    * @TODO `npm ls` ==> https://snyk.io/blog/tackling-the-new-npm@3-dependency-tree/
    * generate tw project dependency report
-   * @param {null} action
-   * @param {Commander} opts
+   * @param {null} action unused
+   * @param {Commander} opts unused
    */
   report (action, opts) {
     let prd

@@ -1,7 +1,8 @@
 'use strict'
 
 /**
- * @module {object} app common runtime state
+ * @module app
+ * @description common runtime state
  */
 module.exports = {
   /**
