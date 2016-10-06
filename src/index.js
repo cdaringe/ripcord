@@ -144,7 +144,7 @@ module.exports = {
       name: 'api doc-ify command it!',
       devDependencies: ['jsdoc', 'minami', 'perish'],
       scriptName: 'docs',
-      scriptCommand: 'node scripts/doc.js'
+      scriptCommand: 'node scripts/docs.js'
     }),
     new Rule({
       name: 'github pages prep it!',
