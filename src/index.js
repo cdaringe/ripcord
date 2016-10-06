@@ -1,3 +1,7 @@
+/**
+ * @module ripcord
+ */
+
 'use strict'
 
 const counsel = require('counsel')
@@ -15,8 +19,15 @@ counsel.configKey = pkg.name
 const COPY_CONTENT_ROOT = path.resolve(__dirname, '..')
 
 module.exports = {
+  /**
+   * @property {Counsel} counsel counsel instance
+   */
   _counsel: counsel,
-  _projectRoot: counsel.project.findProjectRoot(),
+
+  /**
+   * @property {string} projectRoot full path of target project
+   */
+  projectRoot: counsel.project.findProjectRoot(),
 
   /**
    * apply or check ripcord's counsel rules in project.
@@ -48,8 +59,8 @@ module.exports = {
     let prd
     let dev
     try {
-      prd = JSON.parse(cp.execSync('npm ls --prod --json', { cwd: this._projectRoot }).toString())
-      dev = JSON.parse(cp.execSync('npm ls --dev --json', { cwd: this._projectRoot }).toString())
+      prd = JSON.parse(cp.execSync('npm ls --prod --json', { cwd: this.projectRoot }).toString())
+      dev = JSON.parse(cp.execSync('npm ls --dev --json', { cwd: this.projectRoot }).toString())
     } catch (err) {
       /* istanbul ignore next */
       if (err.message.match(/extraneous/)) {
@@ -68,6 +79,9 @@ module.exports = {
     }
   },
 
+  /**
+   * @property {Rule[]} set of rules to apply/check
+   */
   rules: [
 
     // validate!
