@@ -149,6 +149,28 @@ module.exports = {
       copyTarget: './scripts'
     }),
 
+    // safe publishing
+    new ScriptRule({
+      name: 'prepublish it!',
+      scriptName: 'preversion',
+      scriptCommand: 'git checkout master && git pull && npm run validate'
+    }),
+    new ScriptRule({
+      name: 'patch publish it!',
+      scriptName: 'publish-patch',
+      scriptCommand: 'npm run preversion && npm version patch && git push origin master --tags && npm publish'
+    }),
+    new ScriptRule({
+      name: 'minor publish it!',
+      scriptName: 'publish-minor',
+      scriptCommand: 'npm run preversion && npm version minor && git push origin master --tags && npm publish'
+    }),
+    new ScriptRule({
+      name: 'major publish it!',
+      scriptName: 'publish-major',
+      scriptCommand: 'npm run preversion && npm version major && git push origin master --tags && npm publish'
+    }),
+
     // tie 'em up!
     new PreCommitRule({
       name: 'precommit quality it!',
