@@ -18,7 +18,8 @@ to apply `ripcord` to your project, from the project root, run:
 
 `npm install --save-dev ripcord`
 
-immediately on install, ripcord will inject its rules into your project.  what else can
+immediately on install, ripcord will inject its rules into your project.  what else can it do?
+
 `node_modules/.bin/ripcord --help`
 
 pro tip: you can `[sudo] npm i -g ripcord` and run `ripcord [cmd]` in your project _after_ you have installed it locally, and just run `ripcord` from the project root.  Even if there's a version mismatch, fear-not, your locally installed version will be run!
