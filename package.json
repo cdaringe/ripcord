@@ -29,7 +29,7 @@
   "ripcord": {},
   "scripts": {
     "install": "node bin/ripcord counsel apply",
-    "validate": "npm ls",
+    "validate": "npm ls && ripcord counsel check",
     "lint": "standard",
     "test": "nyc --reporter=lcov node test/",
     "check-coverage": "nyc check-coverage --lines 90 --functions 90 --branches 90",

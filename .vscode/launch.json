@@ -82,12 +82,12 @@
       "outDir": null
     },
     {
-      "name": "counsel",
+      "name": "counsel - apply",
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/bin/ripcord",
       "stopOnEntry": false,
-      "args": ["counsel"],
+      "args": ["counsel", "apply"],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
       "runtimeExecutable": null,
