@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Home - Documentation</title>
+    <title>app.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,41 +28,30 @@
 
 <div id="main">
     
+    <h1 class="page-title">app.js</h1>
+    
 
     
 
 
 
     
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
 
-
-
-
-
-
-
-
-
-    
-
-
-    <section class="readme">
-        <article><h1>ripcord</h1><p>project scaffolding and opinion enforcer!</p>
-<h2>what</h2><p>what does <code>ripcord</code> <em>really</em> do? it:</p>
-<ul>
-<li>deploys a set of <a href="https://github.com/cdaringe/counsel">counsel</a> rules, on request</li>
-<li>enforces those rules, on request</li>
-<li>exposes tooling for report generation</li>
-</ul>
-<p>what rules &amp; opinions does ripcord apply? see <a href="https://github.com/cdaringe/ripcord/blob/master/src/index.js">module.exports.rules</a>.</p>
-<h2>usage</h2><p>to apply <code>ripcord</code> to your project, from the project root, run:</p>
-<p><code>npm install --save-dev ripcord</code></p>
-<p>immediately on install, ripcord will inject its rules into your project.  what else can
-<code>node_modules/.bin/ripcord --help</code></p>
-<p>Pro Tip: you can <code>[sudo] npm i -g ripcord</code> and run <code>ripcord [cmd]</code> in your project <em>after</em> you have installed it, and just run <code>ripcord</code> from the project root.  Even if there's a version mismatch, fear-not, your locally installed version will be run!</p></article>
+/**
+ * @module {object} app common runtime state
+ */
+module.exports = {
+  /**
+   * @property {string} logLevel winston log level applied to counsel's logger
+   */
+  logLevel: 'info'
+}
+</code></pre>
+        </article>
     </section>
-
-
 
 
 

@@ -23,7 +23,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-app%2520common%2520runtime%2520state.html">app common runtime state</a></li><li><a href="module-ripcord.html">ripcord</a><ul class='methods'><li data-type='method'><a href="module-ripcord.html#.counsel">counsel</a></li><li data-type='method'><a href="module-ripcord.html#.report">report</a></li></ul></li></ul>
 </nav>
 
 <div id="main">
@@ -38,7 +38,11 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>'use strict'
+            <pre class="prettyprint source linenums"><code>/**
+ * @module ripcord
+ */
+
+'use strict'
 
 const counsel = require('counsel')
 const Rule = require('counsel-rule')
@@ -47,12 +51,23 @@ const CopyRule = require('counsel-copy')
 const PreCommitRule = require('counsel-precommit')
 const pkg = require('../package.json')
 const cp = require('child_process')
+const path = require('path')
+const fs = require('fs')
 
 counsel.configKey = pkg.name
 
+const COPY_CONTENT_ROOT = path.resolve(__dirname, '..')
+
 module.exports = {
+  /**
+   * @property {Counsel} counsel counsel instance
+   */
   _counsel: counsel,
-  _projectRoot: counsel.project.findProjectRoot(),
+
+  /**
+   * @property {string} projectRoot full path of target project
+   */
+  projectRoot: counsel.project.findProjectRoot(),
 
   /**
    * apply or check ripcord's counsel rules in project.
@@ -65,7 +80,7 @@ module.exports = {
     if (action === 'apply') {
       return counsel.apply(this.rules)
     } else if (action === 'check') {
-      return counsel.logger.error('check not yet implemented')
+      return counsel.check(this.rules)
     } else {
       let errMsg = `"${action}" not a valid ripcord counsel argument`
       if (!action) errMsg = 'ripcord counsel requires an argument'
@@ -75,6 +90,7 @@ module.exports = {
   },
 
   /**
+   * @TODO `npm ls` ==> https://snyk.io/blog/tackling-the-new-npm@3-dependency-tree/
    * generate tw project dependency report
    * @param {null} action
    * @param {Commander} opts
@@ -83,8 +99,8 @@ module.exports = {
     let prd
     let dev
     try {
-      prd = JSON.parse(cp.execSync('npm ls --prod --json', { cwd: this._projectRoot }).toString())
-      dev = JSON.parse(cp.execSync('npm ls --prod --json', { cwd: this._projectRoot }).toString())
+      prd = JSON.parse(cp.execSync('npm ls --prod --json', { cwd: this.projectRoot }).toString())
+      dev = JSON.parse(cp.execSync('npm ls --dev --json', { cwd: this.projectRoot }).toString())
     } catch (err) {
       /* istanbul ignore next */
       if (err.message.match(/extraneous/)) {
@@ -103,17 +119,22 @@ module.exports = {
     }
   },
 
+  /**
+   * @property {Rule[]} set of rules to apply/check
+   */
   rules: [
 
     // validate!
     new ScriptRule({
+      name: 'validate it!',
       scriptName: 'validate',
       scriptCommand: 'npm ls &amp;&amp; ripcord counsel check',
-      scriptCommandVariants: [/npm ls/]
+      scriptCommandVariants: [/nsm ls/]
     }),
 
     // secure!
     new ScriptRule({
+      name: 'secure it!',
       devDependencies: ['nsp'],
       scriptName: 'secure',
       scriptCommand: 'nsp check'
@@ -121,6 +142,7 @@ module.exports = {
 
     // lint!
     new ScriptRule({
+      name: 'lint it!',
       devDependencies: ['standard'],
       scriptName: 'lint',
       scriptCommand: 'standard'
@@ -128,38 +150,85 @@ module.exports = {
 
     // test and coverage!
     new ScriptRule({
+      name: 'test it!',
+      devDependencies: ['nyc'],
       scriptName: 'test',
       scriptCommand: 'nyc --reporter=lcov node test/',
       scriptCommandVariants: ['node test/', 'tape test/**/*.js', 'node test/**/*.js']
     }),
     new ScriptRule({
+      name: 'cover it!',
       devDependencies: ['nyc'],
       scriptName: 'check-coverage',
       scriptCommand: 'nyc check-coverage --lines 90 --functions 90 --branches 90',
       scriptCommandVariants: ['*']
     }),
 
+    // readme
+    (function () {
+      /* istanbul ignore next */
+      return {
+        name: 'guaranteed README.md it!',
+        apply () {},
+        check (counsel) {
+          const readmeFilename = path.resolve(counsel.targetProjectRoot, 'README.md')
+          if (!fs.existsSync(readmeFilename)) {
+            throw new Error(`README.md not found at: ${readmeFilename}`)
+          }
+        }
+      }
+    })(),
+
     // developer docs
     new ScriptRule({
+      name: 'api doc-ify command it!',
       devDependencies: ['jsdoc', 'minami', 'perish'],
       scriptName: 'docs',
-      scriptCommand: 'node scripts/doc.js'
+      scriptCommand: 'node scripts/docs.js'
     }),
     new Rule({
+      name: 'github pages prep it!',
       devDependencies: ['gh-pages'] // &lt;== auto deploy docs
     }),
     new CopyRule({
+      name: 'make api docs great... it?',
+      copyContentRoot: COPY_CONTENT_ROOT,
       copySource: './templates/jsdoc.json',
       copyTarget: './scripts'
     }),
     new CopyRule({
+      name: 'api-doc script it!',
+      copyContentRoot: COPY_CONTENT_ROOT,
       copySource: './templates/docs.js',
       copyTarget: './scripts'
     }),
 
+    // safe publishing
+    new ScriptRule({
+      name: 'prepublish it!',
+      scriptName: 'preversion',
+      scriptCommand: 'git checkout master &amp;&amp; git pull &amp;&amp; npm run validate'
+    }),
+    new ScriptRule({
+      name: 'patch publish it!',
+      scriptName: 'publish-patch',
+      scriptCommand: 'npm run preversion &amp;&amp; npm version patch &amp;&amp; git push origin master --tags &amp;&amp; npm publish'
+    }),
+    new ScriptRule({
+      name: 'minor publish it!',
+      scriptName: 'publish-minor',
+      scriptCommand: 'npm run preversion &amp;&amp; npm version minor &amp;&amp; git push origin master --tags &amp;&amp; npm publish'
+    }),
+    new ScriptRule({
+      name: 'major publish it!',
+      scriptName: 'publish-major',
+      scriptCommand: 'npm run preversion &amp;&amp; npm version major &amp;&amp; git push origin master --tags &amp;&amp; npm publish'
+    }),
+
     // tie 'em up!
     new PreCommitRule({
-      preCommitTasks: ['validate', 'lint', 'test', 'check-coverage']
+      name: 'precommit quality it!',
+      preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'secure']
     })
   ]
 }
