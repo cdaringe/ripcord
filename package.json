@@ -18,6 +18,7 @@
   "devDependencies": {
     "gh-pages": "^0.11.0",
     "jsdoc": "^3.4.2",
+    "license-checker": "^8.0.0",
     "minami": "^1.1.1",
     "nsp": "^2.6.2",
     "nyc": "^8.3.0",
@@ -26,7 +27,9 @@
     "tape": "^4.6.2"
   },
   "description": "",
-  "ripcord": {},
+  "ripcord": {
+    "isOpenSource": true
+  },
   "scripts": {
     "install": "node bin/ripcord counsel apply",
     "validate": "npm ls && ripcord counsel check",
@@ -38,13 +41,15 @@
     "preversion": "git checkout master && git pull && npm run validate",
     "publish-patch": "npm run preversion && npm version patch && git push origin master --tags && npm publish",
     "publish-minor": "npm run preversion && npm version minor && git push origin master --tags && npm publish",
-    "publish-major": "npm run preversion && npm version major && git push origin master --tags && npm publish"
+    "publish-major": "npm run preversion && npm version major && git push origin master --tags && npm publish",
+    "check-licenses": "node scripts/check-licenses.js"
   },
   "pre-commit": [
     "validate",
     "lint",
     "test",
     "check-coverage",
+    "check-licenses",
     "secure"
   ]
 }

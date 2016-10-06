@@ -185,10 +185,24 @@ module.exports = {
       scriptCommand: 'npm run preversion && npm version major && git push origin master --tags && npm publish'
     }),
 
+    // license
+    new CopyRule({
+      name: 'license verification prep it!',
+      copyContentRoot: COPY_CONTENT_ROOT,
+      copySource: './templates/check-licenses.js',
+      copyTarget: './scripts'
+    }),
+    new ScriptRule({
+      name: 'license verify it!',
+      devDependencies: ['license-checker'],
+      scriptName: 'check-licenses',
+      scriptCommand: 'node scripts/check-licenses.js'
+    }),
+
     // tie 'em up!
     new PreCommitRule({
       name: 'precommit quality it!',
-      preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'secure']
+      preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure']
     })
   ]
 }

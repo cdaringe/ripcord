@@ -102,6 +102,26 @@
       "outDir": null
     },
     {
+      "name": "license check",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/scripts/check-licenses.js",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outDir": null
+    },
+    {
       "name": "Attach",
       "type": "node",
       "request": "attach",
