@@ -2,29 +2,34 @@
 
 project scaffolding and opinion enforcer!
 
+## install
+
+`npm install --save-dev ripcord`
+
+pro tip: you can `[sudo] npm i -g ripcord` and run `ripcord [cmd]` in your project _after_ you have installed it locally, and just run `ripcord` from the project root.  Even if there's a version mismatch, fear-not, your locally installed version will be run!
+
 ## what
 
-what does `ripcord` _really_ do? it:
+what does `ripcord` _really_ do?
 
 - deploys a set of [counsel](https://github.com/cdaringe/counsel) rules, on request
 - enforces those rules, on request
 - exposes tooling for report generation
 
-what rules & opinions does ripcord apply? see [module.exports.rules](https://github.com/cdaringe/ripcord/blob/master/src/index.js), or below for a high level summarizations.
+what rules & opinions does ripcord apply? see [module.exports.rules](https://github.com/cdaringe/ripcord/blob/master/src/index.js), or the below rules section for a high level summarization.
 
 ## usage
 
-to apply `ripcord` to your project, from the project root, run:
+- to install `ripcord` rules into to your project, simply install it or update it!
+- to manually apply rules, run `ripcord counsel apply`
+- to check if ripcord's rules are honored, run `ripcord counsel check`
+- to generate a depedency report, run `ripcord report [-o /path/to/report]`
 
-`npm install --save-dev ripcord`
+what else can it do?
 
-immediately on install, ripcord will inject its rules into your project.  what else can it do?
+`[node_modules/.bin/]ripcord --help`
 
-`node_modules/.bin/ripcord --help`
-
-pro tip: you can `[sudo] npm i -g ripcord` and run `ripcord [cmd]` in your project _after_ you have installed it locally, and just run `ripcord` from the project root.  Even if there's a version mismatch, fear-not, your locally installed version will be run!
-
-## applied opinions & actions
+## applied rules
 
 - general package validation (on pre-commit)
   - `npm ls` - validate package declaration matches _actual_ package content
