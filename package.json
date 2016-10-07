@@ -8,11 +8,11 @@
   "author": "cdaringe",
   "license": "ISC",
   "dependencies": {
-    "counsel": "^0.0.14",
-    "counsel-copy": "^0.0.14",
-    "counsel-precommit": "^0.0.14",
-    "counsel-rule": "^0.0.14",
-    "counsel-script": "^0.0.14",
+    "counsel": "0.x",
+    "counsel-copy": "0.x",
+    "counsel-precommit": "0.x",
+    "counsel-rule": "0.x",
+    "counsel-script": "0.x",
     "perish": "0.0.3"
   },
   "devDependencies": {
