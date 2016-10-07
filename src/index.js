@@ -9,6 +9,7 @@ const ScriptRule = require('counsel-script')
 const CopyRule = require('counsel-copy')
 const PreCommitRule = require('counsel-precommit')
 const pkg = require('../package.json')
+const resolveDeps = require('snyk-resolve-deps')
 const cp = require('child_process')
 const path = require('path')
 const fs = require('fs')
@@ -55,27 +56,22 @@ module.exports = {
    * @param {Commander} opts unused
    */
   report (action, opts) {
-    let prd
-    let dev
-    try {
-      prd = JSON.parse(cp.execSync('npm ls --prod --json', { cwd: this.projectRoot }).toString())
-      dev = JSON.parse(cp.execSync('npm ls --dev --json', { cwd: this.projectRoot }).toString())
-    } catch (err) {
-      /* istanbul ignore next */
-      if (err.message.match(/extraneous/)) {
-        counsel.logger.error([
-          'uh oh, we can\'t run the dependency report. this is generally',
-          'due to having bogus, unused packages installed (corrected via',
-          '`npm prune`), or having `npm link`ed packages but not formally',
-          'added them to your package.json.'
-        ])
-        process.exit(1)
+    const prd = {}
+    const dev = {}
+    return resolveDeps(this.projectRoot, { dev: true })
+    .then(tree => {
+      const deps = tree.dependencies // .dependencies _has_ deps and devDeps
+      for (let pkg in deps) {
+        if (deps[pkg].depType.match(/prod/)) prd[pkg] = deps[pkg]
+        else dev[pkg] = deps[pkg]
       }
-    }
-    return {
-      compile: prd,
-      testCompile: dev
-    }
+      this._simplifyDepStructure(prd)
+      this._simplifyDepStructure(dev)
+      return {
+        compile: prd,
+        testCompile: dev
+      }
+    })
   },
 
   /**
@@ -206,5 +202,26 @@ module.exports = {
       name: 'precommit quality it!',
       preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure']
     })
-  ]
+  ],
+
+  /**
+   * @private
+   * mutates the snyk dep report in place to include only a small subset of keys for
+   * noise reduction and ease of parsing for people interested in the report.
+   * @param {object} depSet snyk dep set
+   * @returns {undefined}
+   */
+  _simplifyDepStructure (depSet) {
+    for (var pkgName in depSet) {
+      var pkg = depSet[pkgName]
+      pkg = depSet[pkgName] = {
+        'requestedVersion': pkg.dep,
+        'version': pkg.version,
+        'dependencies': pkg.dependencies,
+        'license': pkg.license
+      }
+      if (Object.keys(pkg.dependencies).length) this._simplifyDepStructure(pkg.dependencies)
+      else delete pkg.dependencies
+    }
+  }
 }

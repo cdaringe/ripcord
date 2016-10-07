@@ -49,19 +49,22 @@ if (noArgsPassed || !isValidArg) {
 
 counsel.logger.transports.console.level = program.verbose ? 'verbose' : program.logLevel || app.logLevel
 
-let result = ripcord[action.name].apply(ripcord, [action.arg, action.options])
-
-if (action.name === 'report') {
-  const output = action.options.output
-  let resultJson = JSON.stringify(result, null, 2)
-  if (output) {
-    const REPORT_NAME_DEFAULT = 'tw-dependencies.json'
-    let dest = path.isAbsolute(output) ? output : path.resolve(process.cwd(), output)
-    dest = counsel.project.isDir(dest) ? path.join(dest, REPORT_NAME_DEFAULT) : dest
-    fs.writeFileSync(dest, resultJson)
-  } else {
-    process.stdout.write(resultJson)
+Promise.resolve(
+  ripcord[action.name].apply(ripcord, [action.arg, action.options])
+).then(result => {
+  if (action.name === 'report') {
+    const output = action.options.output
+    let resultJson = JSON.stringify(result, null, 2)
+    if (output) {
+      const REPORT_NAME_DEFAULT = 'tw-dependencies.json'
+      let dest = path.isAbsolute(output) ? output : path.resolve(process.cwd(), output)
+      dest = counsel.project.isDir(dest) ? path.join(dest, REPORT_NAME_DEFAULT) : dest
+      fs.writeFileSync(dest, resultJson)
+    } else {
+      process.stdout.write(resultJson)
+    }
   }
-}
+})
+
 
 module.exports = program
