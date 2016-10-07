@@ -12,9 +12,11 @@ pro tip: you can `[sudo] npm i -g ripcord` and run `ripcord [cmd]` in your proje
 
 what does `ripcord` _really_ do?
 
-- deploys a set of [counsel](https://github.com/cdaringe/counsel) rules, on request
-- enforces those rules, on request
-- exposes tooling for report generation
+- deploys a set of rules into your project, on request. :rocket:
+  - what are rules? they are _all sorts of things._ business rules, scripts, or even depedencies!
+  - see  [counsel](https://github.com/cdaringe/counsel) for more. ripcord uses counsel to apply scaffolding and enforcement.
+- enforces those rules, on request. :lock:
+- exposes tooling for report generation! :memo:
 
 what rules & opinions does ripcord apply? see [module.exports.rules](https://github.com/cdaringe/ripcord/blob/master/src/index.js), or the below rules section for a high level summarization.
 
@@ -28,6 +30,12 @@ what rules & opinions does ripcord apply? see [module.exports.rules](https://git
 what else can it do?
 
 `[node_modules/.bin/]ripcord --help`
+
+**api docs** found [here](https://cdaringe.github.io/ripcord/)
+
+## does ripcord dogfood itself?
+
+absolutely. :party:
 
 ## applied rules
 
