@@ -42,7 +42,8 @@
     "publish-patch": "npm run preversion && npm version patch && git push origin master --tags && npm publish",
     "publish-minor": "npm run preversion && npm version minor && git push origin master --tags && npm publish",
     "publish-major": "npm run preversion && npm version major && git push origin master --tags && npm publish",
-    "check-licenses": "node scripts/check-licenses.js"
+    "check-licenses": "node scripts/check-licenses.js",
+    "postpublish": "npm run docs"
   },
   "pre-commit": [
     "validate",

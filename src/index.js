@@ -5,7 +5,6 @@
 'use strict'
 
 const counsel = require('counsel')
-const Rule = require('counsel-rule')
 const ScriptRule = require('counsel-script')
 const CopyRule = require('counsel-copy')
 const PreCommitRule = require('counsel-precommit')
@@ -146,9 +145,12 @@ module.exports = {
       scriptName: 'docs',
       scriptCommand: 'node scripts/docs.js'
     }),
-    new Rule({
+    new ScriptRule({
       name: 'github pages prep it!',
-      devDependencies: ['gh-pages'] // <== auto deploy docs
+      devDependencies: ['gh-pages'], // <== auto deploy docs
+      scriptName: 'postpublish',
+      scriptCommand: 'npm run docs',
+      scriptAppend: true
     }),
     new CopyRule({
       name: 'make api docs great... it?',
