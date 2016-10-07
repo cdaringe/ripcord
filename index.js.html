@@ -45,7 +45,6 @@
 'use strict'
 
 const counsel = require('counsel')
-const Rule = require('counsel-rule')
 const ScriptRule = require('counsel-script')
 const CopyRule = require('counsel-copy')
 const PreCommitRule = require('counsel-precommit')
@@ -62,7 +61,7 @@ module.exports = {
   /**
    * @property {Counsel} counsel counsel instance
    */
-  counsel: counsel,
+  _counsel: counsel,
 
   /**
    * @property {string} projectRoot full path of target project
@@ -186,9 +185,12 @@ module.exports = {
       scriptName: 'docs',
       scriptCommand: 'node scripts/docs.js'
     }),
-    new Rule({
+    new ScriptRule({
       name: 'github pages prep it!',
-      devDependencies: ['gh-pages'] // &lt;== auto deploy docs
+      devDependencies: ['gh-pages'], // &lt;== auto deploy docs
+      scriptName: 'postpublish',
+      scriptCommand: 'npm run docs',
+      scriptAppend: true
     }),
     new CopyRule({
       name: 'make api docs great... it?',
@@ -225,10 +227,24 @@ module.exports = {
       scriptCommand: 'npm run preversion &amp;&amp; npm version major &amp;&amp; git push origin master --tags &amp;&amp; npm publish'
     }),
 
+    // license
+    new CopyRule({
+      name: 'license verification prep it!',
+      copyContentRoot: COPY_CONTENT_ROOT,
+      copySource: './templates/check-licenses.js',
+      copyTarget: './scripts'
+    }),
+    new ScriptRule({
+      name: 'license verify it!',
+      devDependencies: ['license-checker'],
+      scriptName: 'check-licenses',
+      scriptCommand: 'node scripts/check-licenses.js'
+    }),
+
     // tie 'em up!
     new PreCommitRule({
       name: 'precommit quality it!',
-      preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'secure']
+      preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure']
     })
   ]
 }

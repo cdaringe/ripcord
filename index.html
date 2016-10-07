@@ -48,18 +48,95 @@
 
     <section class="readme">
         <article><h1>ripcord</h1><p>project scaffolding and opinion enforcer!</p>
-<h2>what</h2><p>what does <code>ripcord</code> <em>really</em> do? it:</p>
+<h2>install</h2><p><code>npm install --save-dev ripcord</code></p>
+<p>pro tip: you can <code>[sudo] npm i -g ripcord</code> and run <code>ripcord [cmd]</code> in your project <em>after</em> you have installed it locally, and just run <code>ripcord</code> from the project root.  Even if there's a version mismatch, fear-not, your locally installed version will be run!</p>
+<h2>what</h2><p>what does <code>ripcord</code> <em>really</em> do?</p>
 <ul>
-<li>deploys a set of <a href="https://github.com/cdaringe/counsel">counsel</a> rules, on request</li>
-<li>enforces those rules, on request</li>
-<li>exposes tooling for report generation</li>
+<li>deploys a set of rules into your project, on request. :rocket:<ul>
+<li>what are rules? they are <em>all sorts of things.</em> business rules, scripts, or even depedencies!</li>
+<li>see  <a href="https://github.com/cdaringe/counsel">counsel</a> for more. ripcord uses counsel to apply scaffolding and enforcement.</li>
 </ul>
-<p>what rules &amp; opinions does ripcord apply? see <a href="https://github.com/cdaringe/ripcord/blob/master/src/index.js">module.exports.rules</a>.</p>
-<h2>usage</h2><p>to apply <code>ripcord</code> to your project, from the project root, run:</p>
-<p><code>npm install --save-dev ripcord</code></p>
-<p>immediately on install, ripcord will inject its rules into your project.  what else can
-<code>node_modules/.bin/ripcord --help</code></p>
-<p>Pro Tip: you can <code>[sudo] npm i -g ripcord</code> and run <code>ripcord [cmd]</code> in your project <em>after</em> you have installed it, and just run <code>ripcord</code> from the project root.  Even if there's a version mismatch, fear-not, your locally installed version will be run!</p></article>
+</li>
+<li>enforces those rules, on request. :lock:</li>
+<li>exposes tooling for report generation! :memo:</li>
+</ul>
+<p>what rules &amp; opinions does ripcord apply? see <a href="https://github.com/cdaringe/ripcord/blob/master/src/index.js">module.exports.rules</a>, or the below rules section for a high level summarization.</p>
+<h2>usage</h2><ul>
+<li>to install <code>ripcord</code> rules into to your project, simply install it or update it!</li>
+<li>to manually apply rules, run <code>ripcord counsel apply</code></li>
+<li>to check if ripcord's rules are honored, run <code>ripcord counsel check</code></li>
+<li>to generate a depedency report, run <code>ripcord report [-o /path/to/report]</code></li>
+</ul>
+<p>what else can it do?</p>
+<p><code>[node_modules/.bin/]ripcord --help</code></p>
+<p><strong>api docs</strong> found <a href="https://cdaringe.github.io/ripcord/">here</a></p>
+<h2>does ripcord dogfood itself?</h2><p>absolutely. :party:</p>
+<h2>applied rules</h2><ul>
+<li><p>general package validation (on pre-commit)</p>
+<ul>
+<li><code>npm ls</code> - validate package declaration matches <em>actual</em> package content</li>
+<li><code>ripcord counsel check</code> - enforce all rules below that implement a <code>check</code> method<ul>
+<li>options: <code>scriptCommandVariants: [/nsm ls/]</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>security check (on pre-commit)</p>
+<ul>
+<li><code>nsp check</code> - check pkg deps for vulns</li>
+</ul>
+</li>
+<li><p>linting</p>
+<ul>
+<li><code>standard</code></li>
+</ul>
+</li>
+<li><p>test and coverage</p>
+<ul>
+<li>enforces <code>test</code> task defined. prefers wrapping tests with <code>nyc</code> pacakge</li>
+<li>encourages coverage enforcement on common metrics @90%</li>
+</ul>
+</li>
+<li><p>user docs</p>
+<ul>
+<li>mandates <code>README.md</code></li>
+</ul>
+</li>
+<li><p>api docs (onpublish)</p>
+<ul>
+<li>generate JSDoc pages, themed, published to <code>gh-pages</code></li>
+</ul>
+</li>
+<li><p>package publish behavior</p>
+<ul>
+<li>apply version bumping using npm and git tooling<ul>
+<li><strong>no manual</strong> version number bumping</li>
+</ul>
+</li>
+<li>use git tags/releases</li>
+<li>e.g. <code>npm run publish-patch</code></li>
+</ul>
+</li>
+<li><p>license validation (on pre-commit)</p>
+<ul>
+<li>assert licenses are <em>approved</em>! does not guarantee you've been given permission to use them :)</li>
+<li>configuration:<ul>
+<li><code>&quot;ripcord&quot;: { &quot;isOpenSource&quot;: true }</code> waives license accountability as publish gate.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>pre-commit actions</p>
+<ul>
+<li>summarization of the above</li>
+<li>on pre-commit: <code>['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure']</code>
+})</li>
+</ul>
+</li>
+</ul>
+<h2>considerations</h2><ul>
+<li><a href="https://github.com/semantic-release/semantic-release">semantic-release</a></li>
+</ul></article>
     </section>
 
 
