@@ -150,8 +150,7 @@ module.exports = {
       devDependencies: ['gh-pages'], // <== auto deploy docs
       scriptName: 'postpublish',
       scriptCommand: 'npm run docs',
-      scriptCommandVariants: ['*'],
-      scriptAppend: true
+      scriptCommandVariants: ['*']
     }),
     new CopyRule({
       name: 'make api docs great... it?',
