@@ -213,9 +213,9 @@ module.exports = {
   ],
 
   /**
-   * @private
    * mutates the snyk dep report in place to include only a small subset of keys for
    * noise reduction and ease of parsing for people interested in the report.
+   * @private
    * @param {object} depSet snyk dep set
    * @returns {undefined}
    */
