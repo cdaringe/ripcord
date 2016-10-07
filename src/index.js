@@ -8,9 +8,10 @@ const counsel = require('counsel')
 const ScriptRule = require('counsel-script')
 const CopyRule = require('counsel-copy')
 const PreCommitRule = require('counsel-precommit')
+const FilenameRule = require('counsel-filename-format')
+const kebab = require('lodash.kebabcase')
 const pkg = require('../package.json')
 const resolveDeps = require('snyk-resolve-deps')
-const cp = require('child_process')
 const path = require('path')
 const fs = require('fs')
 
@@ -195,6 +196,13 @@ module.exports = {
       devDependencies: ['license-checker'],
       scriptName: 'check-licenses',
       scriptCommand: 'node scripts/check-licenses.js'
+    }),
+
+    // filenames! kebab 'em
+    new FilenameRule({
+      name: 'kebab case it!',
+      fileFormatExtensions: 'js',
+      fileFormatFunction: kebab
     }),
 
     // tie 'em up!
