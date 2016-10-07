@@ -2,6 +2,8 @@
 
 project scaffolding and opinion enforcer!
 
+[ ![Codeship Status for cdaringe/ripcord](https://app.codeship.com/projects/8944d7f0-6e6a-0134-4108-3672b74a6b59/status?branch=master)](https://app.codeship.com/projects/177795)
+
 ## install
 
 `npm install --save-dev ripcord`
@@ -12,11 +14,11 @@ pro tip: you can `[sudo] npm i -g ripcord` and run `ripcord [cmd]` in your proje
 
 what does `ripcord` _really_ do?
 
-- deploys a set of rules into your project, on request. :rocket:
+- :rocket: deploys a set of rules into your project, on request.
   - what are rules? they are _all sorts of things._ business rules, scripts, or even depedencies!
   - see  [counsel](https://github.com/cdaringe/counsel) for more. ripcord uses counsel to apply scaffolding and enforcement.
-- enforces those rules, on request. :lock:
-- exposes tooling for report generation! :memo:
+- :lock: enforces those rules, on request.
+- :memo: exposes tooling for report generation!
 
 what rules & opinions does ripcord apply? see [module.exports.rules](https://github.com/cdaringe/ripcord/blob/master/src/index.js), or the below rules section for a high level summarization.
 
@@ -35,7 +37,7 @@ what else can it do?
 
 ## does ripcord dogfood itself?
 
-absolutely. :party:
+absolutely. :tada:
 
 ## applied rules
 
