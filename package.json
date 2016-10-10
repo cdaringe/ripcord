@@ -38,7 +38,7 @@
     "validate": "npm ls && ripcord counsel check",
     "lint": "standard",
     "test": "nyc --reporter=lcov node test/",
-    "check-coverage": "nyc check-coverage --lines 90 --functions 90 --branches 90",
+    "check-coverage": "nyc check-coverage --lines 90 --functions 90 --branches 80",
     "secure": "nsp check",
     "docs": "node scripts/docs.js",
     "preversion": "git checkout master && git pull && npm run validate",
