@@ -55,7 +55,9 @@ const resolveDeps = require('snyk-resolve-deps')
 const path = require('path')
 const fs = require('fs')
 
+// counsel init
 counsel.configKey = pkg.name
+counsel.setTargetPackageMeta()
 
 const COPY_CONTENT_ROOT = path.resolve(__dirname, '..')
 
@@ -99,6 +101,11 @@ module.exports = {
   report (action, opts) {
     const prd = {}
     const dev = {}
+    const rptPkg = counsel.targetProjectPackageJson
+    if (!rptPkg.name || !rptPkg.version) {
+      throw new ReferenceError('package name and version required in package.json')
+    }
+    if (!rptPkg.license) throw new ReferenceError('package requires a license in package.json')
     return resolveDeps(this.projectRoot, { dev: true })
     .then(tree => {
       const deps = tree.dependencies // .dependencies _has_ deps and devDeps
@@ -109,6 +116,12 @@ module.exports = {
       this._simplifyDepStructure(prd)
       this._simplifyDepStructure(dev)
       return {
+        package: {
+          name: rptPkg.name,
+          version: rptPkg.version,
+          author: rptPkg.author,
+          license: rptPkg.license
+        },
         compile: prd,
         testCompile: dev
       }
