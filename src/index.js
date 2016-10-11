@@ -82,8 +82,10 @@ module.exports = {
           author: rptPkg.author,
           license: rptPkg.license
         },
-        compile: prd,
-        testCompile: dev
+        configurations: {
+          compile: prd,
+          testCompile: dev
+        }
       }
     })
   },
