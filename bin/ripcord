@@ -43,8 +43,10 @@ program.parse(process.argv)
 const noArgsPassed = !program.args || program.args.length === 0
 const isValidArg = program.args && program.args[1] ? program.args[1] instanceof program.Command : false
 if (noArgsPassed || !isValidArg) {
-  program.help()
-  process.exit(1)
+  program.help((txt) => {
+    console.log(txt)
+    process.exit(1)
+  })
 }
 
 counsel.logger.transports.console.level = program.verbose ? 'verbose' : program.logLevel || app.logLevel
