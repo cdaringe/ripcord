@@ -8,6 +8,7 @@
   "author": "cdaringe",
   "license": "ISC",
   "dependencies": {
+    "commander": "^2.9.0",
     "counsel": "0.x",
     "counsel-copy": "0.x",
     "counsel-filename-format": "0.x",
