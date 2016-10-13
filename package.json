@@ -10,7 +10,7 @@
   "dependencies": {
     "commander": "^2.9.0",
     "counsel": "0.x",
-    "counsel-copy": "0.x",
+    "counsel-copy": "0.0.18",
     "counsel-filename-format": "0.x",
     "counsel-precommit": "0.x",
     "counsel-rule": "0.x",
