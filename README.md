@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/cdaringe/ripcord/master/img/parachute.svg" />
+<img src="https://raw.githubusercontent.com/cdaringe/ripcord/master/img/parachute.png" />
 
 # ripcord
 
