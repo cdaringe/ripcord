@@ -83,3 +83,7 @@ absolutely. :tada:
 ## considerations
 
 - [semantic-release](https://github.com/semantic-release/semantic-release)
+
+## logo
+
+[margdking](https://github.com/margdking)
