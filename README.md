@@ -4,7 +4,7 @@
 
 project scaffolding and opinion enforcer!
 
-[ ![Codeship Status for cdaringe/ripcord](https://app.codeship.com/projects/8944d7f0-6e6a-0134-4108-3672b74a6b59/status?branch=master)](https://app.codeship.com/projects/177795) ![](https://img.shields.io/badge/standardjs-%E2%9C%93-brightgreen.svg)
+[![Codeship Status for cdaringe/ripcord](https://app.codeship.com/projects/8944d7f0-6e6a-0134-4108-3672b74a6b59/status?branch=master)](https://app.codeship.com/projects/177795) ![](https://img.shields.io/badge/standardjs-%E2%9C%93-brightgreen.svg)
 
 ## install
 
