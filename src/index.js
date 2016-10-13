@@ -7,13 +7,14 @@
 const counsel = require('counsel')
 const ScriptRule = require('counsel-script')
 const CopyRule = require('counsel-copy')
-const PreCommitRule = require('counsel-precommit')
-const FilenameRule = require('counsel-filename-format')
-const kebab = require('lodash.kebabcase')
 const pkg = require('../package.json')
 const resolveDeps = require('snyk-resolve-deps')
 const path = require('path')
 const fs = require('fs')
+// @TODO stop, collaborate, listen. formalize biz rules.
+// const PreCommitRule = require('counsel-precommit')
+// const kebab = require('lodash.kebabcase')
+// const FilenameRule = require('counsel-filename-format')
 
 // counsel init
 counsel.configKey = pkg.name
@@ -125,7 +126,7 @@ module.exports = {
       devDependencies: ['nyc'],
       scriptName: 'test',
       scriptCommand: 'nyc --reporter=lcov node test/',
-      scriptCommandVariants: ['node test/', 'tape test/**/*.js', 'node test/**/*.js', 'react-scripts test --env=jsdom']
+      scriptCommandVariants: ['node test/', 'tape test/**/*.js', 'node test/**/*.js', /react-scripts/]
     }),
     new ScriptRule({
       name: 'cover it!',
@@ -211,7 +212,7 @@ module.exports = {
       devDependencies: ['license-checker'],
       scriptName: 'check-licenses',
       scriptCommand: 'node scripts/check-licenses.js'
-    }),
+    })
 
     // // filenames! kebab 'em
     // new FilenameRule({
