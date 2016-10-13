@@ -1,6 +1,6 @@
 {
   "name": "ripcord",
-  "version": "0.0.11",
+  "version": "0.0.0-semantically-released",
   "bin": {
     "ripcord": "bin/ripcord"
   },
@@ -27,6 +27,7 @@
     "nsp": "^2.6.2",
     "nyc": "^8.3.0",
     "perish": "0.0.3",
+    "semantic-release": "^4.3.5",
     "standard": "^8.3.0",
     "tape": "^4.6.2"
   },
@@ -47,7 +48,8 @@
     "publish-minor": "npm run preversion && npm version minor && git push origin master --tags && npm publish",
     "publish-major": "npm run preversion && npm version major && git push origin master --tags && npm publish",
     "check-licenses": "node scripts/check-licenses.js",
-    "postpublish": "npm run docs"
+    "postpublish": "npm run docs",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
   },
   "pre-commit": [
     "validate",
@@ -56,5 +58,9 @@
     "check-coverage",
     "check-licenses",
     "secure"
-  ]
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cdaringe/ripcord.git"
+  }
 }
