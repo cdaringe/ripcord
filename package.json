@@ -11,7 +11,7 @@
     "commander": "^2.9.0",
     "counsel": "0.x",
     "counsel-copy": "0.x",
-    "counsel-filename-format": "0.x",
+    "counsel-filename-format": "0.0.17",
     "counsel-precommit": "0.x",
     "counsel-rule": "0.x",
     "counsel-script": "0.x",
