@@ -9,12 +9,12 @@
   "license": "ISC",
   "dependencies": {
     "commander": "^2.9.0",
-    "counsel": "0.x",
-    "counsel-copy": "0.x",
-    "counsel-filename-format": "0.x",
-    "counsel-precommit": "0.x",
-    "counsel-rule": "0.x",
-    "counsel-script": "0.x",
+    "counsel": "0.0.18",
+    "counsel-copy": "0.0.18",
+    "counsel-filename-format": "0.0.18",
+    "counsel-precommit": "0.0.18",
+    "counsel-rule": "0.0.15",
+    "counsel-script": "0.0.18",
     "lodash.kebabcase": "^4.1.1",
     "perish": "0.0.3",
     "snyk-resolve-deps": "^1.7.1"
