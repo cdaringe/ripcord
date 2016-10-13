@@ -20,6 +20,8 @@
     "snyk-resolve-deps": "^1.7.1"
   },
   "devDependencies": {
+    "@semantic-release/condition-codeship": "^1.1.0",
+    "@semantic-release/release-notes-generator": "^2.0.0",
     "gh-pages": "^0.11.0",
     "jsdoc": "^3.4.2",
     "license-checker": "^8.0.0",
@@ -59,6 +61,12 @@
     "check-licenses",
     "secure"
   ],
+  "release": {
+    "generateNotes": "./node_modules/@semantic-release/release-notes-generator",
+    "verifyConditions": [
+      "./node_modules/@semantic-release/condition-codeship"
+    ]
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/cdaringe/ripcord.git"
