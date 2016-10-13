@@ -125,7 +125,7 @@ module.exports = {
       devDependencies: ['nyc'],
       scriptName: 'test',
       scriptCommand: 'nyc --reporter=lcov node test/',
-      scriptCommandVariants: ['node test/', 'tape test/**/*.js', 'node test/**/*.js']
+      scriptCommandVariants: ['node test/', 'tape test/**/*.js', 'node test/**/*.js', 'react-scripts test --env=jsdom']
     }),
     new ScriptRule({
       name: 'cover it!',
@@ -213,18 +213,18 @@ module.exports = {
       scriptCommand: 'node scripts/check-licenses.js'
     }),
 
-    // filenames! kebab 'em
-    new FilenameRule({
-      name: 'kebab case it!',
-      fileFormatExtensions: 'js',
-      fileFormatFunction: kebab
-    }),
+    // // filenames! kebab 'em
+    // new FilenameRule({
+    //   name: 'kebab case it!',
+    //   fileFormatExtensions: 'js',
+    //   fileFormatFunction: kebab
+    // }),
 
-    // tie 'em up!
-    new PreCommitRule({
-      name: 'precommit quality it!',
-      preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure']
-    })
+    // // tie 'em up!
+    // new PreCommitRule({
+    //   name: 'precommit quality it!',
+    //   preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure']
+    // })
   ],
 
   /**
