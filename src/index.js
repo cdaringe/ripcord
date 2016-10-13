@@ -11,8 +11,7 @@ const pkg = require('../package.json')
 const resolveDeps = require('snyk-resolve-deps')
 const path = require('path')
 const fs = require('fs')
-// @TODO stop, collaborate, listen. formalize biz rules.
-// const PreCommitRule = require('counsel-precommit')
+const PreCommitRule = require('counsel-precommit')
 // const kebab = require('lodash.kebabcase')
 // const FilenameRule = require('counsel-filename-format')
 
@@ -212,7 +211,7 @@ module.exports = {
       devDependencies: ['license-checker'],
       scriptName: 'check-licenses',
       scriptCommand: 'node scripts/check-licenses.js'
-    })
+    }),
 
     // // filenames! kebab 'em
     // new FilenameRule({
@@ -221,11 +220,11 @@ module.exports = {
     //   fileFormatFunction: kebab
     // }),
 
-    // // tie 'em up!
-    // new PreCommitRule({
-    //   name: 'precommit quality it!',
-    //   preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure']
-    // })
+    // tie 'em up!
+    new PreCommitRule({
+      name: 'precommit quality it!',
+      preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure']
+    })
   ],
 
   /**
