@@ -1,3 +1,5 @@
+<img src="https://raw.githubusercontent.com/cdaringe/ripcord/master/img/parachute.svg" />
+
 # ripcord
 
 project scaffolding and opinion enforcer!
