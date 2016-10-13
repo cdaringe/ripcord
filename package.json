@@ -12,7 +12,7 @@
     "counsel": "0.x",
     "counsel-copy": "0.x",
     "counsel-filename-format": "0.x",
-    "counsel-precommit": "0.x",
+    "counsel-precommit": "0.0.17",
     "counsel-rule": "0.x",
     "counsel-script": "0.x",
     "lodash.kebabcase": "^4.1.1",
