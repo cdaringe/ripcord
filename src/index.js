@@ -4,6 +4,7 @@
 
 'use strict'
 
+require('perish')
 const counsel = require('counsel')
 const ScriptRule = require('counsel-script')
 const CopyRule = require('counsel-copy')
@@ -12,6 +13,8 @@ const resolveDeps = require('snyk-resolve-deps')
 const path = require('path')
 const fs = require('fs')
 const PreCommitRule = require('counsel-precommit')
+const logger = require('./logger')
+
 // const kebab = require('lodash.kebabcase')
 // const FilenameRule = require('counsel-filename-format')
 
@@ -31,6 +34,8 @@ module.exports = {
    * @property {string} projectRoot full path of target project
    */
   projectRoot: counsel.project.findProjectRoot(),
+
+  logger: logger,
 
   /**
    * apply or check ripcord's counsel rules in project.
@@ -62,9 +67,11 @@ module.exports = {
     const prd = {}
     const dev = {}
     const rptPkg = counsel.targetProjectPackageJson
+    /* istanbul ignore next */
     if (!rptPkg.name || !rptPkg.version) {
       throw new ReferenceError('package name and version required in package.json')
     }
+    /* istanbul ignore next */
     if (!rptPkg.license) throw new ReferenceError('package requires a license in package.json')
     return resolveDeps(this.projectRoot, { dev: true, extraFields: ['tripwireId'] })
     .then(tree => {
@@ -97,7 +104,7 @@ module.exports = {
 
     // validate!
     new ScriptRule({
-      name: 'validate it!',
+      name: 'validate-script',
       scriptName: 'validate',
       scriptCommand: 'npm ls && ripcord counsel check',
       scriptCommandVariants: [/nsm ls/]
@@ -105,7 +112,7 @@ module.exports = {
 
     // secure!
     new ScriptRule({
-      name: 'secure it!',
+      name: 'security-check-script',
       devDependencies: ['nsp'],
       scriptName: 'secure',
       scriptCommand: 'nsp check'
@@ -113,7 +120,7 @@ module.exports = {
 
     // lint!
     new ScriptRule({
-      name: 'lint it!',
+      name: 'lint-script',
       devDependencies: ['standard'],
       scriptName: 'lint',
       scriptCommand: 'standard'
@@ -121,14 +128,14 @@ module.exports = {
 
     // test and coverage!
     new ScriptRule({
-      name: 'test it!',
+      name: 'test-script',
       devDependencies: ['nyc'],
       scriptName: 'test',
       scriptCommand: 'nyc --reporter=lcov node test/',
       scriptCommandVariants: ['node test/', 'tape test/**/*.js', 'node test/**/*.js', /react-scripts/]
     }),
     new ScriptRule({
-      name: 'cover it!',
+      name: 'coverage-script',
       devDependencies: ['nyc'],
       scriptName: 'check-coverage',
       scriptCommand: 'nyc check-coverage --lines 90 --functions 90 --branches 90',
@@ -139,7 +146,7 @@ module.exports = {
     (function () {
       /* istanbul ignore next */
       return {
-        name: 'guaranteed README.md it!',
+        name: 'enforce-readme',
         apply () {},
         check (counsel) {
           const readmeFilename = path.resolve(counsel.targetProjectRoot, 'README.md')
@@ -152,26 +159,26 @@ module.exports = {
 
     // developer docs
     new ScriptRule({
-      name: 'api doc-ify command it!',
+      name: 'api-docs-script',
       devDependencies: ['jsdoc', 'minami', 'perish'],
       scriptName: 'docs',
       scriptCommand: 'node scripts/docs.js'
     }),
     new ScriptRule({
-      name: 'github pages prep it!',
+      name: 'postpublish-api-docs-script',
       devDependencies: ['gh-pages'], // <== auto deploy docs
       scriptName: 'postpublish',
       scriptCommand: 'npm run docs',
       scriptCommandVariants: ['*']
     }),
     new CopyRule({
-      name: 'make api docs great... it?',
+      name: 'api-doc-rules-copy',
       copyContentRoot: COPY_CONTENT_ROOT,
       copySource: './templates/jsdoc.json',
       copyTarget: './scripts'
     }),
     new CopyRule({
-      name: 'api-doc script it!',
+      name: 'api-doc-script-copy',
       copyContentRoot: COPY_CONTENT_ROOT,
       copySource: './templates/docs.js',
       copyTarget: './scripts'
@@ -179,17 +186,17 @@ module.exports = {
 
     // safe publishing
     new ScriptRule({
-      name: 'prepublish it!',
+      name: 'preversion-script',
       scriptName: 'preversion',
       scriptCommand: 'git checkout master && git pull && npm run validate'
     }),
     new ScriptRule({
-      name: 'patch publish it!',
+      name: 'publish-patch-script',
       scriptName: 'publish-patch',
       scriptCommand: 'npm run preversion && npm version patch && git push origin master --tags && npm publish'
     }),
     new ScriptRule({
-      name: 'minor publish it!',
+      name: 'publish-minor-script',
       scriptName: 'publish-minor',
       scriptCommand: 'npm run preversion && npm version minor && git push origin master --tags && npm publish'
     }),

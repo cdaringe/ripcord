@@ -2,16 +2,17 @@
 
 'use strict'
 
-require('perish')
 const app = require('../src/app')
 const program = require('commander')
 const path = require('path')
-const fs = require('fs')
 const pkgPath = path.resolve(__dirname, '../package.json')
 const pkg = require(pkgPath)
 const ripcord = require('../src/')
 const counsel = require('counsel')
+const postProcessReport = require('./post-process-report')
 
+// CLI command metadata. `name` refers to a corresponding function in
+// ripcord's library entry point (ref, src/index.js)
 let action = { name: null, arg: null, options: null }
 
 // attempt usage of local ripcord, if present
@@ -44,29 +45,21 @@ const noArgsPassed = !program.args || program.args.length === 0
 const isValidArg = program.args && program.args[1] ? program.args[1] instanceof program.Command : false
 if (noArgsPassed || !isValidArg) {
   program.help((txt) => {
+    ripcord.logger.error('Invalid arguments provided')
     console.log(txt)
     process.exit(1)
   })
 }
 
+// configure logger
 counsel.logger.transports.console.level = program.verbose ? 'verbose' : program.logLevel || app.logLevel
+ripcord.logger.setLogLevel(program.logLevel || app.logLevel)
 
-Promise.resolve(
-  ripcord[action.name].apply(ripcord, [action.arg, action.options])
-).then(result => {
-  if (action.name === 'report') {
-    const output = action.options.output
-    let resultJson = JSON.stringify(result, null, 2)
-    if (output) {
-      const REPORT_NAME_DEFAULT = 'tw-dependencies.json'
-      let dest = path.isAbsolute(output) ? output : path.resolve(process.cwd(), output)
-      dest = counsel.project.isDir(dest) ? path.join(dest, REPORT_NAME_DEFAULT) : dest
-      fs.writeFileSync(dest, resultJson)
-    } else {
-      process.stdout.write(resultJson)
-    }
-  }
+// go.
+const cmdP = ripcord[action.name].apply(ripcord, [action.arg, action.options])
+Promise.resolve(cmdP)
+.then(result => {
+  if (action.name === 'report') postProcessReport(action, result)
 })
-
 
 module.exports = program
