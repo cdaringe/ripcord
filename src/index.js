@@ -201,20 +201,20 @@ module.exports = {
       scriptCommand: 'npm run preversion && npm version minor && git push origin master --tags && npm publish'
     }),
     new ScriptRule({
-      name: 'major publish it!',
+      name: 'publish-major-script',
       scriptName: 'publish-major',
       scriptCommand: 'npm run preversion && npm version major && git push origin master --tags && npm publish'
     }),
 
     // license
     new CopyRule({
-      name: 'license verification prep it!',
+      name: 'license-check-script-copy',
       copyContentRoot: COPY_CONTENT_ROOT,
       copySource: './templates/check-licenses.js',
       copyTarget: './scripts'
     }),
     new ScriptRule({
-      name: 'license verify it!',
+      name: 'verify-licenses-script',
       devDependencies: ['license-checker'],
       scriptName: 'check-licenses',
       scriptCommand: 'node scripts/check-licenses.js'
@@ -229,7 +229,7 @@ module.exports = {
 
     // tie 'em up!
     new PreCommitRule({
-      name: 'precommit quality it!',
+      name: 'precommit-script',
       preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure']
     })
   ],
