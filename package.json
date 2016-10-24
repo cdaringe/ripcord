@@ -33,7 +33,7 @@
     "standard": "^8.3.0",
     "tape": "^4.6.2"
   },
-  "description": "",
+  "description": "project scaffolding and opinion enforcer!",
   "ripcord": {
     "isOpenSource": true
   },
