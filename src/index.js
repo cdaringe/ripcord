@@ -66,7 +66,7 @@ module.exports = {
       throw new ReferenceError('package name and version required in package.json')
     }
     if (!rptPkg.license) throw new ReferenceError('package requires a license in package.json')
-    return resolveDeps(this.projectRoot, { dev: true })
+    return resolveDeps(this.projectRoot, { dev: true, extraFields: ['tripwireId'] })
     .then(tree => {
       const deps = tree.dependencies // .dependencies _has_ deps and devDeps
       for (let pkg in deps) {
@@ -238,6 +238,7 @@ module.exports = {
     for (var pkgName in depSet) {
       var pkg = depSet[pkgName]
       pkg = depSet[pkgName] = {
+        'tripwireId': pkg.tripwireId,
         'requestedVersion': pkg.dep,
         'version': pkg.version,
         'dependencies': pkg.dependencies,
