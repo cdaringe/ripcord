@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>sync-packages-to-registry.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-app.html">app</a></li><li><a href="module-ripcord.html">ripcord</a><ul class='methods'><li data-type='method'><a href="module-ripcord.html#.counsel">counsel</a></li><li data-type='method'><a href="module-ripcord.html#.report">report</a></li><li data-type='method'><a href="module-ripcord.html#.syncPackages">syncPackages</a></li></ul></li><li><a href="module-sync-packages-to-registry%2520syncs%2520packages%2520from%2520one%2520npm%2520artifactory%2520registry%2520to%2520another.html">sync-packages-to-registry syncs packages from one npm artifactory registry to another</a><ul class='methods'><li data-type='method'><a href="module-sync-packages-to-registry%252520syncs%252520packages%252520from%252520one%252520npm%252520artifactory%252520registry%252520to%252520another.html#._syncPackage">_syncPackage</a></li><li data-type='method'><a href="module-sync-packages-to-registry%252520syncs%252520packages%252520from%252520one%252520npm%252520artifactory%252520registry%252520to%252520another.html#.setToText">setToText</a></li><li data-type='method'><a href="module-sync-packages-to-registry%252520syncs%252520packages%252520from%252520one%252520npm%252520artifactory%252520registry%252520to%252520another.html#.sync">sync</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">sync-packages-to-registry.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * @module sync-packages-to-registry syncs packages from one npm artifactory registry to another
+ */
+'use strict'
+
+const STATUS_NOT_EXISTS = 'STATUS_NOT_EXISTS'
+const STATUS_EXISTS = 'STATUS_EXISTS'
+const STATUS_INVALID_RESOLVE_GIT = 'STATUS_INVALID_RESOLVE_GIT'
+const STATUS_INVALID_RESOLVE_URI = 'STATUS_INVALID_RESOLVE_URI'
+const ACTION_SKIP = 'ACTION_SKIP'
+const ACTION_SYNC = 'ACTION_SYNC'
+
+const pify = require('pify')
+const npm = require('requireg')('npm')
+const request = require('request')
+const values = require('lodash.values')
+
+const logger = require('./logger')
+
+module.exports = {
+  /**
+   * @private
+   * @property _destRepoName
+   * @description destination repository to copy to. set post `sync()` call
+   * @private
+   */
+  _destRepoName: null,
+
+  /**
+   * @private
+   * @description asserts that npmrc configuration values are in places
+   * @returns undefined
+   */
+  _assertEnv () {
+    const keys = [
+      '_auth',
+      'ARTIFACTORY_URI',
+      'NPM_EXTERNAL_ARTIFACTORY_URI',
+      'NPM_THIRD_PARTY_LOCAL_ARTIFACTORY_URI',
+      'NPM_REGISTRY_CACHE_ARTIFACTORY_URI'
+    ]
+    const missingKeys = keys.filter(key => !npm.config.get(key))
+    if (missingKeys.length) {
+      logger.error([
+        `.npmrc keys missing: ${missingKeys.join(', ')}.\n\n`,
+        'to sucessfully copy packages from an external',
+        'repository to a local repository, please ensure that the following keys',
+        'are set in your npmrc:\n',
+        '\t_auth=some-base64-encoded-str\n',
+        '\tARTIFACTORY_URI=https://my-artifactory.com/artifactory\n',
+        '\tNPM_EXTERNAL_ARTIFACTORY_URI=https://my-artifactory.com/artifactory/api/npm/external-npm-repo\n',
+        '\tNPM_THIRD_PARTY_LOCAL_ARTIFACTORY_URI=https://my-artifactory.com/artifactory/api/npm/local-npm-repo\n',
+        '\tNPM_REGISTRY_CACHE_ARTIFACTORY_URI=https://my-artifactory.com/artifactory/api/npm/registry-cache\n'
+      ].join(' '))
+      process.exit(1)
+    }
+  },
+
+  /**
+   * @private
+   * @description copies package from src to dest repo
+   * @param {object} pkg
+   * @param {string} pkg.name
+   * @returns Promise
+   */
+  _copyPackage (pkg) {
+    const copyUri = [
+      npm.config.get('NPM_REGISTRY_CACHE_ARTIFACTORY_URI'),
+      `${pkg.name}?to=/${this._destRepoName}`,
+      pkg.name
+    ].join('/')
+    return pify(request.post)(copyUri, this._getRequestHeaders())
+    .then(response => {
+      if (response.statusCode !== 200) {
+        throw new Error([
+          `sync-package [${pkg.name}]: failed to copy.`,
+          `unexpected response ${response.statusCode}`
+        ].join(' '))
+      }
+      pkg.status = STATUS_EXISTS
+    })
+  },
+
+  /**
+   * @private
+   * @description tags &amp; filters packages for syncing. packages from npm ls are already deduped,
+   * but may contain multiple versions
+   * @param {object[]} pkgs
+   * @returns object[] pkgs
+   */
+  _tagPackagesToSync (pkgs) {
+    const artifactoryUri = npm.config.get('NPM_EXTERNAL_ARTIFACTORY_URI')
+    const pkgsByName = {}
+    const unresolved = []
+    const gitResolved = []
+    pkgs.forEach((pkg, ndx) => {
+      const resolvedUri = pkg._resolved || ''
+      const isResolvedArtifactory = resolvedUri.startsWith(artifactoryUri)
+      const isResolvedGithub = !!resolvedUri.match(/github.com/)
+
+      if (isResolvedGithub) {
+        gitResolved.push(pkg)
+        pkg.action = ACTION_SKIP
+        pkg.status = STATUS_INVALID_RESOLVE_GIT
+      }
+
+      if (!isResolvedArtifactory) {
+        pkg.action = ACTION_SKIP
+        pkg.status = STATUS_INVALID_RESOLVE_URI
+        unresolved.push(pkg)
+      }
+
+      // handle collisions
+      if (pkgsByName[pkg.name]) {
+        const existing = pkgsByName[pkg.name]
+        if (existing.action !== ACTION_SKIP &amp;&amp; pkg.action === ACTION_SKIP) {
+          logger.warn([
+            `>1 instance of dependency ${pkg.name} detected, where one copy`,
+            `will be skipped. omitting skipped version (${pkg.version})`
+          ].join(' '))
+          return
+        }
+        if (existing.versions) existing.versions.push(pkg.version)
+        else existing.versions = [ existing.version, pkg.version ]
+        return
+      }
+
+      // handle base case (artifactory resolved pkg)
+      pkgsByName[pkg.name] = pkg
+    })
+
+    if (unresolved.length) this._handleUnresolvedPkgs(unresolved)
+    if (gitResolved.length) this._handleGitResolvedPkgs(gitResolved)
+
+    return values(pkgsByName)
+  },
+
+  /**
+   * @private
+   * @description gets package from local repository
+   * @param {string} name
+   * @returns Promise
+   */
+  _getLocalPackage (name) {
+    return pify(request)(
+      `${npm.config.get('NPM_THIRD_PARTY_LOCAL_ARTIFACTORY_URI')}/${name}`,
+      this._getRequestHeaders()
+    )
+  },
+
+  /**
+   * @private
+   * @description generates headers for request module
+   * @returns object headers for request module
+   */
+  _getRequestHeaders () {
+    return { headers: { Authorization: `Basic ${npm.config.get('_auth')}` }, strictSSL: false }
+  },
+
+  _handleDryRun (rslt, pkgs, opts) {
+    if (!opts) throw new Error('missing opts 😢')
+    if (!opts.dryRun) return rslt
+    const toSync = pkgs.filter(pkg => pkg.action === ACTION_SYNC).map(pkg => pkg.name)
+    const toSkip = pkgs.filter(pkg => pkg.action === ACTION_SKIP).map(pkg => pkg.name)
+    const toSyncTxt = this.setToText({ set: toSync, limit: 10, fn: txt => `\t\t${txt}\n` })
+    const toSkipTxt = this.setToText({ set: toSkip, limit: 10, fn: txt => `\t\t${txt}\n` })
+    logger.info([
+      'sync dry run:\n',
+      `\tpackages to sync [${toSync.length}]:\n${toSyncTxt}`,
+      `\tpackages to skip [${toSkip.length}]:\n${toSkipTxt}`
+    ].join(''))
+    process.exit(0)
+  },
+
+  /**
+   * convert an array to text.  enables specification of a limit of how many
+   * items in the set to convert to text, and truncates in a friendly way,
+   * denoting how many items were truncated
+   * @param {object} opts
+   * @param {array} opts.set
+   * @param {number} [opts.limit]
+   * @param {function} opts.fn transform function.
+   *   convert an array item to text. will be join('')ed with other items
+   * @returns string
+   */
+  setToText ({ set, limit, fn }) {
+    if (!set || !fn) throw new Error('set &amp; limit required')
+    limit = limit || 20
+    const moreTxt = `...[${set.length - limit} more]`
+    return set.length > limit
+      ? set.slice(0, limit).map(fn).join('') + fn(moreTxt)
+      : set.map(fn).join('')
+  },
+
+  /**
+   * @private
+   * @descrition handle case where packages are resolving from git
+   * @param {object[]} pkgs
+   */
+  _handleGitResolvedPkgs (pkgs) {
+    const names = pkgs.map(p => p.name)
+    let pkgSetText = this.setToText({ set: names, limit: 10, fn: name => `\t${name}\n` })
+
+    logger.error([
+      `attempted to resolve for syncing:\n${pkgSetText}`,
+      '\n\n🚧',
+      'although npm can resolve git project packages, we have no means to',
+      'copy a package tarball from git to npm.  please roll your git dep into a',
+      'valid npm package. alternatively, add a `--skip-git-deps` flag to this',
+      'project if you would like to proceed knowing the dependency will not',
+      'be copied. 🚧'
+    ].join(' '))
+    process.exit(1)
+  },
+
+  /**
+   * @private
+   * @descrition handle case where packages have no resolve url
+   * @param {object[]} pkgs
+   */
+  _handleUnresolvedPkgs (pkgs) {
+    const names = pkgs.map(p => p.name)
+    let pkgSetText = names.length > 10
+      ? `${names.slice(0, 10).join(', ')}...[${names.length - 10} more]`
+      : names.join(', ')
+    logger.warn([
+      `packages ${pkgSetText} will not be synced.`,
+      `${pkgs.length === 1 ? 'it was' : 'they were'} not resolved`,
+      'from a remote repository.'
+    ].join(' '))
+  },
+
+  /**
+   * @private
+   * @description set module attrs from environment
+   * @returns undefined
+   */
+  _setLocalsFromEnv () {
+    try {
+      this._destRepoName = npm.config.get('NPM_THIRD_PARTY_LOCAL_ARTIFACTORY_URI').match(/[^\/]*$/)[0]
+    } catch (err) {
+      throw new Error([
+        'unable to extract destination repo name from NPM_THIRD_PARTY_LOCAL_ARTIFACTORY_URI:',
+        `${npm.config.get('NPM_THIRD_PARTY_LOCAL_ARTIFACTORY_URI') || 'MISSING'}`
+      ].join(' '))
+    }
+  },
+
+  /**
+   * sync all 3rd party external to 3rd party local
+   * @param {object} opts
+   * @param {boolean} opts.dryRun
+   * @returns Promise
+   */
+  sync (opts) {
+    return pify(npm.load)()
+    .then(this._assertEnv.bind(this))
+    .then(this._setLocalsFromEnv.bind(this))
+    .then(this._listPackages.bind(this))
+    .then(pkgs => pkgs.map(p => Object.assign(p, { status: null, action: null })))
+    .then(this._tagPackagesToSync.bind(this))
+    .then(pkgs => this._syncPackages(pkgs, { dryRun: opts.dryRun }))
+  },
+
+  /**
+   * Sync individual package from src to dest repository
+   * @param {object} pkg
+   * @param {string} pkg.name
+   * @param {Symbol|null} pkg.status
+   * @param {Symbol|null} pkg.action
+   * @param {object} opts
+   * @param {boolean} opts.dryRun
+   * @returns Promise
+   */
+  _syncPackage (pkg, opts) {
+    opts = opts || {}
+    if (!pkg || !pkg.name) {
+      throw new Error([
+        'invalid package provided. this is known to occur when your package',
+        'state is invalid.  run `npm ls` and make sure it passes without error.'
+      ].join(' '))
+    }
+    if (pkg.action === ACTION_SKIP) return Promise.resolve()
+    return this._getLocalPackage(pkg.name)
+    .then(response => {
+      if (response.statusCode === 200) {
+        pkg.status = STATUS_EXISTS
+        pkg.action = ACTION_SKIP
+        return Promise.resolve()
+      }
+      if (response.statusCode === 404) {
+        pkg.action = ACTION_SYNC
+        pkg.status = STATUS_NOT_EXISTS
+        if (opts.dryRun) return Promise.resolve()
+        return this._copyPackage(pkg)
+      }
+      throw new Error(`sync-package [${pkg.name}]: unexpected response ${response.statusCode}`)
+    })
+  },
+
+  /**
+   * @private
+   * @description Sync all packages.  Packages are synchronized sequentially.
+   * @TODO consider blasting the artifactory API by doing a Promise.all(...)
+   * vs. chaining each sync together
+   * @param {string[]} pkgs
+   * @param {object} opts
+   * @param {boolean} opts.dryRun
+   * @returns Promise resolves when all packages synced
+   */
+  _syncPackages (pkgs, opts) {
+    opts = opts || {}
+    logger.progressMode = true
+    return pkgs.reduce(
+      (chain, pkg, ndx) => {
+        logger.verbose(`syncing package (${ndx + 1}/${pkgs.length}): ${pkg.name}`)
+        return chain.then(() => this._syncPackage(pkg, opts))
+      },
+      Promise.resolve()
+    )
+    .then(() => {
+      logger.verbose(`syncing packages: complete\n`)
+      logger.progressMode = false
+    })
+    .then(r => this._handleDryRun(r, pkgs, opts))
+  },
+
+  /**
+   * @private
+   * @description npm ls call. get all package deps
+   * @returns Promise
+   */
+  _listPackages () {
+    const ls = pify(npm.commands.ls)
+    return ls(null, true)
+    .then(pkg => {
+      let pkgs = this._buildFlatDeps({ pkgs: [], pkg, isTopLevel: true })
+      return pkgs
+    })
+  },
+
+  /**
+   * @private
+   * @description Build set of all dependencies (+devDeps).  Set consists of just package names
+   * @warning set is volatile and modified on each call
+   * @param {object} opts
+   * @param {Set} opts.pkgs set of package names (volatile)
+   * @param {object} opts.pkg parsed package.json
+   * @param {object} opts.isTopLevel top-level package flag
+   * @returns undefined
+   */
+  _buildFlatDeps ({ pkgs, pkg, isTopLevel }) {
+    if (!isTopLevel) pkgs.push(pkg)
+    if (pkg.dependencies) {
+      const dependencies = pkg.dependencies
+      for (const name in dependencies) {
+        this._buildFlatDeps({ pkgs, pkg: dependencies[name] })
+      }
+    }
+    return pkgs
+  }
+
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>
