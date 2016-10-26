@@ -39,6 +39,15 @@ program
   .action((arg, opts) => { action = { name: 'counsel', arg: arg, options: opts } })
 
 program
+  .command('licenses [check|dump]')
+  .option('-f, --force', 'force dep report, even if package marked as `devOnly`')
+  .option('-o, --output [dir|filename]', 'output to dir or to file when check fails, or on dump request')
+  .option('-c, --csv', 'csv output. output mode defaults to JSON')
+  .option('-d, --dev', 'inlcude package licenses')
+  .description('check or dump project licenses. ONLY outputs licenses for `dependencies`, not `devDependencies`')
+  .action((arg, opts) => { action = { name: 'licenses', arg: arg, options: opts } })
+
+program
   .command('sync-packages [arg]')
   .option('-d, --dry-run', 'show packages to copy')
   .description('sync packages from external npm repo to internal repo')

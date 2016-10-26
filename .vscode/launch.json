@@ -6,20 +6,28 @@
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/test/index.js",
-      "stopOnEntry": false,
-      "args": [],
       "cwd": "${workspaceRoot}",
-      "preLaunchTask": null,
-      "runtimeExecutable": null,
       "runtimeArgs": [
         "--nolazy"
       ],
       "env": {
         "NODE_ENV": "development"
       },
-      "console": "internalConsole",
-      "sourceMaps": false,
-      "outDir": null
+      "console": "internalConsole"
+    },
+    {
+      "name": "test - licenses",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/test/licenses.js",
+      "cwd": "${workspaceRoot}",
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole"
     },
     {
       "name": "test - sync-pkgs",
@@ -122,12 +130,51 @@
       "outDir": null
     },
     {
-      "name": "license check",
+      "name": "license check - force",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/scripts/check-licenses.js",
+      "program": "${workspaceRoot}/bin/ripcord",
       "stopOnEntry": false,
-      "args": [],
+      "args": ["licenses", "--force"],
+      "cwd": "${workspaceRoot}",
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "console": "internalConsole"
+    },
+    {
+      "name": "license dump - csv",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/ripcord",
+      "stopOnEntry": false,
+      "args": ["licenses", "dump", "--csv", "--dev"],
+      "cwd": "${workspaceRoot}",
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "console": "internalConsole"
+    },
+    {
+      "name": "license dump - csv file",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/ripcord",
+      "stopOnEntry": false,
+      "args": ["licenses", "dump", "--csv", "--dev", "-o", "./"],
+      "cwd": "${workspaceRoot}",
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "console": "internalConsole"
+    },
+    {
+      "name": "license check - csv file",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/ripcord",
+      "stopOnEntry": false,
+      "args": ["licenses", "--force", "--csv", "--output=./"],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
       "runtimeExecutable": null,

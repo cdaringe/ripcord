@@ -31,3 +31,8 @@ bundle*
 docs
 .nyc_output
 coverage
+
+license-check.json
+license-check.csv
+license-dump.json
+license-dump.csv

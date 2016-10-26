@@ -1,8 +1,7 @@
 'use strict'
 
-const path = require('path')
-const counsel = require('counsel')
 const fs = require('fs')
+const ripcord = require('../')
 
 /**
  * @private
@@ -13,9 +12,8 @@ const postProcess = function (action, result) {
   let resultJson = JSON.stringify(result, null, 2)
   /* istanbul ignore next */
   if (output) {
-    const reportName = postProcess.REPORT_NAME_DEFAULT
-    let dest = path.isAbsolute(output) ? output : path.resolve(process.cwd(), output)
-    dest = counsel.project.isDir(dest) ? path.join(dest, reportName) : dest
+    const defaultBasename = postProcess.REPORT_NAME_DEFAULT
+    let dest = ripcord._getDest(output, defaultBasename)
     fs.writeFileSync(dest, resultJson)
   } else {
     process.stdout.write(resultJson)

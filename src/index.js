@@ -6,11 +6,13 @@
 
 require('perish')
 const counsel = require('counsel')
+const path = require('path')
 const pkg = require('../package.json')
 const report = require('./report')
 const logger = require('./logger')
 const rules = require('./rules')
 const syncPackages = require('./sync-packages-to-registry')
+const licenses = require('./licenses')
 
 // counsel init
 counsel.configKey = pkg.name
@@ -55,6 +57,21 @@ module.exports = {
       counsel.logger.error(errMsg)
       process.exit(1)
     }
+  },
+
+  _getDest (outputPath, defaultBasename) {
+    let dest = path.isAbsolute(outputPath) ? outputPath : path.resolve(process.cwd(), outputPath)
+    return counsel.project.isDir(dest) ? path.join(dest, defaultBasename) : dest
+  },
+
+  /**
+   * check or dump project licenses
+   * @param {string} action 'check' or 'dump'
+   * @param {Commander} opts
+   * @returns {Promise}
+   */
+  licenses (action, opts) {
+    return licenses[action || 'check'](opts, this)
   },
 
   /**

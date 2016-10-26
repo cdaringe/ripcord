@@ -113,27 +113,13 @@ module.exports = [
     scriptCommand: 'npm run preversion && npm version major && git push origin master --tags && npm publish'
   }),
 
-  // license
-  new CopyRule({
-    devDependencies: ['perish'],
-    name: 'license-check-script-copy',
-    copyContentRoot: COPY_CONTENT_ROOT,
-    copySource: './templates/check-licenses.js',
-    copyTarget: './scripts'
-  }),
+  // licenses
   new ScriptRule({
     name: 'verify-licenses-script',
     devDependencies: ['license-checker'],
     scriptName: 'check-licenses',
-    scriptCommand: 'node scripts/check-licenses.js'
+    scriptCommand: 'ripcord licenses check'
   }),
-
-  // // filenames! kebab 'em
-  // new FilenameRule({
-  //   name: 'kebab case it!',
-  //   fileFormatExtensions: 'js',
-  //   fileFormatFunction: kebab
-  // }),
 
   // tie 'em up!
   new PreCommitRule({
