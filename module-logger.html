@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>ripcord - Documentation</title>
+    <title>logger - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -28,7 +28,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">ripcord</h1>
+    <h1 class="page-title">logger</h1>
     
 
     
@@ -41,6 +41,8 @@
 <header>
     
         
+            
+        
     
 </header>
 
@@ -48,85 +50,22 @@
     <div class="container-overview">
     
         
-
-        
-    
-    </div>
-
-    
-
-    
-
-    
-
-     
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-<h4 class="name" id="._counsel"><span class="type-signature">(static) </span>_counsel<span class="type-signature"></span></h4>
-
-
-
-
-
-
-
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
+            <div class="description"><p>provide colorified console-only logging interface</p></div>
         
 
         
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>counsel</code></td>
             
 
-            <td class="type">
-            
-                
-<span class="param-type">Counsel</span>
 
 
-            
-            </td>
 
-            
 
-            
 
-            <td class="description last"><p>counsel instance</p></td>
-        </tr>
 
-    
-    </tbody>
-</table>
+
+
+
+
 
 
 
@@ -160,7 +99,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line23">line 23</a>
+        <a href="logger.js.html">logger.js</a>, <a href="logger.js.html#line3">line 3</a>
     </li></ul></dd>
     
 
@@ -176,14 +115,56 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+        
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+        <h3 class="subsection-title">Members</h3>
+
         
             
-<h4 class="name" id=".logger"><span class="type-signature">(static) </span>logger<span class="type-signature"></span></h4>
+<h4 class="name" id=".progressMode"><span class="type-signature">(static) </span>progressMode<span class="type-signature"> :boolean</span></h4>
 
 
 
 
+<div class="description">
+    <p>all stdout writes will clear current line and write back into
+it. toggle it ad-hoc to use for a progress bar.</p>
+</div>
 
+
+
+    <h5>Type:</h5>
+    <ul>
+        <li>
+            
+<span class="param-type">boolean</span>
+
+
+        </li>
+    </ul>
 
 
 
@@ -215,15 +196,10 @@
 
         <tr>
             
-                <td class="name"><code>logger</code></td>
+                <td class="name"><code>progressMode</code></td>
             
 
             <td class="type">
-            
-                
-<span class="param-type">module</span>
-
-
             
             </td>
 
@@ -270,227 +246,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line33">line 33</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id=".projectRoot"><span class="type-signature">(static) </span>projectRoot<span class="type-signature"></span></h4>
-
-
-
-
-
-
-
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>projectRoot</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">string</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>full path of target project</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line28">line 28</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-        
-            
-<h4 class="name" id=".rules"><span class="type-signature">(static) </span>rules<span class="type-signature"></span></h4>
-
-
-
-
-
-
-
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>set</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array.&lt;Rule></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>of rules to apply/check</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line38">line 38</a>
+        <a href="logger.js.html">logger.js</a>, <a href="logger.js.html#line22">line 22</a>
     </li></ul></dd>
     
 
@@ -517,15 +273,11 @@
 
     
 
-    <h4 class="name" id=".counsel"><span class="type-signature">(static) </span>counsel<span class="signature">(action, opts)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id=".debug"><span class="type-signature">(static) </span>debug<span class="signature">(&hellip;args)</span><span class="type-signature"></span></h4>
 
     
 
 
-
-<div class="description">
-    <p>apply or check ripcord's counsel rules in project.</p>
-</div>
 
 
 
@@ -548,6 +300,8 @@
         <th>Type</th>
 
         
+        <th>Attributes</th>
+        
 
         
 
@@ -560,41 +314,28 @@
 
         <tr>
             
-                <td class="name"><code>action</code></td>
+                <td class="name"><code>args</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">any</span>
 
 
             
             </td>
 
             
-
-            
-
-            <td class="description last"><p>'apply' or 'check'</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>opts</code></td>
-            
-
-            <td class="type">
-            
+                <td class="attributes">
                 
-<span class="param-type">Commander</span>
 
+                
 
-            
-            </td>
-
+                
+                    &lt;repeatable><br>
+                
+                </td>
             
 
             
@@ -640,7 +381,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line46">line 46</a>
+        <a href="logger.js.html">logger.js</a>, <a href="logger.js.html#line83">line 83</a>
     </li></ul></dd>
     
 
@@ -666,19 +407,11 @@
 <h5>Returns:</h5>
 
         
+<div class="param-desc">
+    <p>undefined</p>
+</div>
 
 
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise</span>
-
-
-    </dd>
-</dl>
 
     
 
@@ -689,15 +422,11 @@
 
     
 
-    <h4 class="name" id=".report"><span class="type-signature">(static) </span>report<span class="signature">(action, opts)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
+    <h4 class="name" id=".error"><span class="type-signature">(static) </span>error<span class="signature">(&hellip;args)</span><span class="type-signature"></span></h4>
 
     
 
 
-
-<div class="description">
-    <p>generate tw project dependency report</p>
-</div>
 
 
 
@@ -720,178 +449,7 @@
         <th>Type</th>
 
         
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>action</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">null</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>unused</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>opts</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Commander</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>unused</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<dl class="details">
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line66">line 66</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Promise</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".syncPackages"><span class="type-signature">(static) </span>syncPackages<span class="signature">(action, opts)</span><span class="type-signature"> &rarr; {Promise}</span></h4>
-
-    
-
-
-
-<div class="description">
-    <p>sync packages from external to local repo. run <code>ripcord sync-packages --dry-run</code>
-for configuration instructions</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
+        <th>Attributes</th>
         
 
         
@@ -905,41 +463,28 @@ for configuration instructions</p>
 
         <tr>
             
-                <td class="name"><code>action</code></td>
+                <td class="name"><code>args</code></td>
             
 
             <td class="type">
             
                 
-<span class="param-type">string</span>
+<span class="param-type">any</span>
 
 
             
             </td>
 
             
-
-            
-
-            <td class="description last"><p>'syncPackages'</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>opts</code></td>
-            
-
-            <td class="type">
-            
+                <td class="attributes">
                 
-<span class="param-type">Commander</span>
 
+                
 
-            
-            </td>
-
+                
+                    &lt;repeatable><br>
+                
+                </td>
             
 
             
@@ -985,7 +530,7 @@ for configuration instructions</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="index.js.html">index.js</a>, <a href="index.js.html#line77">line 77</a>
+        <a href="logger.js.html">logger.js</a>, <a href="logger.js.html#line47">line 47</a>
     </li></ul></dd>
     
 
@@ -1011,19 +556,589 @@ for configuration instructions</p>
 <h5>Returns:</h5>
 
         
+<div class="param-desc">
+    <p>undefined</p>
+</div>
 
 
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
+
+    
+
+
+
         
-<span class="param-type">Promise</span>
+            
+
+    
+
+    <h4 class="name" id=".info"><span class="type-signature">(static) </span>info<span class="signature">(&hellip;args)</span><span class="type-signature"></span></h4>
+
+    
 
 
-    </dd>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>args</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logger.js.html">logger.js</a>, <a href="logger.js.html#line65">line 65</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
 </dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>undefined</p>
+</div>
+
+
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".setLogLevel"><span class="type-signature">(static) </span>setLogLevel<span class="signature">(level)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    <p>set the log level, using npm world-style log levels</p>
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>level</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last"><p>['error', 'warn', 'info', 'verbose', 'debug']</p></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logger.js.html">logger.js</a>, <a href="logger.js.html#line28">line 28</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".verbose"><span class="type-signature">(static) </span>verbose<span class="signature">(&hellip;args)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>args</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logger.js.html">logger.js</a>, <a href="logger.js.html#line74">line 74</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>undefined</p>
+</div>
+
+
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".warn"><span class="type-signature">(static) </span>warn<span class="signature">(&hellip;args)</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+        <th>Attributes</th>
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>args</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">any</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+
+                
+
+                
+                    &lt;repeatable><br>
+                
+                </td>
+            
+
+            
+
+            <td class="description last"></td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="logger.js.html">logger.js</a>, <a href="logger.js.html#line56">line 56</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    <p>undefined</p>
+</div>
+
+
 
     
 
