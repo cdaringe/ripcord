@@ -14,7 +14,7 @@ module.exports = {
   _logLevel: 2,
 
   /**
-   * @property
+   * @property progressMode
    * @type boolean
    * @description all stdout writes will clear current line and write back into
    * it. toggle it ad-hoc to use for a progress bar.
