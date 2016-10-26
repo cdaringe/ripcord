@@ -61,7 +61,7 @@ tape('sync - dry', t => {
     copySpy.restore()
     nock.cleanAll()
     t.end()
-  })
+  }, t.end)
 })
 
 tape('sync - fo real', t => {
@@ -70,12 +70,20 @@ tape('sync - fo real', t => {
   nock(NPM_SRC_ARTIFACTORY_URI).get(/.*/).times(1000).reply(404, {})
   nock(NPM_SRC_CACHE_ARTIFACTORY_URI).post(/.*/).times(1000).reply(200, {})
   t.plan(2)
-  return sync.sync({ forceCopy: true })
+  const oldSyncPackage = sync._syncPackage
+  const syncPkgStub = sinon.stub(sync, '_syncPackage', (pkg) => {
+    pkg.artifactoryTarball = 'bananas/-/bananas@0.0.1.tgz'
+    pkg._resolved = `http://www.fake.com/artifactory/bananas@0.0.1.tgz/${pkg.artifactoryTarball}`
+    pkg.action = 'ACTION_SYNC'
+    return oldSyncPackage.call(sync, pkg)
+  })
+  return sync.sync()
   .then((pkgs) => {
     t.ok(pkgs.length, 'presents packages')
     t.ok(copySpy.called, 'no copy operation on dryRun')
     copySpy.restore()
     nock.cleanAll()
+    syncPkgStub.restore()
     t.end()
-  })
+  }, t.end)
 })
