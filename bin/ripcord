@@ -38,6 +38,12 @@ program
   .description('deploy tripwire project conventions via counsel')
   .action((arg, opts) => { action = { name: 'counsel', arg: arg, options: opts } })
 
+program
+  .command('sync-packages [arg]')
+  .option('-d, --dry-run', 'show packages to copy')
+  .description('sync packages from external npm repo to internal repo')
+  .action((arg, opts) => { action = { name: 'syncPackages', arg: arg, options: opts } })
+
 program.parse(process.argv)
 
 // process command line input
@@ -47,6 +53,11 @@ if (noArgsPassed || !isValidArg) {
   program.help((txt) => {
     ripcord.logger.error('Invalid arguments provided')
     console.log(txt)
+    console.log([
+      '    ', // commander.  goofball. make it look great! :eyes:
+      'You may apply -h/--help to each sub-command to get subcommand',
+      'to obtain subcommand specific options'
+    ].join(''))
     process.exit(1)
   })
 }

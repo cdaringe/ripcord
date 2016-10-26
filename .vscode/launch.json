@@ -2,10 +2,30 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "test",
+      "name": "test - all",
       "type": "node",
       "request": "launch",
       "program": "${workspaceRoot}/test/index.js",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outDir": null
+    },
+    {
+      "name": "test - sync-pkgs",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/test/sync-pkgs.js",
       "stopOnEntry": false,
       "args": [],
       "cwd": "${workspaceRoot}",
@@ -108,6 +128,26 @@
       "program": "${workspaceRoot}/scripts/check-licenses.js",
       "stopOnEntry": false,
       "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": false,
+      "outDir": null
+    },
+    {
+      "name": "sync-packages (dryRun)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/ripcord",
+      "stopOnEntry": false,
+      "args": ["--log-level=verbose", "sync-packages", "--dry-run"],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
       "runtimeExecutable": null,

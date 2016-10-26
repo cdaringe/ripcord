@@ -73,7 +73,7 @@ absolutely. :tada:
 - license validation (on pre-commit)
   - assert licenses are _approved_! does not guarantee you've been given permission to use them :)
   - configuration:
-    - `"ripcord": { "isOpenSource": true }` waives license accountability as publish gate.
+    - `"ripcord": { "devOnly": true }` waives license accountability. if your package is for development only, you certify that it will never ship in production
 
 - pre-commit actions
   - summarization of the above

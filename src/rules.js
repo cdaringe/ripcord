@@ -115,6 +115,7 @@ module.exports = [
 
   // license
   new CopyRule({
+    devDependencies: ['perish'],
     name: 'license-check-script-copy',
     copyContentRoot: COPY_CONTENT_ROOT,
     copySource: './templates/check-licenses.js',

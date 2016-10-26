@@ -10,6 +10,7 @@ const pkg = require('../package.json')
 const report = require('./report')
 const logger = require('./logger')
 const rules = require('./rules')
+const syncPackages = require('./sync-packages-to-registry')
 
 // counsel init
 counsel.configKey = pkg.name
@@ -64,5 +65,16 @@ module.exports = {
    */
   report (action, opts) {
     return report.generate(action, opts)
+  },
+
+  /**
+   * sync packages from external to local repo. run `ripcord sync-packages --dry-run`
+   * for configuration instructions
+   * @param {string} action 'syncPackages'
+   * @param {Commander} opts
+   * @returns {Promise}
+   */
+  syncPackages (action, opts) {
+    return syncPackages.sync({ dryRun: !!opts.dryRun })
   }
 }

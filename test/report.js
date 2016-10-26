@@ -1,6 +1,5 @@
 'use strict'
 
-require('perish')
 const ripcord = require('../')
 const tape = require('tape')
 const postProcess = require('../bin/post-process-report')

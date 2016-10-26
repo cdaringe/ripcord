@@ -8,6 +8,7 @@
   "author": "cdaringe",
   "license": "ISC",
   "dependencies": {
+    "chalk": "^1.1.3",
     "commander": "^2.9.0",
     "counsel": "0.0.18",
     "counsel-copy": "0.0.18",
@@ -16,7 +17,11 @@
     "counsel-rule": "0.0.15",
     "counsel-script": "0.0.18",
     "lodash.kebabcase": "^4.1.1",
+    "lodash.values": "^4.3.0",
     "perish": "0.0.3",
+    "pify": "^2.3.0",
+    "request": "^2.75.0",
+    "requireg": "^0.1.6",
     "snyk-resolve-deps": "^1.8.0"
   },
   "devDependencies": {
@@ -26,23 +31,25 @@
     "jsdoc": "^3.4.2",
     "license-checker": "^8.0.0",
     "minami": "^1.1.1",
+    "nock": "^9.0.0",
     "nsp": "^2.6.2",
     "nyc": "^8.3.0",
     "perish": "0.0.3",
     "semantic-release": "^4.3.5",
+    "sinon": "^1.17.6",
     "standard": "^8.3.0",
     "tape": "^4.6.2"
   },
   "description": "project scaffolding and opinion enforcer!",
   "ripcord": {
-    "isOpenSource": true
+    "devOnly": true
   },
   "scripts": {
     "install": "node bin/ripcord counsel apply",
     "validate": "npm ls && ripcord counsel check",
     "lint": "standard",
     "test": "nyc --reporter=lcov node test/",
-    "check-coverage": "nyc check-coverage --lines 90 --functions 90 --branches 80",
+    "check-coverage": "nyc check-coverage --lines 90 --functions 90 --branches 70",
     "secure": "nsp check",
     "docs": "node scripts/docs.js",
     "preversion": "git checkout master && git pull && npm run validate",

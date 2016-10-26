@@ -1,8 +1,16 @@
 'use strict'
 
+require('perish')
 const path = require('path')
 const projectRoot = path.resolve(__dirname, '..')
 const pkg = require(path.join(projectRoot, 'package.json'))
+let ripcord
+try {
+  ripcord = require('ripcord')
+} catch (err) {
+  // @TODO remove dirty dogfooding hack!
+  ripcord = require('../')
+}
 
 const WHITELIST = [
   'MIT',
@@ -13,7 +21,7 @@ const WHITELIST = [
 
 const checker = require('license-checker')
 
-if (pkg.ripcord.isOpenSource) {
+if (pkg[ripcord._counsel.configKey].devOnly) {
   process.exit(0)
 }
 
