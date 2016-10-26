@@ -27,6 +27,7 @@
   "devDependencies": {
     "@semantic-release/condition-codeship": "^1.1.0",
     "@semantic-release/release-notes-generator": "^2.0.0",
+    "coveralls": "^2.11.14",
     "gh-pages": "^0.11.0",
     "jsdoc": "^3.4.2",
     "license-checker": "^8.0.0",
