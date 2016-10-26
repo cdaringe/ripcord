@@ -18,8 +18,8 @@ let action = { name: null, arg: null, options: null }
 // attempt usage of local ripcord, if present
 try {
   let localRipcordFilneame = path.join(process.cwd(), 'node_modules', 'ripcord', "bin", "ripcord")
-	localRipcordFilneame = require.resolve(localRipcordFilneame)
-	if(__filename !== localWebpack) return require(localWebpack)
+  localRipcordFilneame = require.resolve(localRipcordFilneame)
+  if(__filename !== localWebpack) return require(localWebpack)
 } catch(err) { /* pass */ }
 
 // expose and digest CLI

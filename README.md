@@ -10,8 +10,6 @@ project scaffolding and opinion enforcer!
 
 `npm install --save-dev ripcord`
 
-pro tip: you can `[sudo] npm i -g ripcord` and run `ripcord [cmd]` in your project _after_ you have installed it locally, and just run `ripcord` from the project root.  Even if there's a version mismatch, fear-not, your locally installed version will be run!
-
 ## what
 
 what does `ripcord` _really_ do?
@@ -30,6 +28,8 @@ what rules & opinions does ripcord apply? see [module.exports.rules](https://git
 - to manually apply rules, run `ripcord counsel apply`
 - to check if ripcord's rules are honored, run `ripcord counsel check`
 - to generate a depedency report, run `ripcord report [-o /path/to/report]`
+
+pro tip: if you install ripcord globally (`[sudo] npm i -g ripcord`) _and_ have a `ripcord` installed locally, you can simply run `ripcord [cmd]` in your project.  `ripcord` will [detect a local copy](https://github.com/cdaringe/ripcord/blob/f07efff1f78929103579cbed1058b0ddc11c7c4d/bin/ripcord#L19) and run that version. will be run!
 
 what else can it do?
 
