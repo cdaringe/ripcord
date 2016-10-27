@@ -24,6 +24,8 @@ try {
 
 // expose and digest CLI
 program
+  .version(pkg.version)
+program
   .option('-l, --log-level [error|warn|info|verbose|debug|silly]', 'set the log level. default info')
   .option('--verbose', 'set the log level to verbose')
 
