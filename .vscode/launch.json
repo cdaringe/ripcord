@@ -174,7 +174,7 @@
       "request": "launch",
       "program": "${workspaceRoot}/bin/ripcord",
       "stopOnEntry": false,
-      "args": ["licenses", "--force", "--csv", "--output=./"],
+      "args": ["licenses", "check", "--force", "--csv", "--output=./"],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
       "runtimeExecutable": null,
@@ -207,6 +207,28 @@
       "console": "internalConsole",
       "sourceMaps": false,
       "outDir": null
+    },
+    {
+      "name": "scmcycle",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/ripcord",
+      "args": ["scmcycle"],
+      "cwd": "${workspaceRoot}",
+      "runtimeArgs": [ "--nolazy" ],
+      "env": { "NODE_ENV": "development" },
+      "console": "internalConsole"
+    },
+    {
+      "name": "bogus-cmd",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/ripcord",
+      "args": ["bogus-cmd"],
+      "cwd": "${workspaceRoot}",
+      "runtimeArgs": [ "--nolazy" ],
+      "env": { "NODE_ENV": "development" },
+      "console": "internalConsole"
     },
     {
       "name": "Attach",

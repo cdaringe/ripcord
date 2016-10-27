@@ -11,6 +11,7 @@ const pkg = require('../package.json')
 const report = require('./report')
 const logger = require('./logger')
 const rules = require('./rules')
+const scmcycle = require('./scmcycle')
 const syncPackages = require('./sync-packages-to-registry')
 const licenses = require('./licenses')
 
@@ -82,6 +83,16 @@ module.exports = {
    */
   report (action, opts) {
     return report.generate(action, opts)
+  },
+
+  /**
+   * sync packages from external to local repo. run `ripcord sync-packages --dry-run`
+   * for configuration instructions
+   * @param {Commander} opts
+   * @returns {Promise}
+   */
+  scmcycle (action, opts) {
+    return scmcycle.run(opts)
   },
 
   /**
