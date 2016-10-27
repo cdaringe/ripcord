@@ -33,8 +33,13 @@ module.exports = {
       const licenseKVs = typeof pkg.licenses === 'string'
         ? { 'license1': pkg.licenses }
         : pkg.licenses.reduce((set, l, ndx) => Object.assign(set, { [`license${ndx + 1}`]: l }), {})
-      Object.assign(pkg, { name, version, production }, licenseKVs)
+      Object.assign(pkg, { name, version, production: production.toString() }, licenseKVs)
       delete pkg.licenses
+
+      // purge commas to assert well behaved csv
+      for (var field in pkg) {
+        pkg[field] = pkg[field].replace(/,/g, ';')
+      }
     }
     return pkgs
   },
