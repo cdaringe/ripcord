@@ -135,7 +135,7 @@
       "request": "launch",
       "program": "${workspaceRoot}/bin/ripcord",
       "stopOnEntry": false,
-      "args": ["licenses", "--force"],
+      "args": ["licenses", "check", "--force"],
       "cwd": "${workspaceRoot}",
       "runtimeArgs": [
         "--nolazy"

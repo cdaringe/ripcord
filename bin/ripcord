@@ -63,25 +63,17 @@ program
   .description('exec scmcycle')
   .action((arg, opts) => { action = { name: 'scmcycle', arg: arg, options: opts } })
 
-program.on('help', txt => {
-  console.log(txt)
-  console.log([
-    '    ', // commander.  goofball. make it look great! :eyes:
-    'You may apply --help to each subcommand in order to get subcommand',
-    'specific help'
-  ].join(' '))
-  process.exit(1)
-})
-
 program.parse(process.argv)
+
 
 // validate command line input
 const args = program.args ? program.args.filter(a => a) : []
 const hasArgs = args && args.length > 0
-const isValidArg = hasArgs ? args[0] instanceof program.Command : false
+const isValidArg = hasArgs ? (args[0] instanceof program.Command || args[1] instanceof program.Command)  : false
 if (!hasArgs || !isValidArg) {
   ripcord.logger.error('invalid args passed')
-  program.help()
+  program.outputHelp()
+  process.exit(1)
 }
 
 // configure logger
