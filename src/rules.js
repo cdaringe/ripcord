@@ -4,9 +4,6 @@ const path = require('path')
 const fs = require('fs')
 const PreCommitRule = require('counsel-precommit')
 const ScriptRule = require('counsel-script')
-const CopyRule = require('counsel-copy')
-
-const COPY_CONTENT_ROOT = path.resolve(__dirname, '..')
 
 module.exports = [
   // validate!
@@ -66,29 +63,20 @@ module.exports = [
 
   // developer docs
   new ScriptRule({
-    name: 'api-docs-script',
-    devDependencies: ['jsdoc', 'minami', 'perish'],
+    name: 'api-docs-generate-script',
     scriptName: 'docs',
-    scriptCommand: 'node scripts/docs.js'
+    scriptCommand: 'ripcord docs'
+  }),
+  new ScriptRule({
+    name: 'api-docs-publish-script',
+    scriptName: 'docs-publish',
+    scriptCommand: 'ripcord docs --publish'
   }),
   new ScriptRule({
     name: 'postpublish-api-docs-script',
-    devDependencies: ['gh-pages'], // <== auto deploy docs
     scriptName: 'postpublish',
-    scriptCommand: 'npm run docs',
+    scriptCommand: 'npm run docs-publish',
     scriptCommandVariants: ['*']
-  }),
-  new CopyRule({
-    name: 'api-doc-rules-copy',
-    copyContentRoot: COPY_CONTENT_ROOT,
-    copySource: './templates/jsdoc.json',
-    copyTarget: './scripts'
-  }),
-  new CopyRule({
-    name: 'api-doc-script-copy',
-    copyContentRoot: COPY_CONTENT_ROOT,
-    copySource: './templates/docs.js',
-    copyTarget: './scripts'
   }),
 
   // safe publishing
@@ -124,6 +112,6 @@ module.exports = [
   // tie 'em up!
   new PreCommitRule({
     name: 'precommit-script',
-    preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure']
+    preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure', 'docs']
   })
 ]

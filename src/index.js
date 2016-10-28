@@ -14,6 +14,7 @@ const rules = require('./rules')
 const scmcycle = require('./scmcycle')
 const syncPackages = require('./sync-packages-to-registry')
 const licenses = require('./licenses')
+const docs = require('./docs')
 
 // counsel init
 counsel.configKey = pkg.name
@@ -58,6 +59,18 @@ module.exports = {
       counsel.logger.error(errMsg)
       process.exit(1)
     }
+  },
+
+  /**
+   * generate and optionally publish developer docs.
+   * @param {any} action unused
+   * @param {object} opts Commander
+   * @param {boolean} opts.publish publish to gh-pages branch if using a github install
+   * @returns {Promise}
+   */
+  docs (action, opts) {
+    return docs.build(opts)
+    .then(() => opts.publish ? docs.publish(opts) : null)
   },
 
   _getDest (outputPath, defaultBasename) {

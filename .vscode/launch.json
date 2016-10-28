@@ -21,12 +21,18 @@
       "request": "launch",
       "program": "${workspaceRoot}/test/licenses.js",
       "cwd": "${workspaceRoot}",
-      "runtimeArgs": [
-        "--nolazy"
-      ],
-      "env": {
-        "NODE_ENV": "development"
-      },
+      "runtimeArgs": [ "--nolazy" ],
+      "env": { "NODE_ENV": "development" },
+      "console": "internalConsole"
+    },
+    {
+      "name": "test - docs",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/test/docs.js",
+      "cwd": "${workspaceRoot}",
+      "runtimeArgs": [ "--nolazy" ],
+      "env": { "NODE_ENV": "development" },
       "console": "internalConsole"
     },
     {
@@ -214,6 +220,17 @@
       "request": "launch",
       "program": "${workspaceRoot}/bin/ripcord",
       "args": ["scmcycle"],
+      "cwd": "${workspaceRoot}",
+      "runtimeArgs": [ "--nolazy" ],
+      "env": { "NODE_ENV": "development" },
+      "console": "internalConsole"
+    },
+    {
+      "name": "docs",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/ripcord",
+      "args": ["docs"],
       "cwd": "${workspaceRoot}",
       "runtimeArgs": [ "--nolazy" ],
       "env": { "NODE_ENV": "development" },
