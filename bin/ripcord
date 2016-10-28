@@ -81,7 +81,8 @@ counsel.logger.transports.console.level = program.verbose ? 'verbose' : program.
 ripcord.logger.setLogLevel(program.logLevel || app.logLevel)
 
 // go.
-const cmdP = ripcord[action.name].apply(ripcord, [action.arg, action.options || {}])
+action.options = action.options || {}
+const cmdP = ripcord[action.name].apply(ripcord, [action.arg, action.options])
 Promise.resolve(cmdP)
 .then(result => {
   if (action.name === 'report') postProcessReport(action, result)
