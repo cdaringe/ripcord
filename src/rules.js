@@ -112,7 +112,6 @@ module.exports = [
   // licenses
   new ScriptRule({
     name: 'verify-licenses-script',
-    devDependencies: ['license-checker'],
     scriptName: 'check-licenses',
     scriptCommand: 'ripcord licenses check',
     scriptCommandVariants: ['*']
