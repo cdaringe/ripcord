@@ -33,7 +33,9 @@ program
   .command('report')
   .option('-o, --output <dir|filename>', 'path to dump the report')
   .description('generate tripwire dependency report')
-  .action((arg, opts) => { action = { name: 'report', arg: arg, options: opts } })
+  .action((opts) => {
+    action = { name: 'report', arg: null, options: opts }
+  })
 
 program
   .command('counsel <apply|check>')
@@ -56,18 +58,24 @@ program
   .command('sync-packages')
   .option('-d, --dry-run', 'show packages to copy')
   .description('sync packages from external npm repo to internal repo')
-  .action((arg, opts) => { action = { name: 'syncPackages', arg: arg, options: opts } })
+  .action((opts) => {
+    action = { name: 'syncPackages', arg: null, options: opts }
+  })
 
 program
   .command('docs')
   .description('generate dev docs')
   .option('-p, --publish', 'generate docs and publish them to github pages')
-  .action((arg, opts) => { action = { name: 'docs', arg: arg, options: opts } })
+  .action((opts) => {
+    action = { name: 'docs', arg: null, options: opts }
+  })
 
 program
   .command('scmcycle')
   .description('exec scmcycle')
-  .action((arg, opts) => { action = { name: 'scmcycle', arg: arg, options: opts } })
+  .action((opts) => {
+    action = { name: 'scmcycle', arg: arg, options: opts }
+  })
 
 program.parse(process.argv)
 
