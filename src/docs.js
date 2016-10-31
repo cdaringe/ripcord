@@ -9,13 +9,12 @@
 const cp = require('child_process')
 const ghpages = require('gh-pages')
 const path = require('path')
-const binPath = path.resolve(__dirname, '../node_modules/.bin')
 const isWin = /^win/.test(process.platform)
 const rmdir = (path) => { try { cp.execSync(`rm -rf ${path}`) } catch (e) { /* pass */ } }
 const counsel = require('counsel')
 const pify = require('pify')
 
-let jsdocBinFilename = path.resolve(binPath, 'jsdoc')
+let jsdocBinFilename = require.resolve('jsdoc')
 if (isWin) jsdocBinFilename += '.cmd'
 
 module.exports = {
@@ -65,6 +64,7 @@ module.exports = {
       ]
       this._clean()
       let rslt = cp.spawnSync(cmd, args, { cwd: projectRootDirname })
+      if (rslt.error) throw rslt.error
       if (rslt.stdout.length) console.log(rslt.stdout.toString())
       if (rslt.stderr.length) throw new Error(rslt.stderr.toString())
     } catch (err) {
