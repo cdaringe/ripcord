@@ -49,7 +49,7 @@
   },
   "scripts": {
     "install": "node bin/ripcord counsel apply",
-    "validate": "npm ls && ripcord counsel check",
+    "validate": "npm ls && bin/ripcord counsel check",
     "lint": "standard",
     "test": "nyc --reporter=lcov node test/",
     "check-coverage": "nyc check-coverage --lines 90 --functions 90 --branches 65",
@@ -58,11 +58,11 @@
     "publish-patch": "npm run preversion && npm version patch && git push origin master --tags && npm publish",
     "publish-minor": "npm run preversion && npm version minor && git push origin master --tags && npm publish",
     "publish-major": "npm run preversion && npm version major && git push origin master --tags && npm publish",
-    "check-licenses": "ripcord licenses check",
+    "check-licenses": "bin/ripcord licenses check",
     "postpublish": "npm run docs",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "docs": "ripcord docs",
-    "docs-publish": "ripcord docs --publish"
+    "docs": "bin/ripcord docs",
+    "docs-publish": "bin/ripcord docs --publish"
   },
   "pre-commit": [
     "validate",
