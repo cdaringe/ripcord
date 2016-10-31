@@ -21,13 +21,16 @@ let projectReadmeFilename = path.resolve(__dirname, '../README.md')
 let sourceDirname = path.resolve(__dirname, '../src')
 let dest = path.resolve(__dirname, '../docs')
 let projectRootDirname = path.resolve(__dirname, '..')
+let templateDirname = path.dirname(require.resolve('minami'))
 
 try {
   const cmd = jsdocBinFilename
   const args = [
-    '-c', jsdocConfigFilename,
-    '-R', projectReadmeFilename,
-    '-d', dest,
+    '--configure', jsdocConfigFilename,
+    '--recurse',
+    '--readme', projectReadmeFilename,
+    '--template', templateDirname,
+    '--destination', dest,
     sourceDirname
   ]
   rmdir(dest)
