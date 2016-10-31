@@ -11,7 +11,7 @@ module.exports = [
     name: 'validate-script',
     scriptName: 'validate',
     scriptCommand: 'npm ls && ripcord counsel check',
-    scriptCommandVariants: [/nsm ls/]
+    scriptCommandVariants: ['*']
   }),
 
   // secure!
@@ -19,7 +19,8 @@ module.exports = [
     name: 'security-check-script',
     devDependencies: ['nsp'],
     scriptName: 'secure',
-    scriptCommand: 'nsp check'
+    scriptCommand: 'nsp check',
+    scriptCommandVariants: ['*']
   }),
 
   // lint!
@@ -27,7 +28,8 @@ module.exports = [
     name: 'lint-script',
     devDependencies: ['standard'],
     scriptName: 'lint',
-    scriptCommand: 'standard'
+    scriptCommand: 'standard',
+    scriptCommandVariants: ['*']
   }),
 
   // test and coverage!
@@ -36,7 +38,7 @@ module.exports = [
     devDependencies: ['nyc'],
     scriptName: 'test',
     scriptCommand: 'nyc --reporter=lcov node test/',
-    scriptCommandVariants: ['node test/', 'tape test/**/*.js', 'node test/**/*.js', /react-scripts/]
+    scriptCommandVariants: ['*']
   }),
   new ScriptRule({
     name: 'coverage-script',
@@ -65,12 +67,14 @@ module.exports = [
   new ScriptRule({
     name: 'api-docs-generate-script',
     scriptName: 'docs',
-    scriptCommand: 'ripcord docs'
+    scriptCommand: 'ripcord docs',
+    scriptCommandVariants: ['*']
   }),
   new ScriptRule({
     name: 'api-docs-publish-script',
     scriptName: 'docs-publish',
-    scriptCommand: 'ripcord docs --publish'
+    scriptCommand: 'ripcord docs --publish',
+    scriptCommandVariants: ['*']
   }),
   new ScriptRule({
     name: 'postpublish-api-docs-script',
@@ -83,22 +87,26 @@ module.exports = [
   new ScriptRule({
     name: 'preversion-script',
     scriptName: 'preversion',
-    scriptCommand: 'git checkout master && git pull && npm run validate'
+    scriptCommand: 'git checkout master && git pull && npm run validate',
+    scriptCommandVariants: ['*']
   }),
   new ScriptRule({
     name: 'publish-patch-script',
     scriptName: 'publish-patch',
-    scriptCommand: 'npm run preversion && npm version patch && git push origin master --tags && npm publish'
+    scriptCommand: 'npm run preversion && npm version patch && git push origin master --tags && npm publish',
+    scriptCommandVariants: ['*']
   }),
   new ScriptRule({
     name: 'publish-minor-script',
     scriptName: 'publish-minor',
-    scriptCommand: 'npm run preversion && npm version minor && git push origin master --tags && npm publish'
+    scriptCommand: 'npm run preversion && npm version minor && git push origin master --tags && npm publish',
+    scriptCommandVariants: ['*']
   }),
   new ScriptRule({
     name: 'publish-major-script',
     scriptName: 'publish-major',
-    scriptCommand: 'npm run preversion && npm version major && git push origin master --tags && npm publish'
+    scriptCommand: 'npm run preversion && npm version major && git push origin master --tags && npm publish',
+    scriptCommandVariants: ['*']
   }),
 
   // licenses
@@ -106,7 +114,8 @@ module.exports = [
     name: 'verify-licenses-script',
     devDependencies: ['license-checker'],
     scriptName: 'check-licenses',
-    scriptCommand: 'ripcord licenses check'
+    scriptCommand: 'ripcord licenses check',
+    scriptCommandVariants: ['*']
   }),
 
   // tie 'em up!
