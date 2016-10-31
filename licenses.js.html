@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>licenses.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-app.html">app</a></li><li><a href="module-logger.html">logger</a><ul class='methods'><li data-type='method'><a href="module-logger.html#.debug">debug</a></li><li data-type='method'><a href="module-logger.html#.error">error</a></li><li data-type='method'><a href="module-logger.html#.info">info</a></li><li data-type='method'><a href="module-logger.html#.setLogLevel">setLogLevel</a></li><li data-type='method'><a href="module-logger.html#.verbose">verbose</a></li><li data-type='method'><a href="module-logger.html#.warn">warn</a></li></ul></li><li><a href="module-ripcord.html">ripcord</a><ul class='methods'><li data-type='method'><a href="module-ripcord.html#.counsel">counsel</a></li><li data-type='method'><a href="module-ripcord.html#.docs">docs</a></li><li data-type='method'><a href="module-ripcord.html#.licenses">licenses</a></li><li data-type='method'><a href="module-ripcord.html#.report">report</a></li><li data-type='method'><a href="module-ripcord.html#.scmcycle">scmcycle</a></li><li data-type='method'><a href="module-ripcord.html#.syncPackages">syncPackages</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">licenses.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>'use strict'
+
+const counsel = require('counsel')
+const pify = require('pify')
+const checker = pify(require('license-checker'))
+const logger = require('./logger')
+const fs = require('fs')
+const json2csv = require('json2csv')
+const values = require('lodash.values')
+
+const WHITELIST = [
+  'MIT',
+  'MIT*',
+  'BSD',
+  'ISC'
+]
+
+module.exports = {
+  _appendFields ({ pkgs, production }) {
+    if (!pkgs || !Object.keys(pkgs).length) return pkgs
+    for (let nameVersion in pkgs) {
+      const pkg = pkgs[nameVersion]
+
+      // tidy name, version
+      const components = nameVersion.match(/(.*)@(.*)/)
+      const name = components[1]
+      const version = components[2]
+
+      // tidy publisher
+      if (Array.isArray(pkg.publisher)) pkg.publisher = pkg.publisher.join(';')
+
+      // split licenses to n-license fields
+      const licenseKVs = typeof pkg.licenses === 'string'
+        ? { 'license1': pkg.licenses }
+        : pkg.licenses.reduce((set, l, ndx) => Object.assign(set, { [`license${ndx + 1}`]: l }), {})
+      Object.assign(pkg, { name, version, production: production.toString() }, licenseKVs)
+      delete pkg.licenses
+
+      // purge commas to assert well behaved csv
+      for (var field in pkg) {
+        pkg[field] = pkg[field].replace(/,/g, ';')
+      }
+    }
+    return pkgs
+  },
+
+  getLicenses (configOverride, opts, ripcord) {
+    return this._getLicenses(configOverride)
+    .then(prdPkgs => {
+      if (!opts.dev) return prdPkgs
+      const devOverride = Object.assign(configOverride, { production: false, development: true })
+      return this._getLicenses(devOverride)
+      .then(devPkgs => Object.assign(devPkgs, prdPkgs))
+    })
+    .then(pkgs => {
+      // scrap current package from report
+      const pkg = counsel.targetProjectPackageJson
+      const nameAtVersion = `${pkg.name}@${pkg.version}`
+      delete pkgs[nameAtVersion]
+      return pkgs
+    })
+  },
+
+  _getLicenses (configOverride, opts) {
+    configOverride = configOverride || {}
+    const projectRoot = counsel.targetProjectRoot
+    const DEFAULT_CONFIG = {
+      start: projectRoot,
+      exclude: WHITELIST.join(',')
+    }
+    const config = Object.assign(DEFAULT_CONFIG, { production: true }, configOverride)
+    return checker.init(config)
+    .then(pkgs => this._appendFields({ pkgs, production: !!config.production }))
+  },
+
+  _handleGetLicensesCheck (pkgs, opts, ripcord) {
+    const pkg = counsel.targetProjectPackageJson
+    if (!Object.keys(pkgs).length) return
+    const errMsg = `${pkg.name} has unapproved licenses`
+    const rptText = opts.csv ? this._reportToCSV(pkgs) : JSON.stringify(pkgs, null, 2)
+    if (opts.output) {
+      this._writeReport(Object.assign(
+        { txt: rptText, basename: 'license-check', ripcord },
+        opts
+      ))
+    } else {
+      logger.error(`${errMsg}:\n`)
+      logger.error(rptText) // stream report to stderr
+    }
+    if (opts.throwOnFail) throw new Error(errMsg)
+    process.exit(1)
+  },
+
+  /**
+   * check target project for valid licenses.
+   * on invalid licenses, generate a report
+   * @param {object} opts
+   * @param {string} opts.output filename, dirname (relative or absolute)
+   * @param {boolean} opts.csv output file in csv mode (otherwise json)
+   * @param {boolean} opts.throwOnFail throws, vs process.exit(1) on fail. hook for testing.
+   * @param {module} ripcord
+   * @returns Promise
+   */
+  check (opts, ripcord) {
+    const pkg = counsel.targetProjectPackageJson
+    const isDevOnly = pkg[counsel.configKey].devOnly
+    if (isDevOnly &amp;&amp; !opts.force) {
+      logger.info('devOnly, waiving license check')
+      return Promise.resolve()
+    }
+    return this.getLicenses(null, opts, ripcord)
+    .then(pkgs => this._handleGetLicensesCheck(pkgs, opts, ripcord))
+  },
+
+  dump (opts, ripcord) {
+    return this.getLicenses({ exclude: null }, opts, ripcord)
+    .then((pkgs) => {
+      if (!Object.keys(pkgs).length) return
+      const dumpTxt = opts.csv ? this._reportToCSV(pkgs) : JSON.stringify(pkgs, null, 2)
+      if (opts.output) {
+        this._writeReport(Object.assign(
+          { txt: dumpTxt, basename: 'license-dump', ripcord },
+          opts
+        ))
+      } else {
+        logger.info(dumpTxt) // stream report to stderr
+      }
+    })
+  },
+
+  _reportToCSV (pkgs) {
+    return json2csv({ data: values(pkgs), quotes: '' })
+  },
+
+  _writeReport ({ txt, ripcord, basename, output, csv }) {
+    const defaultFilename = `${basename}.${(csv ? 'csv' : 'json')}`
+    const dest = ripcord._getDest(output, defaultFilename)
+    fs.writeFileSync(dest, txt)
+    logger.info(`license report written to: ${dest}`)
+  }
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

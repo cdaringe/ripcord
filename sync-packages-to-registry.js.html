@@ -23,7 +23,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-app.html">app</a></li><li><a href="module-logger.html">logger</a><ul class='methods'><li data-type='method'><a href="module-logger.html#.debug">debug</a></li><li data-type='method'><a href="module-logger.html#.error">error</a></li><li data-type='method'><a href="module-logger.html#.info">info</a></li><li data-type='method'><a href="module-logger.html#.setLogLevel">setLogLevel</a></li><li data-type='method'><a href="module-logger.html#.verbose">verbose</a></li><li data-type='method'><a href="module-logger.html#.warn">warn</a></li></ul></li><li><a href="module-ripcord.html">ripcord</a><ul class='methods'><li data-type='method'><a href="module-ripcord.html#.counsel">counsel</a></li><li data-type='method'><a href="module-ripcord.html#.report">report</a></li><li data-type='method'><a href="module-ripcord.html#.syncPackages">syncPackages</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-app.html">app</a></li><li><a href="module-logger.html">logger</a><ul class='methods'><li data-type='method'><a href="module-logger.html#.debug">debug</a></li><li data-type='method'><a href="module-logger.html#.error">error</a></li><li data-type='method'><a href="module-logger.html#.info">info</a></li><li data-type='method'><a href="module-logger.html#.setLogLevel">setLogLevel</a></li><li data-type='method'><a href="module-logger.html#.verbose">verbose</a></li><li data-type='method'><a href="module-logger.html#.warn">warn</a></li></ul></li><li><a href="module-ripcord.html">ripcord</a><ul class='methods'><li data-type='method'><a href="module-ripcord.html#.counsel">counsel</a></li><li data-type='method'><a href="module-ripcord.html#.docs">docs</a></li><li data-type='method'><a href="module-ripcord.html#.licenses">licenses</a></li><li data-type='method'><a href="module-ripcord.html#.report">report</a></li><li data-type='method'><a href="module-ripcord.html#.scmcycle">scmcycle</a></li><li data-type='method'><a href="module-ripcord.html#.syncPackages">syncPackages</a></li></ul></li></ul>
 </nav>
 
 <div id="main">
@@ -55,7 +55,6 @@ const ACTION_SYNC = 'ACTION_SYNC'
 const pify = require('pify')
 const npm = require('requireg')('npm')
 const request = require('request')
-const values = require('lodash.values')
 
 const logger = require('./logger')
 
@@ -111,10 +110,13 @@ module.exports = {
    * @returns Promise
    */
   _copyPackage (pkg) {
+    if (!pkg.artifactoryTarball) {
+      throw new ReferenceError('`.tarball` field missing. unable to copy pkg')
+    }
     const copyUri = [
       npm.config.get('NPM_SRC_CACHE_ARTIFACTORY_URI'),
-      `${pkg.name}?to=/${this._destRepoName}`,
-      pkg.name
+      `${pkg.artifactoryTarball}?to=/${this._destRepoName}`,
+      pkg.artifactoryTarball
     ].join('/')
     const post = pify(request.post)
     return post(copyUri, this._getRequestHeaders())
@@ -139,47 +141,33 @@ module.exports = {
    */
   _tagPackagesToSync (pkgs) {
     const artifactoryUri = npm.config.get('NPM_SRC_ARTIFACTORY_URI')
-    const pkgsByName = {}
+    const artifactorySrcUri = npm.config.get('NPM_SRC_ARTIFACTORY_URI')
     const unresolved = []
     const gitResolved = []
-    pkgs.forEach((pkg, ndx) => {
+    const pkgsByKey = {}
+    const tagged = pkgs.filter((pkg, ndx) => {
       const resolvedUri = pkg._resolved || ''
       const isResolvedArtifactory = resolvedUri.startsWith(artifactoryUri)
       const isResolvedGithub = !!resolvedUri.match(/github.com/)
 
-      /* istanbul ignore next */
-      if (isResolvedGithub) {
-        gitResolved.push(pkg)
-        pkg.action = ACTION_SKIP
-        pkg.status = STATUS_INVALID_RESOLVE_GIT
+      if (!isResolvedArtifactory) {
+        if (isResolvedGithub) {
+          gitResolved.push(pkg)
+          pkg.action = ACTION_SKIP
+          pkg.status = STATUS_INVALID_RESOLVE_GIT
+        } else {
+          pkg.action = ACTION_SKIP
+          pkg.status = STATUS_INVALID_RESOLVE_URI
+          unresolved.push(pkg)
+        }
+        return true
       }
 
-      /* istanbul ignore next */
-      if (!isResolvedArtifactory) {
-        pkg.action = ACTION_SKIP
-        pkg.status = STATUS_INVALID_RESOLVE_URI
-        unresolved.push(pkg)
-      }
+      pkg.artifactoryTarball = pkg._resolved.substring(artifactorySrcUri.length)
 
       // handle collisions
-      if (pkgsByName[pkg.name]) {
-        const existing = pkgsByName[pkg.name]
-        /* istanbul ignore next */
-        if (existing.action !== ACTION_SKIP &amp;&amp; pkg.action === ACTION_SKIP) {
-          logger.warn([
-            `>1 instance of dependency ${pkg.name} detected, where one copy`,
-            `will be skipped. omitting skipped version (${pkg.version})`
-          ].join(' '))
-          return
-        }
-        /* istanbul ignore next */
-        if (existing.versions) existing.versions.push(pkg.version)
-        else existing.versions = [ existing.version, pkg.version ]
-        return
-      }
-
-      // handle base case (artifactory resolved pkg)
-      pkgsByName[pkg.name] = pkg
+      const existing = !!pkgsByKey[pkg.artifactoryTarball]
+      return !existing
     })
 
     /* istanbul ignore next */
@@ -187,7 +175,7 @@ module.exports = {
     /* istanbul ignore next */
     if (gitResolved.length) this._handleGitResolvedPkgs(gitResolved)
 
-    return values(pkgsByName)
+    return tagged
   },
 
   /**
@@ -357,7 +345,6 @@ module.exports = {
    * @param {Symbol|null} pkg.action
    * @param {object} opts
    * @param {boolean} opts.dryRun
-   * @param {boolean} opts.forceCopy copy from /cache-repo even if not present in /src repo. used for testing
    * @returns Promise
    */
   _syncPackage (pkg, opts) {
@@ -369,7 +356,7 @@ module.exports = {
         'state is invalid.  run `npm ls` and make sure it passes without error.'
       ].join(' '))
     }
-    if (pkg.action === ACTION_SKIP &amp;&amp; !opts.forceCopy) return Promise.resolve()
+    if (pkg.action === ACTION_SKIP) return Promise.resolve()
     /* istanbul ignore next */
     const handleResponse = response => {
       if (response.statusCode === 200) {

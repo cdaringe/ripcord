@@ -23,7 +23,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-app.html">app</a></li><li><a href="module-logger.html">logger</a><ul class='methods'><li data-type='method'><a href="module-logger.html#.debug">debug</a></li><li data-type='method'><a href="module-logger.html#.error">error</a></li><li data-type='method'><a href="module-logger.html#.info">info</a></li><li data-type='method'><a href="module-logger.html#.setLogLevel">setLogLevel</a></li><li data-type='method'><a href="module-logger.html#.verbose">verbose</a></li><li data-type='method'><a href="module-logger.html#.warn">warn</a></li></ul></li><li><a href="module-ripcord.html">ripcord</a><ul class='methods'><li data-type='method'><a href="module-ripcord.html#.counsel">counsel</a></li><li data-type='method'><a href="module-ripcord.html#.report">report</a></li><li data-type='method'><a href="module-ripcord.html#.syncPackages">syncPackages</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-app.html">app</a></li><li><a href="module-logger.html">logger</a><ul class='methods'><li data-type='method'><a href="module-logger.html#.debug">debug</a></li><li data-type='method'><a href="module-logger.html#.error">error</a></li><li data-type='method'><a href="module-logger.html#.info">info</a></li><li data-type='method'><a href="module-logger.html#.setLogLevel">setLogLevel</a></li><li data-type='method'><a href="module-logger.html#.verbose">verbose</a></li><li data-type='method'><a href="module-logger.html#.warn">warn</a></li></ul></li><li><a href="module-ripcord.html">ripcord</a><ul class='methods'><li data-type='method'><a href="module-ripcord.html#.counsel">counsel</a></li><li data-type='method'><a href="module-ripcord.html#.docs">docs</a></li><li data-type='method'><a href="module-ripcord.html#.licenses">licenses</a></li><li data-type='method'><a href="module-ripcord.html#.report">report</a></li><li data-type='method'><a href="module-ripcord.html#.scmcycle">scmcycle</a></li><li data-type='method'><a href="module-ripcord.html#.syncPackages">syncPackages</a></li></ul></li></ul>
 </nav>
 
 <div id="main">
@@ -49,9 +49,8 @@
     <section class="readme">
         <article><p><img src="https://raw.githubusercontent.com/cdaringe/ripcord/master/img/parachute.png" /></p>
 <h1>ripcord</h1><p>project scaffolding and opinion enforcer!</p>
-<p><a href="https://app.codeship.com/projects/177795"> <img src="https://app.codeship.com/projects/8944d7f0-6e6a-0134-4108-3672b74a6b59/status?branch=master" alt="Codeship Status for cdaringe/ripcord"></a> <img src="https://img.shields.io/badge/standardjs-%E2%9C%93-brightgreen.svg" alt=""></p>
+<p><a href="https://app.codeship.com/projects/177795"> <img src="https://app.codeship.com/projects/8944d7f0-6e6a-0134-4108-3672b74a6b59/status?branch=master" alt="Codeship Status for cdaringe/ripcord"></a> <img src="https://img.shields.io/badge/standardjs-%E2%9C%93-brightgreen.svg" alt=""> <a href="https://coveralls.io/github/cdaringe/ripcord?branch=master"><img src="https://coveralls.io/repos/github/cdaringe/ripcord/badge.svg?branch=master" alt="Coverage Status"></a></p>
 <h2>install</h2><p><code>npm install --save-dev ripcord</code></p>
-<p>pro tip: you can <code>[sudo] npm i -g ripcord</code> and run <code>ripcord [cmd]</code> in your project <em>after</em> you have installed it locally, and just run <code>ripcord</code> from the project root.  Even if there's a version mismatch, fear-not, your locally installed version will be run!</p>
 <h2>what</h2><p>what does <code>ripcord</code> <em>really</em> do?</p>
 <ul>
 <li>:rocket: deploys a set of rules into your project, on request.<ul>
@@ -69,6 +68,7 @@
 <li>to check if ripcord's rules are honored, run <code>ripcord counsel check</code></li>
 <li>to generate a depedency report, run <code>ripcord report [-o /path/to/report]</code></li>
 </ul>
+<p>pro tip: if you install ripcord globally (<code>[sudo] npm i -g ripcord</code>) <em>and</em> have <code>ripcord</code> installed locally, you can simply run <code>ripcord [cmd]</code> in your project.  <code>ripcord</code> will <a href="https://github.com/cdaringe/ripcord/blob/ebd59305bb27f92febe69f5760f21c2a1bbc21d5/bin/ripcord#L19">detect a local copy</a> and run that version. rad+!</p>
 <p>what else can it do?</p>
 <p><code>[node_modules/.bin/]ripcord --help</code></p>
 <p><strong>api docs</strong> found <a href="https://cdaringe.github.io/ripcord/">here</a></p>
