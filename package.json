@@ -27,6 +27,7 @@
     "pify": "^2.3.0",
     "request": "^2.75.0",
     "requireg": "^0.1.6",
+    "resolve-jsdoc-bin": "^1.0.0",
     "snyk-resolve-deps": "^1.8.0"
   },
   "devDependencies": {

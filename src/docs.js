@@ -9,13 +9,12 @@
 const cp = require('child_process')
 const ghpages = require('gh-pages')
 const path = require('path')
-const isWin = /^win/.test(process.platform)
 const rmdir = (path) => { try { cp.execSync(`rm -rf ${path}`) } catch (e) { /* pass */ } }
 const counsel = require('counsel')
 const pify = require('pify')
+const jsdocBin = require('resolve-jsdoc-bin')
 
-let jsdocBinFilename = require.resolve('jsdoc')
-if (isWin) jsdocBinFilename += '.cmd'
+let jsdocBinFilename = jsdocBin.resolve(__dirname)
 
 module.exports = {
 
