@@ -31,7 +31,8 @@ module.exports = {
       projectReadmeFilename: path.resolve(counsel.targetProjectRoot, 'README.md'),
       sourceDirname: path.resolve(counsel.targetProjectRoot, 'src'),
       dest: path.resolve(counsel.targetProjectRoot, 'docs'),
-      projectRootDirname: counsel.targetProjectRoot
+      projectRootDirname: counsel.targetProjectRoot,
+      templateDirname: path.dirname(require.resolve('minami'))
     }
   },
 
@@ -50,13 +51,16 @@ module.exports = {
         projectReadmeFilename,
         dest,
         sourceDirname,
-        projectRootDirname
+        projectRootDirname,
+        templateDirname
       } = this._getDocsMetaData()
       const cmd = jsdocBinFilename
       const args = [
-        '-c', jsdocConfigFilename,
-        '-R', projectReadmeFilename,
-        '-d', dest,
+        '--configure', jsdocConfigFilename,
+        '--recurse',
+        '--readme', projectReadmeFilename,
+        '--template', templateDirname,
+        '--destination', dest,
         sourceDirname
       ]
       this._clean()
