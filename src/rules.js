@@ -6,6 +6,14 @@ const PreCommitRule = require('counsel-precommit')
 const ScriptRule = require('counsel-script')
 
 module.exports = [
+  // tie 'em up!
+  // @note: apply first, as rule sniffs for git-root. if missing, fails, so should
+  // occur first before waiting for long dependency install rules
+  new PreCommitRule({
+    name: 'precommit-script',
+    preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure', 'docs']
+  }),
+
   // validate!
   new ScriptRule({
     name: 'validate-script',
@@ -115,11 +123,5 @@ module.exports = [
     scriptName: 'check-licenses',
     scriptCommand: 'ripcord licenses check',
     scriptCommandVariants: ['*']
-  }),
-
-  // tie 'em up!
-  new PreCommitRule({
-    name: 'precommit-script',
-    preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure', 'docs']
   })
 ]
