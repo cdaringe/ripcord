@@ -136,6 +136,19 @@
       "outDir": null
     },
     {
+      "name": "license check - dev",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/ripcord",
+      "stopOnEntry": false,
+      "args": ["licenses", "check", "--dev", "--force"],
+      "cwd": "${workspaceRoot}",
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "console": "internalConsole"
+    },
+    {
       "name": "license check - force",
       "type": "node",
       "request": "launch",

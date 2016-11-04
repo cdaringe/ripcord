@@ -45,6 +45,7 @@ module.exports = {
   },
 
   getLicenses (configOverride, opts, ripcord) {
+    configOverride = configOverride || {}
     return this._getLicenses(configOverride)
     .then(prdPkgs => {
       if (!opts.dev) return prdPkgs
@@ -62,7 +63,6 @@ module.exports = {
   },
 
   _getLicenses (configOverride, opts) {
-    configOverride = configOverride || {}
     const projectRoot = counsel.targetProjectRoot
     const DEFAULT_CONFIG = {
       start: projectRoot,
