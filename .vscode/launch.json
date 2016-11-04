@@ -162,6 +162,19 @@
       "console": "internalConsole"
     },
     {
+      "name": "license dump",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/bin/ripcord",
+      "stopOnEntry": false,
+      "args": ["licenses", "dump"],
+      "cwd": "${workspaceRoot}",
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "console": "internalConsole"
+    },
+    {
       "name": "license dump - csv",
       "type": "node",
       "request": "launch",
