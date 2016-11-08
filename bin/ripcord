@@ -91,7 +91,8 @@ if (!hasArgs || !isValidArg) {
 }
 
 // configure logger
-counsel.logger.transports.console.level = program.verbose ? 'verbose' : program.logLevel || app.logLevel
+if (program.verbose) program.logLevel = 'verbose'
+counsel.logger.transports.console.level = program.logLevel || app.logLevel
 ripcord.logger.setLogLevel(program.logLevel || app.logLevel)
 
 // go.

@@ -351,8 +351,12 @@ module.exports = {
     logger.progressMode = true
     return pkgs.reduce(
       (chain, pkg, ndx) => {
-        logger.verbose(`syncing package (${ndx + 1}/${pkgs.length}): ${pkg.name}`)
-        return chain.then(() => this._syncPackage(pkg, opts))
+        // chain each package copy so as to not flood the src/dest npm registries.
+        // this strategy copies each package serially, vs in parallel
+        return chain.then(() => {
+          logger.verbose(`syncing package (${ndx + 1}/${pkgs.length}): ${pkg.name}`)
+          return this._syncPackage(pkg, opts)
+        })
       },
       Promise.resolve()
     )
