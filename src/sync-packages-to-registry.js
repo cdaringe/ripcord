@@ -15,6 +15,7 @@ const ACTION_SYNC = 'ACTION_SYNC'
 const pify = require('pify')
 const npm = require('requireg')('npm')
 const request = require('request')
+const get = require('lodash.get')
 
 const logger = require('./logger')
 
@@ -33,9 +34,9 @@ module.exports = {
   _envKeys: [
     '_auth',
     'ARTIFACTORY_URI',
-    'NPM_SRC_ARTIFACTORY_URI',
-    'NPM_DEST_ARTIFACTORY_URI',
-    'NPM_SRC_CACHE_ARTIFACTORY_URI'
+    'NPM_REGISTRY_DEST',
+    'NPM_REGISTRY_SRC',
+    'NPM_REGISTRY_SRC_CACHE'
   ],
 
   /**
@@ -54,9 +55,9 @@ module.exports = {
         'are set in your npmrc:\n',
         '\t_auth=some-base64-encoded-str\n',
         '\tARTIFACTORY_URI=https://my-artifactory.com/artifactory\n',
-        '\tNPM_SRC_ARTIFACTORY_URI=https://my-artifactory.com/artifactory/api/npm/external-npm-repo\n',
-        '\tNPM_DEST_ARTIFACTORY_URI=https://my-artifactory.com/artifactory/api/npm/local-npm-repo\n',
-        '\tNPM_SRC_CACHE_ARTIFACTORY_URI=https://my-artifactory.com/artifactory/api/npm/registry-cache\n'
+        '\tNPM_REGISTRY_DEST=local-npm-repo\n',
+        '\tNPM_REGISTRY_SRC=external-npm-repo\n',
+        '\tNPM_REGISTRY_SRC_CACHE=registry-cache\n'
       ].join(' '))
       throw new Error(msgMissingKeys)
     }
@@ -74,7 +75,9 @@ module.exports = {
       throw new ReferenceError('`.tarball` field missing. unable to copy pkg')
     }
     const copyUri = [
-      npm.config.get('NPM_SRC_CACHE_ARTIFACTORY_URI'),
+      npm.config.get('ARTIFACTORY_URI'),
+      'api/copy',
+      npm.config.get('NPM_REGISTRY_SRC_CACHE'),
       `${pkg.artifactoryTarball}?to=/${this._destRepoName}`,
       pkg.artifactoryTarball
     ].join('/')
@@ -84,6 +87,7 @@ module.exports = {
       /* istanbul ignore next */
       if (response.statusCode !== 200) {
         throw new Error([
+          '-',
           `sync-package [${pkg.name}]: failed to copy.`,
           `unexpected response ${response.statusCode}`
         ].join(' '))
@@ -100,22 +104,34 @@ module.exports = {
    * @returns object[] pkgs
    */
   _tagPackagesToSync (pkgs) {
-    const artifactoryUri = npm.config.get('NPM_SRC_ARTIFACTORY_URI')
-    const artifactorySrcUri = npm.config.get('NPM_SRC_ARTIFACTORY_URI')
+    const base = npm.config.get('ARTIFACTORY_URI')
+    const srcReg = npm.config.get('NPM_REGISTRY_SRC')
+    const artifactoryUri = `${base}/api/npm/${srcReg}`
+    const npmRegistrySrcUri = 'https://registry.npmjs.org'
     const unresolved = []
     const gitResolved = []
     const pkgsByKey = {}
     const tagged = pkgs.filter((pkg, ndx) => {
-      const resolvedUri = pkg._resolved || ''
-      const isResolvedArtifactory = resolvedUri.startsWith(artifactoryUri)
+      const resolvedUri = get(pkg, 'dist.tarball') || ''
+      const isResolvedArtifactory = resolvedUri.match(artifactoryUri)
+      const isResolvedNPM = resolvedUri.match(/registry\.npmjs\.org/)
       const isResolvedGithub = !!resolvedUri.match(/github.com/)
 
-      if (!isResolvedArtifactory) {
+      if (isResolvedNPM) {
+        logger.warn([
+          `package resolved from npmjs.org: ${pkg.name}. will attempt to find`,
+          'and copy it from artifactory. brace for impact 💣'
+        ].join(' '))
+      } else if (!isResolvedArtifactory) {
         if (isResolvedGithub) {
           gitResolved.push(pkg)
           pkg.action = ACTION_SKIP
           pkg.status = STATUS_INVALID_RESOLVE_GIT
         } else {
+          logger.warn([
+            `package not resolved from artifactory or github: ${pkg.name}`,
+            resolvedUri || 'NO_URI_AVAILABLE'
+          ].join(', '))
           pkg.action = ACTION_SKIP
           pkg.status = STATUS_INVALID_RESOLVE_URI
           unresolved.push(pkg)
@@ -123,7 +139,9 @@ module.exports = {
         return true
       }
 
-      pkg.artifactoryTarball = pkg._resolved.substring(artifactorySrcUri.length)
+      pkg.artifactoryTarball = isResolvedNPM
+        ? pkg.dist.tarball.substring(npmRegistrySrcUri.length + 1)
+        : pkg.dist.tarball.substring(artifactoryUri.length + 1)
 
       // handle collisions
       const existing = !!pkgsByKey[pkg.artifactoryTarball]
@@ -144,9 +162,11 @@ module.exports = {
    * @param {string} name
    * @returns Promise
    */
-  _getLocalPackage (name) {
+  _getDestPackage (name) {
     const get = pify(request)
-    const uri = `${npm.config.get('NPM_SRC_ARTIFACTORY_URI')}/${name}`
+    const base = npm.config.get('ARTIFACTORY_URI')
+    const registry = npm.config.get('NPM_REGISTRY_DEST')
+    const uri = `${base}/api/storage/${registry}/${name}`
     return get(uri, this._getRequestHeaders())
   },
 
@@ -265,12 +285,12 @@ module.exports = {
    */
   _setLocalsFromEnv () {
     try {
-      this._destRepoName = npm.config.get('NPM_DEST_ARTIFACTORY_URI').match(/[^\/]*$/)[0]
+      this._destRepoName = npm.config.get('NPM_REGISTRY_DEST').match(/[^\/]*$/)[0]
     } catch (err) {
       /* istanbul ignore next */
       throw new Error([
-        'unable to extract destination repo name from NPM_DEST_ARTIFACTORY_URI:',
-        `${npm.config.get('NPM_DEST_ARTIFACTORY_URI') || 'MISSING'}`
+        'unable to extract destination repo name from NPM_REGISTRY_DEST:',
+        `${npm.config.get('NPM_REGISTRY_DEST') || 'MISSING'}`
       ].join(' '))
     }
   },
@@ -332,7 +352,7 @@ module.exports = {
       }
       throw new Error(`sync-package [${pkg.name}]: unexpected response ${response.statusCode}`)
     }
-    return this._getLocalPackage(pkg.name)
+    return this._getDestPackage(pkg.name)
     .then(handleResponse.bind(this))
   },
 

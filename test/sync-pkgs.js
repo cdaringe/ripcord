@@ -8,24 +8,24 @@ const logger = require('../src/logger')
 const nock = require('nock')
 
 const ARTIFACTORY_URI = 'http://www.bogus.com/artifactory'
-const NPM_SRC_ARTIFACTORY_URI = 'http://www.bogus.com/artifactory/src'
-const NPM_DEST_ARTIFACTORY_URI = 'http://www.bogus.com/artifactory/dest'
-const NPM_SRC_CACHE_ARTIFACTORY_URI = 'http://www.bogus.com/artifactory/cache'
+const NPM_REGISTRY_SRC = 'src'
+const NPM_REGISTRY_DEST = 'dest'
+const NPM_REGISTRY_SRC_CACHE = 'cache'
 
 const setupNpmConfig = () => {
   npm.config.set('_auth', 'test-auth')
   npm.config.set('ARTIFACTORY_URI', ARTIFACTORY_URI)
-  npm.config.set('NPM_SRC_ARTIFACTORY_URI', NPM_SRC_ARTIFACTORY_URI)
-  npm.config.set('NPM_DEST_ARTIFACTORY_URI', NPM_DEST_ARTIFACTORY_URI)
-  npm.config.set('NPM_SRC_CACHE_ARTIFACTORY_URI', NPM_SRC_CACHE_ARTIFACTORY_URI)
+  npm.config.set('NPM_REGISTRY_SRC', NPM_REGISTRY_SRC)
+  npm.config.set('NPM_REGISTRY_DEST', NPM_REGISTRY_DEST)
+  npm.config.set('NPM_REGISTRY_SRC_CACHE', NPM_REGISTRY_SRC_CACHE)
 }
 
 const teardownNpmConfig = () => {
   npm.config.set('_auth', '')
   npm.config.set('ARTIFACTORY_URI', '')
-  npm.config.set('NPM_SRC_ARTIFACTORY_URI', '')
-  npm.config.set('NPM_DEST_ARTIFACTORY_URI', '')
-  npm.config.set('NPM_SRC_CACHE_ARTIFACTORY_URI', '')
+  npm.config.set('NPM_REGISTRY_SRC', '')
+  npm.config.set('NPM_REGISTRY_DEST', '')
+  npm.config.set('NPM_REGISTRY_SRC_CACHE', '')
 }
 
 tape('setup', t => {
@@ -51,7 +51,10 @@ tape('sync env params valid', t => {
 tape('sync - dry', t => {
   setupNpmConfig()
   const copySpy = sinon.spy(sync, '_copyPackage')
-  nock(NPM_SRC_ARTIFACTORY_URI).get(/.*/).reply(200, {})
+  const getRoute = `${ARTIFACTORY_URI}/api/storage/dest/`
+  // "http://www.bogus.com/artifactory/api/storage/dest/archy"
+  // "http://www.bogus.com/artifactory/api/storage/dest"
+  nock(getRoute).get(/.*/).times(1000).reply(200, {})
   // ^ dryRun still _may_ attempt http requests against src repo, just won't copy'
   t.plan(2)
   return sync.sync({ dryRun: true })
@@ -67,8 +70,8 @@ tape('sync - dry', t => {
 tape('sync - fo real', t => {
   setupNpmConfig()
   const copySpy = sinon.spy(sync, '_copyPackage')
-  nock(NPM_SRC_ARTIFACTORY_URI).get(/.*/).times(1000).reply(404, {})
-  nock(NPM_SRC_CACHE_ARTIFACTORY_URI).post(/.*/).times(1000).reply(200, {})
+  nock(`${ARTIFACTORY_URI}/api/storage/${NPM_REGISTRY_DEST}`).get(/.*/).times(1000).reply(404, {})
+  nock(`${ARTIFACTORY_URI}/api/copy/${NPM_REGISTRY_SRC_CACHE}`).post(/.*/).times(1000).reply(200, {})
   t.plan(2)
   const oldSyncPackage = sync._syncPackage
   const syncPkgStub = sinon.stub(sync, '_syncPackage', (pkg) => {
