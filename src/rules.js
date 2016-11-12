@@ -95,7 +95,7 @@ module.exports = [
   new ScriptRule({
     name: 'preversion-script',
     scriptName: 'preversion',
-    scriptCommand: 'git checkout master && git pull && npm run validate',
+    scriptCommand: 'git checkout master && git pull',
     scriptCommandVariants: ['*']
   }),
   new ScriptRule({
