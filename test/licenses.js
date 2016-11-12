@@ -11,7 +11,7 @@ tape('license check', t => {
   const origHandleGetLicensesCheck = licenses._handleGetLicensesCheck
   const stub = sinon.stub(licenses, '_handleGetLicensesCheck', (pkgs, opts, rc) => {
     pkgs = { name: 'dummy-pkg', version: '0.0.1' }
-    return origHandleGetLicensesCheck(pkgs, opts, ripcord)
+    return origHandleGetLicensesCheck.apply(licenses, [pkgs, opts, ripcord])
   })
   t.plan(2)
   Promise.resolve()

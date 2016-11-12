@@ -34,12 +34,29 @@ module.exports = {
         ? { 'license1': pkg.licenses }
         : pkg.licenses.reduce((set, l, ndx) => Object.assign(set, { [`license${ndx + 1}`]: l }), {})
       Object.assign(pkg, { name, version, production: production.toString() }, licenseKVs)
-      delete pkg.licenses
 
       // purge commas to assert well behaved csv
       for (var field in pkg) {
-        pkg[field] = pkg[field].replace(/,/g, ';')
+        if (field !== 'licenses') {
+          // licenses field is type array, and is a special case
+          // that is handled pre-export (if exporting!)
+          pkg[field] = pkg[field].replace(/,/g, ';')
+        }
       }
+    }
+    return pkgs
+  },
+
+  /**
+   * license-checker returns strings or arrays for licenses.  obnoxious. tidy it!
+   * @private
+   * @param {object[]} pkgs
+   * @returns object[] pkgs
+   */
+  _cleanLicenseCheckerOutput (pkgs) {
+    for (let name in pkgs) {
+      let pkg = pkgs[name]
+      pkg.licenses = Array.isArray(pkg.licenses) ? pkg.licenses : [ pkg.licenses ]
     }
     return pkgs
   },
@@ -54,6 +71,7 @@ module.exports = {
       .then(devPkgs => Object.assign(devPkgs, prdPkgs))
     })
     .then(pkgs => {
+      pkgs = this._cleanLicenseCheckerOutput(pkgs)
       // scrap current package from report
       const pkg = counsel.targetProjectPackageJson
       const nameAtVersion = `${pkg.name}@${pkg.version}`
@@ -65,8 +83,7 @@ module.exports = {
   _getLicenses (configOverride, opts) {
     const projectRoot = counsel.targetProjectRoot
     const DEFAULT_CONFIG = {
-      start: projectRoot,
-      exclude: WHITELIST.join(',')
+      start: projectRoot
     }
     const config = Object.assign(DEFAULT_CONFIG, { production: true }, configOverride)
     return checker.init(config)
@@ -75,9 +92,13 @@ module.exports = {
 
   _handleGetLicensesCheck (pkgs, opts, ripcord) {
     const pkg = counsel.targetProjectPackageJson
+    for (let name in pkgs) {
+      if (this._hasWhitelistedLicense(pkgs[name])) delete pkgs[name]
+    }
     if (!Object.keys(pkgs).length) return
     const errMsg = `${pkg.name} has unapproved licenses`
     const rptText = opts.csv ? this._reportToCSV(pkgs) : JSON.stringify(pkgs, null, 2)
+    delete pkg.licenses
     if (opts.output) {
       this._writeReport(Object.assign(
         { txt: rptText, basename: 'license-check', ripcord },
@@ -89,6 +110,11 @@ module.exports = {
     }
     if (opts.throwOnFail) throw new Error(errMsg)
     process.exit(1)
+  },
+
+  _hasWhitelistedLicense (pkg) {
+    if (!pkg.licenses || !pkg.licenses.length) return false
+    return pkg.licenses.some(lic => WHITELIST.some(wLic => lic.match(wLic)))
   },
 
   /**

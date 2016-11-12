@@ -292,7 +292,8 @@
       "processId": "${command.PickProcess}",
       "port": 5858,
       "sourceMaps": false,
-      "outDir": null
+      "outDir": null,
+      "stopOnEntry": false
     }
   ]
 }
