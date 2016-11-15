@@ -142,6 +142,7 @@ module.exports = {
     return this.getLicenses({ exclude: null }, opts, ripcord)
     .then((pkgs) => {
       if (!Object.keys(pkgs).length) return
+      values(pkgs).forEach(pkg => { delete pkg.licenses })
       const dumpTxt = opts.csv ? this._reportToCSV(pkgs) : JSON.stringify(pkgs, null, 2)
       if (opts.output) {
         this._writeReport(Object.assign(
