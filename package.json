@@ -38,7 +38,7 @@
     "license-checker": "^8.0.0",
     "nock": "^9.0.0",
     "nsp": "^2.6.2",
-    "nyc": "^8.3.0",
+    "nyc": "^9.0.1",
     "perish": "0.0.3",
     "semantic-release": "^4.3.5",
     "sinon": "^1.17.6",
