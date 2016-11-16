@@ -10,7 +10,7 @@
   "dependencies": {
     "chalk": "^1.1.3",
     "commander": "^2.9.0",
-    "counsel": "0.0.18",
+    "counsel": "0.0.19",
     "counsel-copy": "0.0.18",
     "counsel-filename-format": "0.0.18",
     "counsel-precommit": "0.0.19",
