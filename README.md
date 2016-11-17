@@ -4,7 +4,8 @@
 
 project scaffolding and opinion enforcer!
 
-[ ![Codeship Status for cdaringe/ripcord](https://app.codeship.com/projects/8944d7f0-6e6a-0134-4108-3672b74a6b59/status?branch=master)](https://app.codeship.com/projects/177795) ![](https://img.shields.io/badge/standardjs-%E2%9C%93-brightgreen.svg) [![Coverage Status](https://coveralls.io/repos/github/cdaringe/ripcord/badge.svg?branch=master)](https://coveralls.io/github/cdaringe/ripcord?branch=master)
+[ ![Codeship Status for cdaringe/ripcord](https://app.codeship.com/projects/8944d7f0-6e6a-0134-4108-3672b74a6b59/status?branch=master)](https://app.codeship.com/projects/177795) [![Coverage Status](https://coveralls.io/repos/github/cdaringe/ripcord/badge.svg?branch=master)](https://coveralls.io/github/cdaringe/ripcord?branch=master) ![](https://img.shields.io/badge/standardjs-%E2%9C%93-brightgreen.svg) [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
+
 
 ## install
 
@@ -46,7 +47,6 @@ absolutely. :tada:
 - general package validation (on pre-commit)
   - `npm ls` - validate package declaration matches _actual_ package content
   - `ripcord counsel check` - enforce all rules below that implement a `check` method
-    - options: `scriptCommandVariants: [/nsm ls/]`
 
 - security check (on pre-commit)
   - `nsp check` - check pkg deps for vulns
@@ -79,6 +79,8 @@ absolutely. :tada:
   - summarization of the above
   - on pre-commit: `['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure']`
 })
+
+rules can be ignored or overridden per the [counsel-rule docs](https://github.com/cdaringe/counsel/tree/master/packages/counsel-rule).
 
 ## considerations
 
