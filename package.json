@@ -16,7 +16,7 @@
     "counsel-precommit": "0.0.19",
     "counsel-rule": "0.0.20",
     "counsel-script": "0.0.20",
-    "gh-pages": "^0.11.0",
+    "gh-pages": "^0.12.0",
     "jsdoc": "^3.4.2",
     "json2csv": "^3.7.1",
     "license-checker": "^8.0.0",
