@@ -40,7 +40,7 @@
     "nsp": "^2.6.2",
     "nyc": "^8.3.0",
     "perish": "0.0.3",
-    "semantic-release": "^4.3.5",
+    "semantic-release": "^6.3.2",
     "sinon": "^1.17.6",
     "standard": "^8.3.0",
     "tape": "^4.6.2"
