@@ -24,7 +24,7 @@
     "lodash.kebabcase": "^4.1.1",
     "lodash.values": "^4.3.0",
     "minami": "^1.1.1",
-    "perish": "0.0.3",
+    "perish": "1.0.0",
     "pify": "^2.3.0",
     "request": "^2.75.0",
     "requireg": "^0.1.6",
