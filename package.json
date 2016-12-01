@@ -15,7 +15,7 @@
     "counsel-filename-format": "0.0.21",
     "counsel-precommit": "0.0.21",
     "counsel-rule": "0.0.21",
-    "counsel-script": "0.0.10",
+    "counsel-script": "0.0.22",
     "gh-pages": "^0.12.0",
     "jsdoc": "^3.4.2",
     "json2csv": "^3.7.1",
