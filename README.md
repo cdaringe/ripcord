@@ -2,7 +2,7 @@
 
 # ripcord
 
-project scaffolding and opinion enforcer!
+project scaffolding, opinion enforcer, and build tooling!
 
 [ ![Codeship Status for cdaringe/ripcord](https://app.codeship.com/projects/8944d7f0-6e6a-0134-4108-3672b74a6b59/status?branch=master)](https://app.codeship.com/projects/177795) [![Coverage Status](https://coveralls.io/repos/github/cdaringe/ripcord/badge.svg?branch=master)](https://coveralls.io/github/cdaringe/ripcord?branch=master) ![](https://img.shields.io/badge/standardjs-%E2%9C%93-brightgreen.svg) [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
@@ -25,7 +25,9 @@ what rules & opinions does ripcord apply? see [module.exports.rules](https://git
 
 ## usage
 
-- to install `ripcord` rules into to your project, simply install it or update it!
+here are some hypothetical use cases:
+
+- to install `ripcord` rules into to your project, simply install it or update it into your project!
 - to manually apply rules, run `ripcord counsel apply`
 - to check if ripcord's rules are honored, run `ripcord counsel check`
 - to generate a depedency report, run `ripcord report [-o /path/to/report]`
@@ -82,6 +84,34 @@ absolutely. :tada:
 
 rules can be ignored or overridden per the [counsel-rule docs](https://github.com/cdaringe/counsel/tree/master/packages/counsel-rule).
 
+## tooling
+
+### dependency reporting
+
+generate tripwire dependency report.  operates in two modes:
+
+- node/npm project mode
+  - uses your `package.json` depedencies & devDependencies as sole source of external depedencies
+- ui build (e.g. webpack build)
+  - uses ui build compiler output as declaration of which `dependencies` are used, and uses remaining `devDependencies` as source of external devDependencies
+  - see `ripcord report --help` for more info
+
+### rule application and checking
+
+deploy or check  project conventions via counsel. `counsel <apply|check>`
+
+## license checking
+
+check or dump (output) project licenses. only outputs licenses for `dependencies` not `devDependencies` by default.
+
+`licenses [options] <check|dump>`
+
+## npm repo package syncning
+
+sync packages from npm repo to repo. current implementation assumes artifactory API present to successfully copy!
+
+`ripcord sync-packages --help`
+
 ## considerations
 
 - [semantic-release](https://github.com/semantic-release/semantic-release)
@@ -94,6 +124,13 @@ rules can be ignored or overridden per the [counsel-rule docs](https://github.co
   - debug using the built source maps
   - hide .js and .map files from the source tree.
 
+## yarn compatibility
+
+this modules digs deep into your `node_modules`.  hence, consistent structure and content are imperative for reporting and license features to work.  consequently, we recommend only _officially_ using npm, at least for builds.
+
 ## logo
 
 [margdking](https://github.com/margdking)
+
+## todo
+- ui build support for license checking

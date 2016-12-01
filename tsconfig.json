@@ -1,0 +1,10 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es6",
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "removeComments": false
+    },
+    "include": ["src/**/*.ts", "bin/**/*.ts", "test/**/*.ts"]
+}

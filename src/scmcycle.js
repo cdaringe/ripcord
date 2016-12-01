@@ -1,11 +1,6 @@
-'use strict'
-
-// const cp = require('child_process')
-const logger = require('./logger')
-
-module.exports = {
-  run (opts) {
-    logger.warn('not yet implemented!')
-    console.log(process.env)
-  }
+"use strict";
+function run(opts) {
+    console.log('not yet implemented!', process.env);
 }
+exports.run = run;
+//# sourceMappingURL=scmcycle.js.map

@@ -36,4 +36,4 @@ license-check.json
 license-check.csv
 license-dump.json
 license-dump.csv
-*.lock
+*.map
