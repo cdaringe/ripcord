@@ -61,7 +61,7 @@
   "scripts": {
     "install": "node bin/ripcord.js counsel apply",
     "validate": "npm ls && bin/ripcord.js counsel check",
-    "lint": "standard src/*.ts bin/**/*.ts test/**/*.ts",
+    "lint": "tslint -c tslint.json src/**/*.ts bin/**/*.ts test/**/*.ts",
     "test": "tsc && nyc --reporter=lcov node test/",
     "check-coverage": "nyc check-coverage --lines 90 --functions 80 --branches 65",
     "secure": "nsp check",
@@ -77,6 +77,7 @@
   },
   "pre-commit": [
     "tsc",
+    "lint",
     "validate",
     "test",
     "check-coverage",

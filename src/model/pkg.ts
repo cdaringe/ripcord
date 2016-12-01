@@ -36,7 +36,7 @@ export interface IPkgSet {
  * @param {any} pkgs
  * @returns {any} flatSet new set
  */
-export function flattenPkgs ({ pkgs, flatSet, root }) : IPkgSet {
+export function flattenPkgs ({ pkgs, flatSet, root }): IPkgSet {
     flatSet = flatSet || {}
     values(pkgs || []).forEach(pkg => {
       const k = key(pkg)
@@ -51,4 +51,4 @@ export function flattenPkgs ({ pkgs, flatSet, root }) : IPkgSet {
     return flatSet
   }
 
-export function key (pkg : IPkg) { return `${pkg.name};${pkg.version}` }
+export function key (pkg: IPkg) { return `${pkg.name};${pkg.version}` }
