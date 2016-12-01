@@ -12,7 +12,7 @@
     "commander": "^2.9.0",
     "counsel": "0.0.21",
     "counsel-copy": "0.0.21",
-    "counsel-filename-format": "0.0.21",
+    "counsel-filename-format": "0.0.22",
     "counsel-precommit": "0.0.21",
     "counsel-rule": "0.0.21",
     "counsel-script": "0.0.10",
