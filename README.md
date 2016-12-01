@@ -19,7 +19,7 @@ what does `ripcord` _really_ do?
   - what are rules? they are _all sorts of things._ business rules, scripts, or even depedencies!
   - see  [counsel](https://github.com/cdaringe/counsel) for more. ripcord uses counsel to apply scaffolding and enforcement.
 - :lock: enforces those rules, on request.
-- :memo: exposes tooling for report generation!
+- :memo: exposes tooling for report generation! depencency reports, license reports and checking are included.
 
 what rules & opinions does ripcord apply? see [module.exports.rules](https://github.com/cdaringe/ripcord/blob/master/src/index.js), or the below rules section for a high level summarization.
 
@@ -32,7 +32,7 @@ here are some hypothetical use cases:
 - to check if ripcord's rules are honored, run `ripcord counsel check`
 - to generate a depedency report, run `ripcord report [-o /path/to/report]`
 
-pro tip: if you install ripcord globally (`[sudo] npm i -g ripcord`) _and_ have `ripcord` installed locally, you can simply run `ripcord [cmd]` in your project.  `ripcord` will [detect a local copy](https://github.com/cdaringe/ripcord/blob/ebd59305bb27f92febe69f5760f21c2a1bbc21d5/bin/ripcord#L19) and run that version. rad+!
+**pro tip**: if you install ripcord globally (`[sudo] npm i -g ripcord`) _and_ have `ripcord` installed locally, you can simply run `ripcord [cmd]` in your project.  `ripcord` will [detect a local copy](https://github.com/cdaringe/ripcord/blob/ebd59305bb27f92febe69f5760f21c2a1bbc21d5/bin/ripcord#L19) and run that version. rad+!
 
 what else can it do?
 
