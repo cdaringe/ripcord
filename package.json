@@ -41,7 +41,6 @@
     "nock": "^9.0.0",
     "nsp": "^2.6.2",
     "nyc": "^10.0.0",
-    "perish": "0.0.3",
     "semantic-release": "^6.3.2",
     "sinon": "^1.17.6",
     "source-map-support": "^0.4.6",
