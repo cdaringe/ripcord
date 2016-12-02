@@ -1,12 +1,3 @@
 {
-  "eslint.enable": false,
-  "files.exclude": {
-    "**/*.map": true,
-    "src/**/*.js": true,
-    "test/*.js": true,
-    "bin/*.js": true
-  }
-,
-"typescript.tsdk": "./node_modules/typescript/lib",
-"standard.enable": false
+  "eslint.enable": false
 }
