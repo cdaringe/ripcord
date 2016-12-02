@@ -5,53 +5,32 @@
       "name": "test - all",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/test/index.ts",
+      "program": "${workspaceRoot}/test/index.js",
       "cwd": "${workspaceRoot}",
-      "runtimeArgs": [ "--nolazy" ],
-      "env": { "NODE_ENV": "development" },
-      "console": "internalConsole",
-      "sourceMaps": true
-    },
-    {
-      "name": "test - cli",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/test/cli.ts",
-      "cwd": "${workspaceRoot}",
-      "runtimeArgs": [ "--nolazy" ],
-      "env": { "NODE_ENV": "development" },
-      "console": "internalConsole",
-      "sourceMaps": true
-    },
-    {
-      "name": "test - docs",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/test/docs.ts",
-      "cwd": "${workspaceRoot}",
-      "runtimeArgs": [ "--nolazy" ],
-      "env": { "NODE_ENV": "development" },
-      "sourceMaps": true,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
       "console": "internalConsole"
     },
     {
       "name": "test - licenses",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/test/licenses.ts",
+      "program": "${workspaceRoot}/test/licenses.js",
       "cwd": "${workspaceRoot}",
       "runtimeArgs": [ "--nolazy" ],
-      "sourceMaps": true,
       "env": { "NODE_ENV": "development" },
       "console": "internalConsole"
     },
     {
-      "name": "test - report",
+      "name": "test - docs",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/test/report.ts",
+      "program": "${workspaceRoot}/test/docs.js",
       "cwd": "${workspaceRoot}",
-      "sourceMaps": true,
       "runtimeArgs": [ "--nolazy" ],
       "env": { "NODE_ENV": "development" },
       "console": "internalConsole"
@@ -60,7 +39,7 @@
       "name": "test - sync-pkgs",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/test/sync-pkgs.ts",
+      "program": "${workspaceRoot}/test/sync-pkgs.js",
       "stopOnEntry": false,
       "args": [],
       "cwd": "${workspaceRoot}",
@@ -73,213 +52,226 @@
         "NODE_ENV": "development"
       },
       "console": "internalConsole",
-      "sourceMaps": true,
+      "sourceMaps": false,
       "outDir": null
-    },
-    {
-      "name": "test - uideps",
-      "type": "node",
-      "request": "launch",
-      "program": "${workspaceRoot}/test/ui-build.ts",
-      "stopOnEntry": false,
-      "args": [],
-      "cwd": "${workspaceRoot}",
-      "runtimeArgs": [ "--nolazy" ],
-      "env": { "NODE_ENV": "development" },
-      "console": "internalConsole",
-      "sourceMaps": true
     },
     {
       "name": "bogus cmd arg",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/bin/ripcord.ts",
+      "program": "${workspaceRoot}/bin/ripcord",
       "stopOnEntry": false,
       "args": ["blah"],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
       "runtimeExecutable": null,
-      "runtimeArgs": [ "--nolazy" ],
-      "env": { "NODE_ENV": "development" },
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
       "console": "internalConsole",
-      "sourceMaps": true,
+      "sourceMaps": false,
       "outDir": null
     },
     {
       "name": "report - file",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/bin/ripcord.ts",
+      "program": "${workspaceRoot}/bin/ripcord",
       "stopOnEntry": false,
       "args": ["report", "-o", "/tmp/"],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
       "runtimeExecutable": null,
-      "runtimeArgs": [ "--nolazy" ],
-      "env": { "NODE_ENV": "development" },
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
       "console": "internalConsole",
-      "sourceMaps": true,
+      "sourceMaps": false,
       "outDir": null
     },
     {
       "name": "report - stdout",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/bin/ripcord.ts",
+      "program": "${workspaceRoot}/bin/ripcord",
       "stopOnEntry": false,
       "args": ["report"],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
       "runtimeExecutable": null,
-      "runtimeArgs": [ "--nolazy" ],
-      "env": { "NODE_ENV": "development" },
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
       "console": "internalConsole",
-      "sourceMaps": true,
+      "sourceMaps": false,
       "outDir": null
     },
     {
       "name": "counsel - apply",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/bin/ripcord.ts",
+      "program": "${workspaceRoot}/bin/ripcord",
       "stopOnEntry": false,
       "args": ["counsel", "apply"],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
       "runtimeExecutable": null,
-      "runtimeArgs": [ "--nolazy" ],
-      "env": { "NODE_ENV": "development" },
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
       "console": "internalConsole",
-      "sourceMaps": true,
+      "sourceMaps": false,
       "outDir": null
     },
     {
       "name": "license check - dev",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/bin/ripcord.ts",
+      "program": "${workspaceRoot}/bin/ripcord",
       "stopOnEntry": false,
       "args": ["licenses", "check", "--dev", "--force"],
       "cwd": "${workspaceRoot}",
-      "runtimeArgs": [ "--nolazy" ],
-      "console": "internalConsole",
-      "sourceMaps": true
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "console": "internalConsole"
     },
     {
       "name": "license check - force",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/bin/ripcord.ts",
+      "program": "${workspaceRoot}/bin/ripcord",
       "stopOnEntry": false,
       "args": ["licenses", "check", "--force"],
       "cwd": "${workspaceRoot}",
-      "runtimeArgs": [ "--nolazy" ],
-      "console": "internalConsole",
-      "sourceMaps": true
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "console": "internalConsole"
     },
     {
       "name": "license dump",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/bin/ripcord.ts",
+      "program": "${workspaceRoot}/bin/ripcord",
       "stopOnEntry": false,
       "args": ["licenses", "dump"],
       "cwd": "${workspaceRoot}",
-      "runtimeArgs": [ "--nolazy" ],
-      "console": "internalConsole",
-      "sourceMaps": true
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "console": "internalConsole"
     },
     {
       "name": "license dump - csv",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/bin/ripcord.ts",
+      "program": "${workspaceRoot}/bin/ripcord",
       "stopOnEntry": false,
       "args": ["licenses", "dump", "--csv", "--dev"],
       "cwd": "${workspaceRoot}",
-      "runtimeArgs": [ "--nolazy" ],
-      "console": "internalConsole",
-      "sourceMaps": true
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "console": "internalConsole"
     },
     {
       "name": "license dump - csv file",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/bin/ripcord.ts",
+      "program": "${workspaceRoot}/bin/ripcord",
       "stopOnEntry": false,
       "args": ["licenses", "dump", "--csv", "--dev", "-o", "./"],
       "cwd": "${workspaceRoot}",
-      "runtimeArgs": [ "--nolazy" ],
-      "console": "internalConsole",
-      "sourceMaps": true
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "console": "internalConsole"
     },
     {
       "name": "license check - csv file",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/bin/ripcord.ts",
+      "program": "${workspaceRoot}/bin/ripcord",
       "stopOnEntry": false,
       "args": ["licenses", "check", "--force", "--csv", "--output=./"],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
       "runtimeExecutable": null,
-      "runtimeArgs": [ "--nolazy" ],
-      "env": { "NODE_ENV": "development" },
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
       "console": "internalConsole",
-      "outDir": null,
-      "sourceMaps": true
+      "sourceMaps": false,
+      "outDir": null
     },
     {
       "name": "sync-packages (dryRun)",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/bin/ripcord.ts",
+      "program": "${workspaceRoot}/bin/ripcord",
       "stopOnEntry": false,
       "args": ["--log-level=verbose", "sync-packages", "--dry-run"],
       "cwd": "${workspaceRoot}",
       "preLaunchTask": null,
       "runtimeExecutable": null,
-      "runtimeArgs": [ "--nolazy" ],
-      "env": { "NODE_ENV": "development" },
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
       "console": "internalConsole",
-      "outDir": null,
-      "sourceMaps": true
+      "sourceMaps": false,
+      "outDir": null
     },
     {
       "name": "scmcycle",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/bin/ripcord.ts",
+      "program": "${workspaceRoot}/bin/ripcord",
       "args": ["scmcycle"],
       "cwd": "${workspaceRoot}",
       "runtimeArgs": [ "--nolazy" ],
       "env": { "NODE_ENV": "development" },
-      "console": "internalConsole",
-      "sourceMaps": true
+      "console": "internalConsole"
     },
     {
       "name": "docs",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/bin/ripcord.ts",
+      "program": "${workspaceRoot}/bin/ripcord",
       "args": ["docs"],
       "cwd": "${workspaceRoot}",
       "runtimeArgs": [ "--nolazy" ],
       "env": { "NODE_ENV": "development" },
-      "console": "internalConsole",
-      "sourceMaps": true
+      "console": "internalConsole"
     },
     {
       "name": "bogus-cmd",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/bin/ripcord.ts",
+      "program": "${workspaceRoot}/bin/ripcord",
       "args": ["bogus-cmd"],
       "cwd": "${workspaceRoot}",
       "runtimeArgs": [ "--nolazy" ],
       "env": { "NODE_ENV": "development" },
-      "console": "internalConsole",
-      "sourceMaps": true
+      "console": "internalConsole"
     },
     {
       "name": "Attach",
@@ -288,10 +280,10 @@
       "port": 5858,
       "address": "localhost",
       "restart": false,
+      "sourceMaps": false,
       "outDir": null,
       "localRoot": "${workspaceRoot}",
-      "remoteRoot": null,
-      "sourceMaps": true
+      "remoteRoot": null
     },
     {
       "name": "Attach to Process",
@@ -299,9 +291,9 @@
       "request": "attach",
       "processId": "${command.PickProcess}",
       "port": 5858,
+      "sourceMaps": false,
       "outDir": null,
-      "stopOnEntry": false,
-      "sourceMaps": true
+      "stopOnEntry": false
     }
   ]
 }
