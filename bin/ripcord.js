@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
-const path = require("path");
-const post_process_report_1 = require("./post-process-report");
+const path = require('path');
+const post_process_report_1 = require('./post-process-report');
 const perish = require('perish');
 const app = require('../src/app');
 const program = require('commander');

@@ -5,7 +5,7 @@
  */
 "use strict";
 const bb = require('bluebird');
-const get = require('lodash').get;
+const { get, values } = require('lodash');
 const logger = require('./logger');
 const pify = require('pify');
 const npm = require('requireg')('npm');
@@ -152,23 +152,30 @@ module.exports = {
             this._handleGitResolvedPkgs(gitResolved);
         return tagged;
     },
+    _flattenPkgs(rootPkg) {
+        return this._buildFlatDeps({ pkgs: [], pkg: rootPkg, isTopLevel: true });
+    },
     /**
-     * Skip syncing user requested packages
-     * @param {any} pkgs
+     * Skip syncing user requested packages by dropping skipped packages from dep chain
+     * @param {any} rootPkg
      * @param {any} opts
      * @returns {object[]} pkgs
      */
-    _filterPkgs(pkgs, opts) {
-        if (opts.limit)
-            pkgs = pkgs.filter(pkg => opts.limit.indexOf(pkg.name) > -1);
+    _filterPkgs(rootPkg, opts) {
+        // ^ @TODO handle this
         if (!opts.skip)
-            return pkgs;
-        return pkgs.filter(pkg => {
-            const found = opts.skip.indexOf(pkg) > -1;
-            if (found)
-                logger.verbose(`skipping package: ${pkg.name}@${pkg.version}`);
-            return !found;
+            return rootPkg;
+        ['dependencies'].forEach(setKey => {
+            const set = values(rootPkg[setKey]);
+            set.forEach(pkg => {
+                const found = opts.skip.indexOf(pkg.name) > -1;
+                if (found) {
+                    logger.verbose(`skipping package: ${pkg.name}@${pkg.version}`);
+                    delete rootPkg[setKey][pkg.name];
+                }
+            });
         });
+        return rootPkg;
     },
     /**
      * @private
@@ -288,6 +295,11 @@ module.exports = {
             'from a remote repository.'
         ].join(' '));
     },
+    _limitPkgs(pkgs, opts) {
+        if (opts.limit)
+            pkgs = pkgs.filter(pkg => opts.limit.indexOf(pkg.name) > -1);
+        return pkgs;
+    },
     /**
      * @private
      * @description loads npm
@@ -330,7 +342,9 @@ module.exports = {
             .then(this._assertEnv.bind(this))
             .then(this._setLocalsFromEnv.bind(this))
             .then(this._listPackages.bind(this))
-            .then(pkgs => this._filterPkgs(pkgs, opts))
+            .then(rootPkg => this._filterPkgs(rootPkg, opts))
+            .then(this._flattenPkgs.bind(this))
+            .then(pkgs => this._limitPkgs(pkgs, opts))
             .then(pkgs => pkgs.sort((pA, pB) => {
             const a = pA.name.toLowerCase();
             const b = pB.name.toLowerCase();
@@ -445,11 +459,7 @@ module.exports = {
      */
     _listPackages() {
         const ls = pify(npm.commands.ls);
-        return ls(null, true)
-            .then(pkg => {
-            let pkgs = this._buildFlatDeps({ pkgs: [], pkg, isTopLevel: true });
-            return pkgs;
-        });
+        return ls(null, true);
     },
     /**
      * @private

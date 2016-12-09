@@ -2,19 +2,20 @@ import { pkgId } from './app'
 import * as counsel from 'counsel'
 import { writeFile } from 'fs'
 import { spawnSync } from 'child_process'
+const npm = require('requireg')('npm')
 const pify = require('pify')
 const writeFileP = pify(writeFile)
 const logger = require('./logger')
 
 /* istanbul ignore next */
-export function run (opts : any) : Promise<any> {
+export function run (opts: any): Promise<any> {
   const pkg = counsel.targetProjectPackageJson
   const pkgRoot = counsel.targetProjectRoot
   const pkgFilename = counsel.targetProjectPackageJsonFilename
   const pkgNameVersion = `${pkg.name}@${pkg.version}`
 
-  const registryUri = process.env.npm_config_publish_registry
-  if (!registryUri) throw new Error([
+  const publishRegistryUri = npm.config.get('publish_registry')
+  if (!publishRegistryUri) throw new Error([
     'npm config `publish_registry` not found.',
     'please add a `publish_registry` to your .npmrc'
   ].join(' '))
@@ -52,11 +53,11 @@ export function run (opts : any) : Promise<any> {
   .then(() => writeFileP(pkgFilename, JSON.stringify(twIdPkg, null, 2)))
   .then(() => {
     logger.verbose('ripcord executing npm publish')
-    const resp = spawnSync('npm', ['publish', '--verbose'], { cwd: pkgRoot })
+    const resp = spawnSync('npm', ['publish', '--registry', publishRegistryUri, '--verbose'], { cwd: pkgRoot })
     if (resp.status) throw new Error(resp.stderr ? resp.stderr.toString() : 'failed to npm publish')
   })
   .then(restorePkgJson, restorePkgJson)
-  .then(() => logger.info(`${pkgNameVersion} published successfully to ${registryUri}`))
+  .then(() => logger.info(`${pkgNameVersion} published successfully to ${publishRegistryUri}`))
   .catch(err => {
     if (err.message && err.message.match('pre-existing version')) {
       logger.warn(`${pkgNameVersion} already has artifact`)

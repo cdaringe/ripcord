@@ -1,5 +1,5 @@
 "use strict";
-const path = require("path");
+const path = require('path');
 require('perish');
 require('source-map-support').install(); // silly typescript, source-maps are for kids!
 exports.dummyUiBuildProjectDirname = path.join(__dirname, '..', 'dummy-ui-build-project');
