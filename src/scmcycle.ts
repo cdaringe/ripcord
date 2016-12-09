@@ -4,11 +4,16 @@ import { writeFile } from 'fs'
 import { spawnSync } from 'child_process'
 const npm = require('requireg')('npm')
 const pify = require('pify')
+const loadNpm = pify(npm.load)
 const writeFileP = pify(writeFile)
 const logger = require('./logger')
 
 /* istanbul ignore next */
 export function run (opts: any): Promise<any> {
+  return loadNpm().then(_run)
+}
+
+function _run (opts: any): Promise<any> {
   const pkg = counsel.targetProjectPackageJson
   const pkgRoot = counsel.targetProjectRoot
   const pkgFilename = counsel.targetProjectPackageJsonFilename

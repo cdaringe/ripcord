@@ -5,10 +5,15 @@ const fs_1 = require('fs');
 const child_process_1 = require('child_process');
 const npm = require('requireg')('npm');
 const pify = require('pify');
+const loadNpm = pify(npm.load);
 const writeFileP = pify(fs_1.writeFile);
 const logger = require('./logger');
 /* istanbul ignore next */
 function run(opts) {
+    return loadNpm().then(_run);
+}
+exports.run = run;
+function _run(opts) {
     const pkg = counsel.targetProjectPackageJson;
     const pkgRoot = counsel.targetProjectRoot;
     const pkgFilename = counsel.targetProjectPackageJsonFilename;
@@ -64,5 +69,4 @@ function run(opts) {
         throw err;
     });
 }
-exports.run = run;
 //# sourceMappingURL=scmcycle.js.map
