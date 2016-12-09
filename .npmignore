@@ -37,5 +37,4 @@ license-check.csv
 license-dump.json
 license-dump.csv
 *.map
-
 *.ts
