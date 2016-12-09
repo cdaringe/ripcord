@@ -1,5 +1,5 @@
 "use strict";
-const path = require('path');
+const path = require("path");
 const fs = require('fs');
 const PreCommitRule = require('counsel-precommit');
 const ScriptRule = require('counsel-script');

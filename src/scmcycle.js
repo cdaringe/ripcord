@@ -1,8 +1,8 @@
 "use strict";
-const app_1 = require('./app');
-const counsel = require('counsel');
-const fs_1 = require('fs');
-const child_process_1 = require('child_process');
+const app_1 = require("./app");
+const counsel = require("counsel");
+const fs_1 = require("fs");
+const child_process_1 = require("child_process");
 const pify = require('pify');
 const writeFileP = pify(fs_1.writeFile);
 const logger = require('./logger');

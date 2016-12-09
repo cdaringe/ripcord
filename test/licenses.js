@@ -1,6 +1,6 @@
 "use strict";
-const path = require('path');
-const common_1 = require('./util/common');
+const path = require("path");
+const common_1 = require("./util/common");
 const tape = require('tape');
 const sinon = require('sinon');
 const ripcord = require('../');

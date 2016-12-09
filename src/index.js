@@ -3,7 +3,7 @@
  */
 "use strict";
 require('perish');
-const path = require('path');
+const path = require("path");
 const counsel = require('counsel');
 const pkg = require('../package.json');
 const report = require('./report');
