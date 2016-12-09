@@ -36,6 +36,7 @@
     "@semantic-release/condition-codeship": "^1.1.0",
     "@semantic-release/release-notes-generator": "^2.0.0",
     "@types/node": "^6.0.48",
+    "@types/npm": "^2.0.28",
     "coveralls": "^2.11.14",
     "license-checker": "^8.0.0",
     "nock": "^9.0.0",

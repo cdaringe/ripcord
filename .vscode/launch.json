@@ -57,6 +57,26 @@
       "console": "internalConsole"
     },
     {
+      "name": "test - scmcycle",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/test/scmcycle.ts",
+      "stopOnEntry": false,
+      "args": [],
+      "cwd": "${workspaceRoot}",
+      "preLaunchTask": null,
+      "runtimeExecutable": null,
+      "runtimeArgs": [
+        "--nolazy"
+      ],
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "internalConsole",
+      "sourceMaps": true,
+      "outDir": null
+    },
+    {
       "name": "test - sync-pkgs",
       "type": "node",
       "request": "launch",
