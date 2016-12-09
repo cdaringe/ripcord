@@ -1,0 +1,100 @@
+{
+  "name": "ripcord",
+  "version": "0.0.0-semantically-released",
+  "bin": {
+    "ripcord": "bin/ripcord.js"
+  },
+  "main": "src/index.js",
+  "author": "cdaringe",
+  "license": "ISC",
+  "dependencies": {
+    "bluebird": "^3.4.6",
+    "chalk": "^1.1.3",
+    "commander": "^2.9.0",
+    "commander-pojo": "^1.0.1",
+    "counsel": "0.0.23",
+    "counsel-copy": "0.0.23",
+    "counsel-filename-format": "0.0.23",
+    "counsel-precommit": "0.0.23",
+    "counsel-rule": "0.0.23",
+    "counsel-script": "0.0.23",
+    "gh-pages": "^0.12.0",
+    "jsdoc": "^3.4.2",
+    "json2csv": "^3.7.1",
+    "license-checker": "^8.0.0",
+    "lodash": "^4.17.2",
+    "minami": "^1.1.1",
+    "perish": "^1.0.0",
+    "pify": "^2.3.0",
+    "read-pkg-up": "^2.0.0",
+    "request": "^2.75.0",
+    "requireg": "^0.1.6",
+    "resolve-jsdoc-bin": "^1.0.0",
+    "snyk-resolve-deps": "^1.8.0"
+  },
+  "devDependencies": {
+    "@semantic-release/condition-codeship": "^1.1.0",
+    "@semantic-release/release-notes-generator": "^2.0.0",
+    "@types/node": "^6.0.48",
+    "coveralls": "^2.11.14",
+    "license-checker": "^8.0.0",
+    "nock": "^9.0.0",
+    "nsp": "^2.6.2",
+    "nyc": "^10.0.0",
+    "semantic-release": "^6.3.2",
+    "sinon": "^1.17.6",
+    "source-map-support": "^0.4.6",
+    "tape": "^4.6.2",
+    "tslint": "^4.0.2",
+    "tslint-config-standard": "^2.0.0",
+    "typescript": "^2.0.10",
+    "validate-commit-msg": "^2.8.2",
+    "webpack": "^1.13.3"
+  },
+  "description": "project scaffolding and opinion enforcer!",
+  "ripcord": {
+    "devOnly": true,
+    "overrides": {
+      "lint-script": null,
+      "precommit-script": null
+    }
+  },
+  "scripts": {
+    "install": "node bin/ripcord.js counsel apply",
+    "validate": "validate-commit-msg && npm ls && bin/ripcord.js counsel check",
+    "lint": "tslint -c tslint.json src/**/*.ts bin/**/*.ts test/**/*.ts",
+    "test": "tsc && nyc --reporter=lcov node test/",
+    "check-coverage": "nyc check-coverage --lines 90 --functions 80 --branches 65",
+    "secure": "nsp check",
+    "preversion": "git checkout master && git pull && npm run validate",
+    "publish-patch": "npm run preversion && npm version patch && git push origin master --tags && npm publish",
+    "publish-minor": "npm run preversion && npm version minor && git push origin master --tags && npm publish",
+    "publish-major": "npm run preversion && npm version major && git push origin master --tags && npm publish",
+    "check-licenses": "bin/ripcord.js licenses check",
+    "postpublish": "npm run docs",
+    "scmcycle": "node bin/ripcord.js scmcycle",
+    "semantic-release": "semantic-release pre && npm publish && semantic-release post",
+    "docs": "bin/ripcord.js docs",
+    "docs-publish": "bin/ripcord.js docs --publish"
+  },
+  "pre-commit": [
+    "validate",
+    "lint",
+    "tsc",
+    "test",
+    "check-coverage",
+    "check-licenses",
+    "secure",
+    "docs"
+  ],
+  "release": {
+    "generateNotes": "./node_modules/@semantic-release/release-notes-generator",
+    "verifyConditions": [
+      "./node_modules/@semantic-release/condition-codeship"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cdaringe/ripcord.git"
+  }
+}
