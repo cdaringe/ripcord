@@ -1,6 +1,6 @@
 {
   "name": "ripcord",
-  "version": "0.20.0",
+  "version": "0.0.0-semantically-released",
   "bin": {
     "ripcord": "bin/ripcord.js"
   },
