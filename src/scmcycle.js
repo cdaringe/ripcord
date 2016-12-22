@@ -20,7 +20,7 @@ function _run(opts) {
     const pkgFilename = counsel.targetProjectPackageJsonFilename;
     const pkgNameVersion = `${pkg.name}@${pkg.version}`;
     const publishRegistryUri = npm.config.get('publish_registry');
-    const { branch, revision } = process.env.revision;
+    const { branch, revision } = process.env;
     const readyToCycle = validatePrereqs();
     /* istanbul ignore next */
     if (!readyToCycle)

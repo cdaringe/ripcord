@@ -222,7 +222,7 @@ module.exports = {
     const base = npm.config.get('ARTIFACTORY_URI')
     const suffix = this._getScopedPkgLocalUriSuffix(name, version)
     const uri = `${base}/api/storage/${registryName}/${suffix}`
-    logger.verbose(`testing for package "${name}@${version} at ${uri}`)
+    // logger.verbose(`testing for package "${name}@${version} at ${uri}`)
     return get(uri, this._getRequestHeaders())
   },
 
@@ -425,10 +425,14 @@ module.exports = {
     /* istanbul ignore next */
     const handleResponse = ([ targetResponse, cacheResponse ]) => {
       if (cacheResponse.statusCode !== 200) {
-        throw new Error([
+        logger.warn([
           `package not found in cache: ${pkg.name}@${pkg.version},`,
           cacheResponse.request.href
         ].join(' '))
+        logger.post('cache-miss-packages', `${pkg.name}@${pkg.version}`)
+        pkg.status = STATUS_NOT_EXISTS
+        pkg.action = ACTION_SKIP
+        return Promise.resolve()
       }
       if (targetResponse.statusCode === 200) {
         pkg.status = STATUS_EXISTS

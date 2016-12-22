@@ -141,7 +141,7 @@ const logger = {
 }
 
 process.on('exit', code => {
-  if (code) logger.flush()
+  logger.flush()
 })
 
 module.exports = logger
