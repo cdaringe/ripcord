@@ -73,6 +73,27 @@ module.exports = {
 
   /**
    * @private
+   * @description Build set of all dependencies (+devDeps).  Set consists of just package names
+   * @warning set is volatile and modified on each call
+   * @param {object} opts
+   * @param {Set} opts.pkgs set of package names (volatile)
+   * @param {object} opts.pkg parsed package.json
+   * @param {object} opts.isTopLevel top-level package flag
+   * @returns undefined
+   */
+  _buildFlatDeps ({ pkgs, pkg, isTopLevel }) {
+    if (!isTopLevel) pkgs.push(pkg)
+    if (pkg.dependencies) {
+      const dependencies = pkg.dependencies
+      for (const name in dependencies) {
+        this._buildFlatDeps({ pkgs, pkg: dependencies[name] })
+      }
+    }
+    return pkgs
+  },
+
+  /**
+   * @private
    * @description copies package from src to dest repo
    * @param {object} pkg
    * @param {string} pkg.name
@@ -196,12 +217,12 @@ module.exports = {
    * @param {string} version
    * @returns Promise
    */
-  _getDestPackage (name: string, version: string) {
+  _getPackage (name: string, version: string, registryName: string) {
     const get = pify(request)
     const base = npm.config.get('ARTIFACTORY_URI')
-    const registry = npm.config.get('NPM_REGISTRY_DEST')
     const suffix = this._getScopedPkgLocalUriSuffix(name, version)
-    const uri = `${base}/api/storage/${registry}/${suffix}`
+    const uri = `${base}/api/storage/${registryName}/${suffix}`
+    logger.verbose(`testing for package "${name}@${version} at ${uri}`)
     return get(uri, this._getRequestHeaders())
   },
 
@@ -402,21 +423,30 @@ module.exports = {
     }
     if (pkg.action === ACTION_SKIP) return Promise.resolve()
     /* istanbul ignore next */
-    const handleResponse = response => {
-      if (response.statusCode === 200) {
+    const handleResponse = ([ targetResponse, cacheResponse ]) => {
+      if (cacheResponse.statusCode !== 200) {
+        throw new Error([
+          `package not found in cache: ${pkg.name}@${pkg.version},`,
+          cacheResponse.request.href
+        ].join(' '))
+      }
+      if (targetResponse.statusCode === 200) {
         pkg.status = STATUS_EXISTS
         pkg.action = ACTION_SKIP
         return Promise.resolve()
       }
-      if (response.statusCode === 404) {
+      if (targetResponse.statusCode === 404) {
         pkg.action = ACTION_SYNC
         pkg.status = STATUS_NOT_EXISTS
         if (opts.dryRun) return Promise.resolve()
         return this._copyPackage(pkg)
       }
-      throw new Error(`sync-package [${pkg.name}]: unexpected response ${response.statusCode}`)
+      throw new Error(`sync-package [${pkg.name}]: unexpected response ${targetResponse.statusCode}`)
     }
-    return this._getDestPackage(pkg.name, pkg.version)
+    return Promise.all([
+      this._getPackage(pkg.name, pkg.version, npm.config.get('NPM_REGISTRY_DEST')),
+      this._getPackage(pkg.name, pkg.version, npm.config.get('NPM_REGISTRY_SRC_CACHE'))
+    ])
     .then(handleResponse.bind(this))
   },
 
@@ -482,27 +512,6 @@ module.exports = {
   _listPackages () {
     const ls = pify(npm.commands.ls)
     return ls(null, true)
-  },
-
-  /**
-   * @private
-   * @description Build set of all dependencies (+devDeps).  Set consists of just package names
-   * @warning set is volatile and modified on each call
-   * @param {object} opts
-   * @param {Set} opts.pkgs set of package names (volatile)
-   * @param {object} opts.pkg parsed package.json
-   * @param {object} opts.isTopLevel top-level package flag
-   * @returns undefined
-   */
-  _buildFlatDeps ({ pkgs, pkg, isTopLevel }) {
-    if (!isTopLevel) pkgs.push(pkg)
-    if (pkg.dependencies) {
-      const dependencies = pkg.dependencies
-      for (const name in dependencies) {
-        this._buildFlatDeps({ pkgs, pkg: dependencies[name] })
-      }
-    }
-    return pkgs
   }
 
 }
