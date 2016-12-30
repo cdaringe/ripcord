@@ -1,7 +1,8 @@
 import { pkgId } from './app'
 import * as counsel from 'counsel'
-import { IPkg, IPkgSet, flattenPkgs } from './model/pkg'
+import { IPkg, IPkgSet } from './model/pkg'
 import { ISnykPkg, ISnykPkgSet } from './model/snyk-pkg'
+const logger = require('./logger')
 const resolveDeps = require('snyk-resolve-deps')
 const uiBuild = require('./ui-build')
 const _ = require('lodash')
@@ -29,13 +30,13 @@ export function generate (action, opts) {
  */
 export function getDependencies (opts : any) : Promise<IPkgSet> {
   opts = opts || {}
-  const resDepsP = resolveDeps(
-    opts.targetProjectRoot || counsel.targetProjectRoot,
-    {
-      dev: true,
-      extraFields: [pkgId, 'author', 'maintainer', 'maintainers']
-    }
-  )
+  const projectRoot = opts.targetProjectRoot || counsel.targetProjectRoot
+  const licenserConfig = {
+    dev: true,
+    extraFields: [pkgId, 'author', 'maintainer', 'maintainers']
+  }
+  const resDepsP = resolveDeps(projectRoot, licenserConfig)
+  logger.verbose('getting logical dependencies')
   return Promise.resolve(resDepsP)
   .then(rootPkg => {
     handleSnykDepTypeBug({ pkgs: rootPkg.dependencies, root: true })
@@ -134,9 +135,6 @@ export function mapSnykPkgSetToPkgSet (sSet : ISnykPkgSet) : IPkgSet | null {
     else {
       const dSet : IPkgSet = mapSnykPkgSetToPkgSet(sPkg.dependencies)
       // ^^ .dependencies _has_ deps and devDeps
-      if (sPkg['licenses']) {
-        debugger // @TODO trash me!
-      }
       pkg = {
         author: getAuthorOrMaintainers(sPkg),
         from: sPkg.from,

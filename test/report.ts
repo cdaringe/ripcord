@@ -6,7 +6,8 @@ const tape = require('tape')
 const sinon = require('sinon')
 const fs = require('fs')
 const common = require('./util/common')
-const { webpackConfigFilename, dummyUiBuildProjectDirname } = common
+const counsel = require('counsel')
+const { webpackConfigFilename, dummyUiBuildProjectDirname, linkWebpack, unlinkWebpack } = common
 
 tape('report - node/lib', t => {
   t.plan(3)
@@ -29,6 +30,9 @@ tape('report - web-build', t => {
   const stub = sinon.stub(uiBuild, 'hasUiBuild', () => true)
   // ^^ flag that we have webpack even though we haven't installed it in the test
   // project.  it will be imported for build from our root project!
+  linkWebpack()
+  const prevRoot = counsel.targetProjectRoot
+  counsel.targetProjectRoot = dummyUiBuildProjectDirname
   Promise.resolve()
   .then(() => ripcord.report())
   .catch(err => t.ok(err.message.match('no config'), 'fails web build without web config'))
@@ -38,6 +42,8 @@ tape('report - web-build', t => {
   )
   .then(report => {
     stub.restore()
+    unlinkWebpack()
+    counsel.targetProjectRoot = prevRoot
     t.ok(report.configurations.compile['dummy-pkg;0.0.1'], 'web build report included webpack injected scripts')
     t.notOk(report.configurations.testCompile['unused-dep;0.0.1'], 'web build drops unused dep')
     t.end()

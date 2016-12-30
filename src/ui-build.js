@@ -21,14 +21,16 @@ module.exports = {
      */
     applyWebBuildTransform(pkgs, opts) {
         opts = opts || {};
-        const hasUiBuild = this.hasUiBuild(pkgs, opts);
+        const flatPkgs = pkg_1.flattenPkgs({ pkgs, flatSet: null, root: true });
+        const hasUiBuild = this.hasUiBuild(flatPkgs, opts);
         if (!hasUiBuild)
             return Promise.resolve(pkgs);
         return this.getWebpackDeps(opts)
             .then(wpDeps => {
-            const flatPkgs = pkg_1.flattenPkgs({ pkgs, flatSet: null, root: true });
-            values(flatPkgs).forEach(pkg => pkg.production = false); // production is flagged by ui built pkgs _only_
-            const flatPkgsByKey = keyBy(values(flatPkgs), pkg_1.key); // our critical set!
+            logger.verbose('transforming native build to web-build');
+            const flatPkgValues = values(flatPkgs);
+            flatPkgValues.forEach(pkg => pkg.production = false); // production is flagged by ui built pkgs _only_
+            const flatPkgsByKey = keyBy(flatPkgValues, pkg_1.key); // our critical set!
             const wpDepsByKey = keyBy(wpDeps, pkg_1.key);
             // mark all included deps as production
             for (let wpKey in wpDepsByKey) {
@@ -39,7 +41,7 @@ module.exports = {
                 }
             }
             // remove production dependencies that were _not_ bundled
-            const flatProdPkgsByKey = keyBy(values(flatPkgs).filter(p => p.production), pkg_1.key);
+            const flatProdPkgsByKey = keyBy(flatPkgValues.filter(p => p.production), pkg_1.key);
             for (let prodKey in flatProdPkgsByKey) {
                 let prdPkg = flatProdPkgsByKey[prodKey];
                 delete flatPkgsByKey[prodKey].dependencies; // all deps now how an explicity entry, so don't nest
@@ -94,8 +96,8 @@ module.exports = {
      * @returns {Promise} Promise<object>
      */
     getWebpackDeps(opts) {
-        let configFilename;
-        let config;
+        let configFilename = null;
+        let config = null;
         opts = opts || {};
         if (!opts.webpackConfig) {
             throw new Error([
@@ -110,7 +112,7 @@ module.exports = {
             : path.resolve(process.cwd(), opts.webpackConfig);
         config = this._getBabelConfig(configFilename);
         return this._getWebpackedNodeModules({
-            webpackDir: path.dirname(configFilename),
+            webpackDir: counsel.targetProjectRoot,
             webpackConfig: config
         });
     },
@@ -122,11 +124,10 @@ module.exports = {
      * @returns {Promise} resolves to { requestedFilename: string, package: { ... } }
      */
     _getUpstreamPackageJsons(filenames) {
-        const bundledRequestAndPkg = (filename) => {
-            // const cwd = path.join(filename, 'dummydir')
+        const bundledRequestAndPkg = function (filename) {
             return readPkgUp({ cwd: filename })
-                .then(r => {
-                return { request: filename, pkg: r.pkg, pkgJsonFilename: r.path };
+                .then(function extraPackageJsons(res) {
+                return { request: filename, pkg: res.pkg, pkgJsonFilename: res.path };
             });
         };
         return bb.map(filenames, bundledRequestAndPkg, { concurrency: 20 });
@@ -142,7 +143,7 @@ module.exports = {
         const wp = require(webpackPath); // naughty daddy...
         const wpJsonProfileConfig = Object.assign(webpackConfig, { profile: true, json: true });
         // ^^ --json & --profile config options enable easy parsing of bundled packages
-        logger.verbose('...compiling webpack project');
+        logger.verbose('compiling webpack project');
         return pify(wp)(wpJsonProfileConfig)
             .then(stats => this._wpStatsToPkgMeta({ stats, webpackDir, webpackPath }))
             .then(pkgReqs => this._wpPkgMetaToBundleSet(pkgReqs))
@@ -158,6 +159,13 @@ module.exports = {
                     'environment variables specified'
                 ].join(' '));
             }
+            console.error([
+                'a webpack compile time error has occurred.',
+                'webpack plugins may occasionally throw non-Error instances, and',
+                'something other than an Error has been thrown.  apologies that we cannot',
+                'provide any more helpful information.'
+            ].join(' '));
+            throw err;
         });
     },
     /**
@@ -187,7 +195,13 @@ module.exports = {
      */
     hasUiBuild(pkgs, opts) {
         const hasUIBuildConfig = !!(opts.webpackConfig || opts.someOtherUiBuildToolConfig);
-        const hasUIBuildTool = !!(pkgs['webpack'] || pkgs['someOtherUiBuildTool']); // @TODO. inputs come as { webpack: ... } and { 'wepback@0.x': ... }
+        let hasUIBuildTool = false;
+        for (let pkgName in pkgs) {
+            if (pkgName.match(/webpack/) || pkgName.match(/someOtherUiBuildTool/)) {
+                hasUIBuildTool = true;
+                break;
+            }
+        }
         if (opts.uiBuild === false)
             return false;
         if (hasUIBuildTool) {

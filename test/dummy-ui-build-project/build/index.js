@@ -55,9 +55,10 @@
 
 	const dummyPkgFn = __webpack_require__(2)
 	const dummyPkgUsedDepFn = __webpack_require__(4)
-	const beep = __webpack_require__(5)
+	const dummyPkgUsedTwice = __webpack_require__(5)
+	const beep = __webpack_require__(6)
 
-	console.log(dummyPkgFn(), dummyPkgUsedDepFn(), ("production"), beep.bop())
+	console.log(dummyPkgFn(), dummyPkgUsedDepFn(), dummyPkgUsedTwice(), ("production"), beep.bop())
 
 
 /***/ },
@@ -82,15 +83,26 @@
 
 /***/ },
 /* 4 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
+	const dummyPkgUsedTwice = __webpack_require__(5)
 	module.exports = function () {
+	  dummyPkgUsedTwice()
 	  console.log('dummy-pkg-used-dep-0.0.2')
 	}
 
 
 /***/ },
 /* 5 */
+/***/ function(module, exports) {
+
+	module.exports = function () {
+	  console.log('dummy-pkg-used-twice')
+	}
+
+
+/***/ },
+/* 6 */
 /***/ function(module, exports) {
 
 	module.exports = {

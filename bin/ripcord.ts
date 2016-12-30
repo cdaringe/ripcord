@@ -3,9 +3,9 @@
 'use strict'
 
 import * as path from 'path'
-import postProcessReport from './post-process-report'
 const perish = require('perish')
 const app = require('../src/app')
+import postProcessReport from './post-process-report'
 const program = require('commander')
 const pkgPath = path.resolve(__dirname, '../package.json')
 const pkg = require(pkgPath)

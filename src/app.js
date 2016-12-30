@@ -1,4 +1,8 @@
 "use strict";
+require('perish');
+Error.stackTraceLimit = 100;
+const bb = require('bluebird');
+bb.config({ longStackTraces: true });
 exports.logLevel = 'info';
 exports.pkgId = [
     't',

@@ -458,7 +458,10 @@ module.exports = {
         logger.verbose(`sync concurrency set to ${concurrency}`);
         logger.progressMode = true;
         return bb.map(pkgs, (pkg, ndx) => {
-            logger.verbose(`${opts.dryRun ? '[dry-run]' : ''} syncing package (${pkgs.length - ndx}/${pkgs.length}): ${pkg.name}`);
+            logger.verbose([
+                `${opts.dryRun ? '[dry-run]' : ''}`,
+                `syncing package (${pkgs.length - ndx}/${pkgs.length}): ${pkg.name}`
+            ].join(' '));
             return this._syncPackage(pkg, opts);
         }, { concurrency })
             .then(() => {

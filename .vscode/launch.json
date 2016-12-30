@@ -35,15 +35,13 @@
       "console": "internalConsole"
     },
     {
-      "name": "test - licenses",
       "type": "node",
       "request": "launch",
+      "name": "test - licenses",
       "program": "${workspaceRoot}/test/licenses.ts",
-      "cwd": "${workspaceRoot}",
-      "runtimeArgs": [ "--nolazy" ],
       "sourceMaps": true,
       "env": { "NODE_ENV": "development" },
-      "console": "internalConsole"
+      "cwd": "${workspaceRoot}"
     },
     {
       "name": "test - report",
@@ -302,25 +300,17 @@
       "sourceMaps": true
     },
     {
-      "name": "Attach",
       "type": "node",
       "request": "attach",
+      "name": "Attach to Port - 5858",
       "port": 5858,
-      "address": "localhost",
-      "restart": false,
-      "outDir": null,
-      "localRoot": "${workspaceRoot}",
-      "remoteRoot": null,
       "sourceMaps": true
     },
     {
-      "name": "Attach to Process",
-      "type": "node",
+      "type": "node2",
       "request": "attach",
-      "processId": "${command.PickProcess}",
-      "port": 5858,
-      "outDir": null,
-      "stopOnEntry": false,
+      "name": "Attach to Port - 9229",
+      "port": 9229,
       "sourceMaps": true
     }
   ]

@@ -2,8 +2,8 @@
  * @module ripcord
  */
 "use strict";
-require('perish');
 const path = require('path');
+require('./app');
 const counsel = require('counsel');
 const pkg = require('../package.json');
 const report = require('./report');

@@ -1,6 +1,7 @@
 "use strict";
 const app_1 = require('./app');
 const counsel = require('counsel');
+const logger = require('./logger');
 const resolveDeps = require('snyk-resolve-deps');
 const uiBuild = require('./ui-build');
 const _ = require('lodash');
@@ -28,10 +29,13 @@ exports.generate = generate;
  */
 function getDependencies(opts) {
     opts = opts || {};
-    const resDepsP = resolveDeps(opts.targetProjectRoot || counsel.targetProjectRoot, {
+    const projectRoot = opts.targetProjectRoot || counsel.targetProjectRoot;
+    const licenserConfig = {
         dev: true,
         extraFields: [app_1.pkgId, 'author', 'maintainer', 'maintainers']
-    });
+    };
+    const resDepsP = resolveDeps(projectRoot, licenserConfig);
+    logger.verbose('getting logical dependencies');
     return Promise.resolve(resDepsP)
         .then(rootPkg => {
         handleSnykDepTypeBug({ pkgs: rootPkg.dependencies, root: true });
@@ -138,9 +142,6 @@ function mapSnykPkgSetToPkgSet(sSet) {
         else {
             const dSet = mapSnykPkgSetToPkgSet(sPkg.dependencies);
             // ^^ .dependencies _has_ deps and devDeps
-            if (sPkg['licenses']) {
-                debugger; // @TODO trash me!
-            }
             pkg = {
                 author: getAuthorOrMaintainers(sPkg),
                 from: sPkg.from,

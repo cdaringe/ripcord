@@ -1,0 +1,9 @@
+author,from,name,production,tripwireId,requestedVersion,version,license1,isStub,license
+,dummy-pkg@0.0.0>dummy-pkg-used-twice@2.0.0; dummy-pkg@0.0.0>dummy-pkg-used-dep@0.0.2>dummy-pkg-used-twice@2.0.0,dummy-pkg-used-twice,true,,^2.0.0 (dummy-pkg-used-dep@0.0.2); 2.0.0 (dummy-pkg@0.0.0),2.0.0,UNKNOWN,,
+,dummy-pkg@0.0.0>dummy-pkg-used-dep@0.0.2,dummy-pkg-used-dep,true,,0.0.2 (dummy-pkg@0.0.0),0.0.2,UNKNOWN,,
+,dummy-pkg@0.0.0>unused-pkg@0.0.1,unused-pkg,false,,0.0.1 (dummy-pkg@0.0.0),0.0.1,UNKNOWN,,
+,dummy-pkg@0.0.0>dummy-pkg@0.0.1,dummy-pkg,true,,0.0.1 (dummy-pkg@0.0.0),0.0.1,UNKNOWN,,
+,dummy-pkg@0.0.0>dummy-pkg@0.0.1>dummy-pkg-unused-dep@0.0.1,dummy-pkg-unused-dep,false,,0.0.1 (dummy-pkg@0.0.1),0.0.1,UNKNOWN,,
+,dummy-pkg@0.0.0>dummy-pkg@0.0.1>dummy-pkg-used-dep@0.0.1,dummy-pkg-used-dep,true,,0.0.1 (dummy-pkg@0.0.1),0.0.1,UNKNOWN,,
+,dummy-pkg@0.0.0>dummy-build-pkg@0.0.2,dummy-build-pkg,false,,0.0.2 (dummy-pkg@0.0.0),0.0.2,UNKNOWN,,
+sokra,root@0.0.0>test@0.0.0,webpack,false,,^1.14.0 (root@0.0.0),1.14.1,MIT,true,MIT

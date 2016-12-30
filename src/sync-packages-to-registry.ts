@@ -474,7 +474,10 @@ module.exports = {
     return bb.map(
       pkgs,
       (pkg, ndx) => {
-        logger.verbose(`${opts.dryRun ? '[dry-run]' : ''} syncing package (${pkgs.length - ndx}/${pkgs.length}): ${pkg.name}`)
+        logger.verbose([
+          `${opts.dryRun ? '[dry-run]' : ''}`,
+          `syncing package (${pkgs.length - ndx}/${pkgs.length}): ${pkg.name}`
+        ].join(' '))
         return this._syncPackage(pkg, opts)
       },
       { concurrency }

@@ -26,6 +26,7 @@ module.exports = {
     _appendDevPackages(prdPkgs, opts) {
         // if (!opts.dev) return prdPkgs
         const devOverride = Object.assign(opts, { production: false, development: true });
+        logger.verbose('scraping devevelopment license metadata');
         return this._getLicenses(devOverride)
             .then(devPkgs => Object.assign(devPkgs, prdPkgs));
     },
@@ -61,58 +62,27 @@ module.exports = {
         return pkgs;
     },
     /**
-     * license-checker returns strings or arrays for licenses.  obnoxious. tidy it!
-     * @private
-     * @param {object[]} pkgs
-     * @returns object[] pkgs
-     */
-    _cleanLicenseCheckerOutput(pkgs) {
-        for (let name in pkgs) {
-            let pkg = pkgs[name];
-            pkg.licenses = Array.isArray(pkg.licenses) ? pkg.licenses : [pkg.licenses];
+   * check target project for valid licenses.
+   * on invalid licenses, generate a report
+   * @param {object} opts
+   * @param {string} opts.output filename, dirname (relative or absolute)
+   * @param {string} opts.webpackConfig filename, webpack config
+   * @param {boolean} opts.csv output file in csv mode (otherwise json)
+   * @param {boolean} opts.throwOnFail throws, vs process.exit(1) on fail. hook for testing.
+   * @param {module} ripcord
+   * @returns Promise
+   */
+    check(opts, ripcord) {
+        opts = opts || {};
+        const pkg = counsel.targetProjectPackageJson;
+        const isDevOnly = !!get(pkg, `${counsel.configKey}.devOnly`);
+        /* istanbul ignore next */
+        if (isDevOnly && !opts.force) {
+            logger.info('devOnly, waiving license check');
+            return Promise.resolve();
         }
-        return pkgs;
-    },
-    /**
-     * Get dependency set
-     * @param {any} opts
-     * @param {any} ripcord
-     * @returns {object} pkgs : IPkgSet
-     */
-    getLicenses(opts, ripcord) {
-        opts = opts || {};
-        const isUiBuild = opts.uiBuild;
-        opts.uiBuild = false;
-        // ^ get deps _first_ sans web transform. after we merge our license info into
-        // our package tree, then webtransform
-        const licensePkgsP = this._getLicenses(opts) // @TODO, tidy API.  take opts.licenseOpts or something, not the app level opts
-            .then(prdPkgs => this._appendDevPackages(prdPkgs, opts))
-            .then(pkgs => this._cleanLicenseCheckerOutput(pkgs));
-        opts.retainUnused = true;
-        return Promise.all([licensePkgsP, report.getDependencies(opts)])
-            .then(([lPkgs, pkgs]) => {
-            opts.uiBuild = isUiBuild;
-            return this._mergeLicensesToPkgSet(lPkgs, pkgs);
-        })
-            .then(pkgs => uiBuild.applyWebBuildTransform(pkgs, opts));
-    },
-    _getLicenses(opts) {
-        opts = opts || {};
-        const projectRoot = opts.targetProjectRoot || counsel.targetProjectRoot;
-        const DEFAULT_CONFIG = {
-            start: projectRoot
-        };
-        const config = Object.assign(DEFAULT_CONFIG, { production: true }, opts);
-        return Promise.all([
-            checker.init(config),
-            readJSON(path.join(projectRoot, 'package.json'))
-        ])
-            .then(([pkgs, pkgJSON]) => {
-            // filter out current package
-            delete pkgs[`${pkgJSON.name}@${pkgJSON.version}`];
-            return pkgs;
-        })
-            .then(pkgs => this._appendFields({ pkgs, production: !!config.production }));
+        return this.getLicenses(opts, ripcord)
+            .then(pkgs => this._checkLicenses(pkgs, opts, ripcord));
     },
     _checkLicenses(pkgs, opts, ripcord) {
         const pkg = counsel.targetProjectPackageJson;
@@ -142,63 +112,18 @@ module.exports = {
         /* istanbul ignore next */
         process.exit(1);
     },
-    _hasWhitelistedLicense(pkg) {
-        if (!pkg.licenses || !pkg.licenses.length)
-            return false;
-        return pkg.licenses.some(lic => {
-            return WHITELIST.some(wLic => {
-                return lic.match(wLic);
-            });
-        });
-    },
     /**
-     * apply license checker metadata into our standard dependency report dependency
-     * set (IPkgSet)
-     * @param {any} lPkgs license package set
-     * @param {IPkgSet} pkgs
-     * @returns {IPkgSet}
+     * license-checker returns strings or arrays for licenses.  obnoxious. tidy it!
+     * @private
+     * @param {object[]} pkgs
+     * @returns object[] pkgs
      */
-    _mergeLicensesToPkgSet(lPkgs, pkgs) {
-        const flatPkgs = pkg_1.flattenPkgs({ pkgs, flatSet: null, root: true });
-        const keyedLPkgs = keyBy(lPkgs, lPkg => pkg_1.key(lPkg));
-        for (let lKey in keyedLPkgs) {
-            let pkg = flatPkgs[lKey];
-            /* istanbul ignore next */
-            if (!flatPkgs[lKey]) {
-                throw new Error([
-                    `unable to to find ${lKey} in pkg deps.`,
-                    'this is known to happen if manual adjustments have been made to your',
-                    'node_modules directory or if a non-npm package manager has been',
-                    'used, such as yarn'
-                ].join(' '));
-            }
-            Object.assign(pkg, keyedLPkgs[lKey]);
-            delete pkg.license; // in favor of .license1, ..., .licenseN + .licenses
+    _cleanLicenseCheckerOutput(pkgs) {
+        for (let name in pkgs) {
+            let pkg = pkgs[name];
+            pkg.licenses = Array.isArray(pkg.licenses) ? pkg.licenses : [pkg.licenses];
         }
         return pkgs;
-    },
-    /**
-     * check target project for valid licenses.
-     * on invalid licenses, generate a report
-     * @param {object} opts
-     * @param {string} opts.output filename, dirname (relative or absolute)
-     * @param {string} opts.webpackConfig filename, webpack config
-     * @param {boolean} opts.csv output file in csv mode (otherwise json)
-     * @param {boolean} opts.throwOnFail throws, vs process.exit(1) on fail. hook for testing.
-     * @param {module} ripcord
-     * @returns Promise
-     */
-    check(opts, ripcord) {
-        opts = opts || {};
-        const pkg = counsel.targetProjectPackageJson;
-        const isDevOnly = !!get(pkg, `${counsel.configKey}.devOnly`);
-        /* istanbul ignore next */
-        if (isDevOnly && !opts.force) {
-            logger.info('devOnly, waiving license check');
-            return Promise.resolve();
-        }
-        return this.getLicenses(opts, ripcord)
-            .then(pkgs => this._checkLicenses(pkgs, opts, ripcord));
     },
     dump(opts, ripcord) {
         opts = opts || {};
@@ -217,7 +142,94 @@ module.exports = {
             else {
                 logger.info(dumpTxt); // stream report to stderr
             }
+            return dumpTxt;
         });
+    },
+    /**
+     * Get dependency set
+     * @param {any} opts
+     * @param {any} ripcord
+     * @returns {object} pkgs : IPkgSet
+     */
+    getLicenses(opts, ripcord) {
+        opts = opts || {};
+        const isUiBuild = opts.uiBuild;
+        opts.uiBuild = false;
+        logger.verbose('scraping production license metadata');
+        // ^ get deps _first_ sans web transform. after we merge our license info into
+        // our package tree, then webtransform
+        const licensePkgsP = this._getLicenses(opts) // @TODO, tidy API.  take opts.licenseOpts or something, not the app level opts
+            .then(prdPkgs => this._appendDevPackages(prdPkgs, opts))
+            .then(pkgs => this._cleanLicenseCheckerOutput(pkgs));
+        opts.retainUnused = true;
+        return Promise.all([licensePkgsP, report.getDependencies(opts)])
+            .then(([lPkgs, pkgs]) => {
+            opts.uiBuild = isUiBuild;
+            return this._mergeLicensesToPkgSet(lPkgs, pkgs, opts);
+        })
+            .then(pkgs => uiBuild.applyWebBuildTransform(pkgs, opts));
+    },
+    _getLicenses(opts) {
+        opts = opts || {};
+        const projectRoot = opts.targetProjectRoot || counsel.targetProjectRoot;
+        const DEFAULT_CONFIG = {
+            start: projectRoot
+        };
+        const config = Object.assign(DEFAULT_CONFIG, { production: true }, opts);
+        return Promise.all([
+            checker.init(config),
+            readJSON(path.join(projectRoot, 'package.json'))
+        ])
+            .then(([pkgs, pkgJSON]) => {
+            // filter out current package
+            delete pkgs[`${pkgJSON.name}@${pkgJSON.version}`];
+            return pkgs;
+        })
+            .then(pkgs => this._appendFields({ pkgs, production: !!config.production }));
+    },
+    _hasWhitelistedLicense(pkg) {
+        if (!pkg.licenses || !pkg.licenses.length)
+            return false;
+        return pkg.licenses.some(lic => {
+            return WHITELIST.some(wLic => {
+                return lic.match(wLic);
+            });
+        });
+    },
+    /**
+     * apply license checker metadata into our standard dependency report dependency
+     * set (IPkgSet)
+     * @param {any} lPkgs license package set
+     * @param {IPkgSet} pkgs
+     * @returns {IPkgSet}
+     */
+    _mergeLicensesToPkgSet(lPkgs, pkgs, opts) {
+        logger.verbose('combining license dependency report and logical dependency report');
+        const flatPkgs = pkg_1.flattenPkgs({ pkgs, flatSet: null, root: true });
+        const keyedLPkgs = keyBy(lPkgs, lPkg => pkg_1.key(lPkg));
+        for (let lKey in keyedLPkgs) {
+            const lPkg = keyedLPkgs[lKey];
+            const pkg = flatPkgs[lKey];
+            /* istanbul ignore next */
+            if (!pkg) {
+                if (!opts._ignoreNonLogicalDependenices) {
+                    throw new Error([
+                        `unable to to find ${lKey} in pkg deps.`,
+                        'this is known to happen if manual adjustments have been made to your',
+                        'node_modules directory or if a non-npm package manager has been',
+                        'used, such as yarn'
+                    ].join(' '));
+                }
+                else {
+                    console.warn(`skipping merging of license & logical pkg: ${lPkg.name}`);
+                }
+            }
+            else {
+                Object.assign(pkg, lPkg);
+                delete pkg.license; // in favor of .license1, ..., .licenseN + .licenses
+            }
+        }
+        return pkgs;
     },
     _reportToCSV(pkgs) {
         for (let name in pkgs) {

@@ -2,8 +2,8 @@
  * @module ripcord
  */
 
-require('perish')
 import * as path from 'path'
+require('./app')
 const counsel = require('counsel')
 const pkg = require('../package.json')
 const report = require('./report')
