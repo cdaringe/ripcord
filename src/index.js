@@ -13,6 +13,15 @@ const scmcycle = require('./scmcycle');
 const syncPackages = require('./sync-packages-to-registry');
 const licenses = require('./licenses');
 const docs = require('./docs');
+let isGlobal = false;
+let projectRoot = null;
+try {
+    projectRoot = counsel.project.findProjectRoot();
+}
+catch (err) {
+    // nasty woman! naughty/sloppy error check.
+    isGlobal = true;
+}
 // counsel init
 counsel.configKey = pkg.name;
 counsel.setTargetPackageMeta();
@@ -22,9 +31,15 @@ module.exports = {
      */
     _counsel: counsel,
     /**
+     * @property {boolean} isGlobal flag whether ripcord is running as a global pkg
+     * or not.  determined purely whether or not we found a package manifest
+     * up the file heirarchy.
+     */
+    isGlobal: isGlobal,
+    /**
      * @property {string} projectRoot full path of target project
      */
-    projectRoot: counsel.project.findProjectRoot(),
+    projectRoot: projectRoot,
     /**
      * @property {module} logger
      */
