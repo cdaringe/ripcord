@@ -74,8 +74,11 @@ module.exports = {
      * @returns undefined
      */
     _buildFlatDeps({ pkgs, pkg, isTopLevel }) {
-        if (pkg.missing)
-            throw new Error('missing package detected. please npm install and retry');
+        if (pkg.missing && pkg.optional)
+            return pkgs;
+        if (pkg.missing) {
+            throw new Error(`missing package detected: ${pkg.name}@${pkg.version}. please npm install and retry`);
+        }
         if (!pkg.name)
             throw new Error('unable to identify package name. please purge node_modules and reinstall ');
         if (!isTopLevel)
