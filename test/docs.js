@@ -1,5 +1,5 @@
 "use strict";
-const path = require('path');
+const path = require("path");
 const ripcord = require('../'); // include to bootstrap ripcord constants
 const tape = require('tape');
 const docs = require('../src/docs');

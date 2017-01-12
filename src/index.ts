@@ -26,7 +26,7 @@ try {
 counsel.configKey = pkg.name
 counsel.setTargetPackageMeta()
 
-export default {
+module.exports = {
   /**
    * @property {Counsel} counsel counsel instance
    */

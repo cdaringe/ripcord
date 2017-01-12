@@ -1,8 +1,8 @@
 "use strict";
-const app_1 = require('./app');
-const counsel = require('counsel');
-const fs_1 = require('fs');
-const child_process_1 = require('child_process');
+const app_1 = require("./app");
+const counsel = require("counsel");
+const fs_1 = require("fs");
+const child_process_1 = require("child_process");
 const npm = require('requireg')('npm');
 const pify = require('pify');
 const loadNpm = pify(npm.load);

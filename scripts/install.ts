@@ -1,7 +1,7 @@
 import * as cp from 'child_process'
 import { resolve } from 'path'
 import { project } from 'counsel'
-import ripcord from '../src/index'
+const ripcord = require('../src/index')
 
 Promise.resolve()
 .then(() => project.findProjectRoot(resolve(__dirname, '..', '..')))

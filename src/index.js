@@ -2,7 +2,7 @@
  * @module ripcord
  */
 "use strict";
-const path = require('path');
+const path = require("path");
 require('./app');
 const counsel = require('counsel');
 const pkg = require('../package.json');
@@ -25,8 +25,7 @@ catch (err) {
 // counsel init
 counsel.configKey = pkg.name;
 counsel.setTargetPackageMeta();
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = {
+module.exports = {
     /**
      * @property {Counsel} counsel counsel instance
      */

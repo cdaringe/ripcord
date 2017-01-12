@@ -1,5 +1,5 @@
 "use strict";
-const assert = require('assert');
+const assert = require("assert");
 const common = require('./util/common');
 const tape = require('tape');
 const uiBuild = require('../src/ui-build');

@@ -1,7 +1,7 @@
 "use strict";
-const counsel = require('counsel');
-const pkg_1 = require('./model/pkg');
-const path = require('path');
+const counsel = require("counsel");
+const pkg_1 = require("./model/pkg");
+const path = require("path");
 const pify = require('pify');
 const checker = pify(require('license-checker'));
 const logger = require('./logger');
