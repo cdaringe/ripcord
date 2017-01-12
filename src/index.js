@@ -25,7 +25,8 @@ catch (err) {
 // counsel init
 counsel.configKey = pkg.name;
 counsel.setTargetPackageMeta();
-module.exports = {
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = {
     /**
      * @property {Counsel} counsel counsel instance
      */

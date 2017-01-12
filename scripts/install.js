@@ -1,8 +1,7 @@
 "use strict";
-const cp = require('child_process');
 const path_1 = require('path');
 const counsel_1 = require('counsel');
-const exec = pify(cp.exec);
+const index_1 = require('../src/index');
 Promise.resolve()
     .then(() => counsel_1.project.findProjectRoot(path_1.resolve(__dirname, '..', '..')))
     .catch(err => {
@@ -12,6 +11,9 @@ Promise.resolve()
     ].join(' '));
     process.exit(0);
 })
-    .then(() => exec('node bin/ripcord.js counsel apply', { cwd: path_1.resolve(__dirname, '..') }))
-    .then(() => console.log('[ripcord] install success'));
+    .then(() => {
+    index_1.default.logger.setLogLevel('verbose');
+    return index_1.default.counsel('apply', null);
+})
+    .then(() => index_1.default._counsel.logger.info('install success'));
 //# sourceMappingURL=install.js.map

@@ -26,7 +26,7 @@ try {
 counsel.configKey = pkg.name
 counsel.setTargetPackageMeta()
 
-module.exports = {
+export default {
   /**
    * @property {Counsel} counsel counsel instance
    */
@@ -60,7 +60,7 @@ module.exports = {
    * @param {Commander} opts
    * @returns {Promise}
    */
-  counsel (action, opts) {
+  counsel (action: string, opts: any) {
     /* istanbul ignore next */
     if (action === 'apply') {
       return counsel.apply(this.rules)

@@ -2,6 +2,7 @@ const chalk = require('chalk');
 const readline = require('readline');
 const fs = require('fs');
 const path = require('path');
+const counsel = require('counsel');
 /* istanbul ignore next */
 const logger = {
     /**
@@ -43,6 +44,7 @@ const logger = {
         }
         const levels = ['error', 'warn', 'info', 'verbose', 'debug'];
         this._logLevel = levels.indexOf(level);
+        counsel.logger.level = level;
         if (this._logLevel === -1) {
             throw new Error([
                 `could not find matching log level for: ${level}.`,

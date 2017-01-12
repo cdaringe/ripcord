@@ -1,7 +1,7 @@
 import * as cp from 'child_process'
 import { resolve } from 'path'
 import { project } from 'counsel'
-const exec = pify(cp.exec)
+import ripcord from '../src/index'
 
 Promise.resolve()
 .then(() => project.findProjectRoot(resolve(__dirname, '..', '..')))
@@ -12,5 +12,8 @@ Promise.resolve()
   ].join(' '))
   process.exit(0)
 })
-.then(() => exec('node bin/ripcord.js counsel apply', { cwd: resolve(__dirname, '..') }))
-.then(() => console.log('[ripcord] install success'))
+.then(() => {
+  ripcord.logger.setLogLevel('verbose')
+  return ripcord.counsel('apply', null)
+})
+.then(() => ripcord._counsel.logger.info('install success'))
