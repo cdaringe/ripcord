@@ -15,7 +15,7 @@
     "counsel": "0.0.28",
     "counsel-copy": "0.0.23",
     "counsel-filename-format": "0.0.23",
-    "counsel-precommit": "0.0.24",
+    "counsel-precommit": "0.0.28",
     "counsel-rule": "0.0.23",
     "counsel-script": "0.0.28",
     "gh-pages": "^0.12.0",
