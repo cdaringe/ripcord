@@ -28,7 +28,6 @@ module.exports = {
      * @private
      */
     _envKeys: [
-        '_auth',
         'ARTIFACTORY_URI',
         'NPM_REGISTRY_DEST',
         'NPM_REGISTRY_SRC',
