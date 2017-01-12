@@ -13,7 +13,7 @@
     "commander": "^2.9.0",
     "commander-pojo": "^1.0.1",
     "counsel": "0.0.28",
-    "counsel-copy": "0.0.23",
+    "counsel-copy": "0.0.26",
     "counsel-filename-format": "0.0.23",
     "counsel-precommit": "0.0.24",
     "counsel-rule": "0.0.23",
