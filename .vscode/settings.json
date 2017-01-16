@@ -4,7 +4,8 @@
     "**/*.map": true,
     "src/**/*.js": true,
     "test/*.js": true,
-    "bin/*.js": true
+    "bin/*.js": true,
+    "scripts/*.js": true
   }
 ,
 "typescript.tsdk": "./node_modules/typescript/lib",
