@@ -75,7 +75,7 @@ noCITest('sync - full sync, mocked backend', t => {
     const realSyncPackage = sync._syncPackage;
     const syncPkgStub = sinon.stub(sync, '_syncPackage', (pkg) => {
         pkg.artifactoryTarball = 'bananas/-/bananas@0.0.1.tgz';
-        pkg._resolved = `http://www.fake.com/artifactory/bananas@0.0.1.tgz/${pkg.artifactoryTarball}`;
+        pkg._resolved = `${ARTIFACTORY_URI}/bananas@0.0.1.tgz/${pkg.artifactoryTarball}`;
         pkg.action = 'ACTION_SYNC';
         return realSyncPackage.call(sync, pkg);
     });
