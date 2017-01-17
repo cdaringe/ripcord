@@ -2,7 +2,7 @@
  * @module ripcord
  */
 "use strict";
-const path = require("path");
+const path = require('path');
 require('./app');
 const counsel = require('counsel');
 const pkg = require('../package.json');
@@ -13,33 +13,19 @@ const scmcycle = require('./scmcycle');
 const syncPackages = require('./sync-packages-to-registry');
 const licenses = require('./licenses');
 const docs = require('./docs');
-let isGlobal = false;
-let projectRoot = null;
-try {
-    projectRoot = counsel.project.findProjectRoot();
-}
-catch (err) {
-    // nasty woman! naughty/sloppy error check.
-    isGlobal = true;
-}
 // counsel init
 counsel.configKey = pkg.name;
-counsel.setTargetPackageMeta();
+if (!process.env.RIPCORD_INSTALL) {
+    // permit install process to determine if we are running in global mode or not
+    // before attempting to source target package metadata.
+    // it will init counsel on its own!
+    counsel.setTargetPackageMeta();
+}
 module.exports = {
     /**
      * @property {Counsel} counsel counsel instance
      */
     _counsel: counsel,
-    /**
-     * @property {boolean} isGlobal flag whether ripcord is running as a global pkg
-     * or not.  determined purely whether or not we found a package manifest
-     * up the file heirarchy.
-     */
-    isGlobal: isGlobal,
-    /**
-     * @property {string} projectRoot full path of target project
-     */
-    projectRoot: projectRoot,
     /**
      * @property {module} logger
      */

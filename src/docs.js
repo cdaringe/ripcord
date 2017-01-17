@@ -4,7 +4,7 @@
  * @private
  */
 "use strict";
-const path = require("path");
+const path = require('path');
 const cp = require('child_process');
 const ghpages = require('gh-pages');
 const rmdir = (path) => { try {

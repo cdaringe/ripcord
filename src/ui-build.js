@@ -1,5 +1,5 @@
 "use strict";
-const pkg_1 = require("./model/pkg");
+const pkg_1 = require('./model/pkg');
 const path = require('path');
 const pify = require('pify');
 const { uniqBy, values, keyBy, set, forEach } = require('lodash');
