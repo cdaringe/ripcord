@@ -79,10 +79,10 @@ noCITest('sync - dry', t => {
   }, t.end)
 })
 
-noCITest('sync - fo real', t => {
+noCITest('sync - full sync, mocked backend', t => {
   setupNpmConfig()
-  nock(`${ARTIFACTORY_URI}/api/storage/${NPM_REGISTRY_DEST}`).get(/.*/).times(2000).reply(404, {})
-  nock(`${ARTIFACTORY_URI}/api/copy/${NPM_REGISTRY_SRC_CACHE}`).post(/.*/).times(2000).reply(200, {})
+  nock(`${ARTIFACTORY_URI}/api/storage/${NPM_REGISTRY_DEST}`).get(/.*/).times(5000).reply(404, {})
+  nock(`${ARTIFACTORY_URI}/api/copy/${NPM_REGISTRY_SRC_CACHE}`).post(/.*/).times(5000).reply(200, {})
   t.plan(2)
   const realSyncPackage = sync._syncPackage
   const syncPkgStub = sinon.stub(sync, '_syncPackage', (pkg) => {
