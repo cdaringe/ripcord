@@ -13,15 +13,7 @@ const scmcycle = require('./scmcycle');
 const syncPackages = require('./sync-packages-to-registry');
 const licenses = require('./licenses');
 const docs = require('./docs');
-// counsel init
-counsel.configKey = pkg.name;
-if (!process.env.RIPCORD_INSTALL) {
-    // permit install process to determine if we are running in global mode or not
-    // before attempting to source target package metadata.
-    // it will init counsel on its own!
-    counsel.setTargetPackageMeta();
-}
-module.exports = {
+const ripcord = {
     /**
      * @property {Counsel} counsel counsel instance
      */
@@ -71,6 +63,25 @@ module.exports = {
         let dest = path.isAbsolute(outputPath) ? outputPath : path.resolve(process.cwd(), outputPath);
         return counsel.project.isDir(dest) ? path.join(dest, defaultBasename) : dest;
     },
+    _initCounsel() {
+        counsel.configKey = pkg.name;
+        if (process.env.RIPCORD_INSTALL)
+            return;
+        // permit install process to determine if we are running in global mode or not
+        // before attempting to source target package metadata.
+        // it will init counsel on its own!
+        try {
+            counsel.setTargetPackageMeta();
+        }
+        catch (err) {
+            if (err.code === 'ENOPKG') {
+                counsel.logger.warn('no project package.json found. running in package free mode');
+            }
+            else {
+                throw err;
+            }
+        }
+    },
     /**
      * check or dump project licenses
      * @param {string} action 'check' or 'dump'
@@ -109,4 +120,6 @@ module.exports = {
         return syncPackages.sync(opts);
     }
 };
+ripcord._initCounsel();
+module.exports = ripcord;
 //# sourceMappingURL=index.js.map
