@@ -4,7 +4,7 @@ const pify = require('pify')
 const { uniqBy, values, keyBy, set, forEach } = require('lodash')
 const readPkgUp = require('read-pkg-up')
 const bb = require('bluebird')
-const logger = require('./logger')
+import logger from './logger'
 const counsel = require('counsel')
 
 module.exports = {

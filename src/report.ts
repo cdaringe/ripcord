@@ -2,7 +2,7 @@ import { pkgId } from './app'
 import * as counsel from 'counsel'
 import { IPkg, IPkgSet } from './model/pkg'
 import { ISnykPkg, ISnykPkgSet } from './model/snyk-pkg'
-const logger = require('./logger')
+import logger from './logger'
 const resolveDeps = require('snyk-resolve-deps')
 const uiBuild = require('./ui-build')
 const _ = require('lodash')

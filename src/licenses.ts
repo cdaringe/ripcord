@@ -4,7 +4,7 @@ import * as uiBU from './ui-build'
 import * as path from 'path'
 const pify = require('pify')
 const checker = pify(require('license-checker'))
-const logger = require('./logger')
+import logger from './logger'
 const fs = require('fs')
 const json2csv = require('json2csv')
 const _ = require('lodash')

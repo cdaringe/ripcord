@@ -7,7 +7,7 @@ const npm = require('requireg')('npm');
 const pify = require('pify');
 const loadNpm = pify(npm.load);
 const writeFileP = pify(fs_1.writeFile);
-const logger = require('./logger');
+const logger_1 = require('./logger');
 /* istanbul ignore next */
 function run(opts) {
     return loadNpm().then(_run);
@@ -32,12 +32,12 @@ function _run(opts) {
         .then(() => writeFileP(pkgFilename, JSON.stringify(twIdPkg, null, 2)))
         .then(() => publish(publishRegistryUri, pkgRoot))
         .then(() => restorePkgJson(null, pkg, pkgFilename), err => restorePkgJson(err, pkg, pkgFilename))
-        .then(() => logger.info(`${pkgNameVersion} published successfully to ${publishRegistryUri}`))
+        .then(() => logger_1.default.info(`${pkgNameVersion} published successfully to ${publishRegistryUri}`))
         .catch(err => handleFail(err, pkgNameVersion));
 }
 /* istanbul ignore next */
 function generateDependencyReport(pkgRoot) {
-    logger.verbose('generating dependency report');
+    logger_1.default.verbose('generating dependency report');
     const resp = child_process_1.spawnSync('npm', ['run', 'report'], { cwd: pkgRoot });
     if (resp.status)
         throw new Error(resp.stderr ? resp.stderr.toString() : 'failed to generate report');
@@ -46,7 +46,7 @@ exports.generateDependencyReport = generateDependencyReport;
 /* istanbul ignore next */
 function handleFail(err, pkgNameVersion) {
     if (err.message && err.message.match('pre-existing version')) {
-        logger.warn(`${pkgNameVersion} already has artifact`);
+        logger_1.default.warn(`${pkgNameVersion} already has artifact`);
         return;
     }
     throw err;
@@ -61,7 +61,7 @@ function npmTest(pkgRoot) {
 exports.npmTest = npmTest;
 /* istanbul ignore next */
 function publish(publishRegistryUri, pkgRoot) {
-    logger.verbose('ripcord executing npm publish');
+    logger_1.default.verbose('ripcord executing npm publish');
     const resp = child_process_1.spawnSync('npm', ['publish', '--registry', publishRegistryUri, '--verbose'], { cwd: pkgRoot });
     if (resp.status)
         throw new Error(resp.stderr ? resp.stderr.toString() : 'failed to npm publish');
@@ -98,7 +98,7 @@ function validatePrereqs() {
         branch = branch.replace('refs/heads/', '');
     /* istanbul ignore next */
     if (branch !== 'master') {
-        logger.info(`skipping publish. branch ${branch} !== 'master'`);
+        logger_1.default.info(`skipping publish. branch ${branch} !== 'master'`);
         return false;
     }
     return true;

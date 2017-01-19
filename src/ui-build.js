@@ -5,7 +5,7 @@ const pify = require('pify');
 const { uniqBy, values, keyBy, set, forEach } = require('lodash');
 const readPkgUp = require('read-pkg-up');
 const bb = require('bluebird');
-const logger = require('./logger');
+const logger_1 = require('./logger');
 const counsel = require('counsel');
 module.exports = {
     /**
@@ -27,7 +27,7 @@ module.exports = {
             return Promise.resolve(pkgs);
         return this.getWebpackDeps(opts)
             .then(wpDeps => {
-            logger.verbose('transforming native build to web-build');
+            logger_1.default.verbose('transforming native build to web-build');
             const flatPkgValues = values(flatPkgs);
             flatPkgValues.forEach(pkg => pkg.production = false); // production is flagged by ui built pkgs _only_
             const flatPkgsByKey = keyBy(flatPkgValues, pkg_1.key); // our critical set!
@@ -71,16 +71,16 @@ module.exports = {
         }
         catch (err) {
             if (err instanceof Error && err.message.match('Unexpected token import')) {
-                logger.warn('es6 webpack config found. attempting babel-register');
+                logger_1.default.warn('es6 webpack config found. attempting babel-register');
                 try {
                     require('babel-register');
                     return require(configFilename);
                 }
                 catch (err) {
                     if (err instanceof Error && err.message.match('Cannot find')) {
-                        logger.warn('...babel-register not found');
+                        logger_1.default.warn('...babel-register not found');
                         const coreRegister = path.join(counsel.targetProjectRoot, 'node_modules', 'babel-core', 'register.js');
-                        logger.warn('...attempting babel-core/register', coreRegister);
+                        logger_1.default.warn('...attempting babel-core/register', coreRegister);
                         require(coreRegister);
                         return require(configFilename);
                     }
@@ -143,7 +143,7 @@ module.exports = {
         const wp = require(webpackPath); // naughty daddy...
         const wpJsonProfileConfig = Object.assign(webpackConfig, { profile: true, json: true });
         // ^^ --json & --profile config options enable easy parsing of bundled packages
-        logger.verbose('compiling webpack project');
+        logger_1.default.verbose('compiling webpack project');
         return pify(wp)(wpJsonProfileConfig)
             .then(stats => this._wpStatsToPkgMeta({ stats, webpackDir, webpackPath }))
             .then(pkgReqs => this._wpPkgMetaToBundleSet(pkgReqs))

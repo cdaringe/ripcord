@@ -7,7 +7,7 @@ require('./app')
 const counsel = require('counsel')
 const pkg = require('../package.json')
 const report = require('./report')
-const logger = require('./logger')
+import logger from './logger'
 const rules = require('./rules')
 const scmcycle = require('./scmcycle')
 const syncPackages = require('./sync-packages-to-registry')

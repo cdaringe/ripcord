@@ -1,9 +1,9 @@
 "use strict";
+const logger_1 = require('../src/logger');
 const tape = require('tape');
 const sinon = require('sinon');
 const sync = require('../src/sync-packages-to-registry');
 const npm = require('requireg')('npm');
-const logger = require('../src/logger');
 const nock = require('nock');
 const ARTIFACTORY_URI = 'http://www.bogus.com/artifactory';
 const NPM_REGISTRY_SRC = 'src';
@@ -35,7 +35,7 @@ function noCITest(name, cb) {
 }
 noCITest('setup', t => {
     t.plan(1);
-    logger.setLogLevel('silent');
+    logger_1.default.setLogLevel('silent');
     return sync._loadNpm()
         .then(() => t.pass('sync setup'))
         .catch(t.fail)

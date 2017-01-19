@@ -6,9 +6,10 @@
 
 import * as path from 'path'
 import { IPkg } from './model/pkg'
+import * as depUtil from './dep-util'
+import logger from './logger'
 const bb = require('bluebird')
 const { get, values } = require('lodash')
-const logger = require('./logger')
 const pify = require('pify')
 const npm = require('requireg')('npm')
 const request = require('request')
@@ -19,7 +20,9 @@ const STATUS_INVALID_RESOLVE_GIT = 'STATUS_INVALID_RESOLVE_GIT'
 const STATUS_INVALID_RESOLVE_URI = 'STATUS_INVALID_RESOLVE_URI'
 const ACTION_SKIP = 'ACTION_SKIP'
 const ACTION_SYNC = 'ACTION_SYNC'
-
+const NPM_RESOLVED_KEY = 'npm-resolved'
+const NO_URL_RESOLVED_KEY = 'no-url-resolved'
+const GIT_RESOLVED_KEY = 'git-resolved'
 
 module.exports = {
   /**
@@ -78,14 +81,20 @@ module.exports = {
    * @param {Set} opts.pkgs set of package names (volatile)
    * @param {object} opts.pkg parsed package.json
    * @param {object} opts.isTopLevel top-level package flag
-   * @returns undefined
+   * @returns {array} set of packages
    */
   _buildFlatDeps ({ pkgs, pkg, isTopLevel }) {
     if (pkg.missing && pkg.optional) return pkgs
     if (pkg.missing) {
-      throw new Error(`missing package detected: ${pkg.name}@${pkg.version}. please npm install and retry`)
+      throw new Error([
+        `missing package detected: ${pkg.name}@${pkg.version}. this can`,
+        'generally confirmed by running `npm ls`/`yarn list`.',
+        'please tidy your dependencies'
+      ].join(' '))
     }
-    if (!pkg.name) throw new Error('unable to identify package name. please purge node_modules and reinstall ')
+    if (!pkg.name) {
+      throw new Error('unable to identify package name. please purge node_modules and reinstall')
+    }
     if (!isTopLevel) pkgs.push(pkg)
     if (pkg.dependencies) {
       const dependencies = pkg.dependencies
@@ -105,15 +114,15 @@ module.exports = {
    */
   _copyPackage (pkg) {
     /* istanbul ignore next */
-    if (!pkg.artifactoryTarball) {
+    if (!pkg.tarballBasename) {
       throw new ReferenceError('`.tarball` field missing. unable to copy pkg')
     }
     const copyUri = [
       npm.config.get('ARTIFACTORY_URI'),
       'api/copy',
       npm.config.get('NPM_REGISTRY_SRC_CACHE'),
-      `${pkg.artifactoryTarball}?to=/${this._destRepoName}`,
-      pkg.artifactoryTarball
+      `${pkg.tarballBasename}?to=/${this._destRepoName}`,
+      pkg.tarballBasename
     ].join('/')
     const post = pify(request.post)
     return post(copyUri, this._getRequestHeaders())
@@ -138,53 +147,36 @@ module.exports = {
     const srcReg = npm.config.get('NPM_REGISTRY_SRC')
     const artifactoryUri = `${base}/api/npm/${srcReg}`
     const npmRegistrySrcUri = 'https://registry.npmjs.org'
-    const unresolved = []
-    const gitResolved = []
     const pkgsByKey = {}
     const tagged = pkgs.filter((pkg, ndx) => {
-      const resolvedUri = get(pkg, 'dist.tarball') || ''
-      const isResolvedArtifactory = !!resolvedUri.match(artifactoryUri)
+      const resolvedUri = get(pkg, 'dist.tarball') || pkg.resolved // dist.tarball from npm package.jsons, resolved from yarn.lock
+      const isResolvedArtifactory = !!resolvedUri.match(/artifactory/)
       const isResolvedNPM = !!resolvedUri.match(/registry\.npmjs\.org/)
       const isResolvedGithub = !!resolvedUri.match(/github.com/)
 
       /* istanbul ignore next */
       if (isResolvedNPM) {
-        logger.post('npm-resolved', `${pkg.name}@${pkg.version}`)
-        logger.warn([
-          `package resolved from npmjs.org: ${pkg.name}. will attempt to find`,
-          'and copy it from artifactory. brace for impact 💣'
-        ].join(' '))
+        logger.post(NPM_RESOLVED_KEY, `${pkg.name}@${pkg.version}`)
       } else if (!isResolvedArtifactory) {
         if (isResolvedGithub) {
-          gitResolved.push(pkg)
+          logger.post(GIT_RESOLVED_KEY, `${pkg.name}@${pkg.version}`)
           pkg.action = ACTION_SKIP
           pkg.status = STATUS_INVALID_RESOLVE_GIT
         } else {
-          logger.warn([
-            `package not resolved from artifactory or github: ${pkg.name}`,
-            resolvedUri || 'NO_URI_AVAILABLE'
-          ].join(', '))
+          logger.post(NO_URL_RESOLVED_KEY, `${pkg.name}@${pkg.version}`)
           pkg.action = ACTION_SKIP
           pkg.status = STATUS_INVALID_RESOLVE_URI
-          unresolved.push(pkg)
         }
         return true
       }
 
-      pkg.artifactoryTarball = isResolvedNPM
-        ? pkg.dist.tarball.substring(npmRegistrySrcUri.length + 1)
-        : pkg.dist.tarball.substring(artifactoryUri.length + 1)
+      pkg.tarballBasename = resolvedUri.match(/-\/(.*\.tgz)/)[1]
 
       // handle collisions
-      const existing = !!pkgsByKey[pkg.artifactoryTarball]
+      const existing = !!pkgsByKey[pkg.tarballBasename]
       return !existing
     })
-
-    /* istanbul ignore next */
-    if (unresolved.length) this._handleUnresolvedPkgs(unresolved)
-    /* istanbul ignore next */
-    if (gitResolved.length) this._handleGitResolvedPkgs(gitResolved)
-
+    this._warnForBadlyResolvedPackages()
     return tagged
   },
 
@@ -199,7 +191,6 @@ module.exports = {
    * @returns {object[]} pkgs
    */
   _filterPkgs (rootPkg, opts): any {
-    // ^ @TODO handle this
     if (!opts.skip) return rootPkg
     ;['dependencies'].forEach(setKey => {
       const set = values(rootPkg[setKey])
@@ -295,48 +286,6 @@ module.exports = {
       : set.map(fn).join('')
   },
 
-  /**
-   * @private
-   * @descrition handle case where packages are resolving from git
-   * @param {object[]} pkgs
-   */
-  _handleGitResolvedPkgs (pkgs) {
-    /* istanbul ignore next */
-    const names = pkgs.map(p => p.name)
-    /* istanbul ignore next */
-    let pkgSetText = this.setToText({ set: names, limit: 10, fn: name => `\t${name}\n` })
-
-    /* istanbul ignore next */
-    logger.error([
-      `attempted to resolve for syncing:\n${pkgSetText}`,
-      '\n\n🚧',
-      'although npm can resolve git project packages, we have no means to',
-      'copy a package tarball from git to npm.  please roll your git dep into a',
-      'valid npm package. alternatively, add a `--skip-git-deps` flag to this',
-      'project if you would like to proceed knowing the dependency will not',
-      'be copied. 🚧'
-    ].join(' '))
-    /* istanbul ignore next */
-    process.exit(1)
-  },
-
-  /**
-   * @private
-   * @descrition handle case where packages have no resolve url
-   * @param {object[]} pkgs
-   */
-  _handleUnresolvedPkgs (pkgs) {
-    const names = pkgs.map(p => p.name)
-    let pkgSetText = names.length > 10
-      ? `${names.slice(0, 10).join(', ')}...[${names.length - 10} more]`
-      : names.join(', ')
-    logger.warn([
-      `packages ${pkgSetText} will not be synced.`,
-      `${pkgs.length === 1 ? 'it was' : 'they were'} not resolved`,
-      'from a remote repository.'
-    ].join(' '))
-  },
-
   _limitPkgs (pkgs: Array<IPkg>, opts: any): Array<IPkg> {
     if (opts.limit) pkgs = pkgs.filter(pkg => opts.limit.indexOf(pkg.name) > -1)
     return pkgs
@@ -350,6 +299,24 @@ module.exports = {
   _loadNpm () {
     return pify(npm.load)({ progress: false, silent: true })
     // ^^ silent does not silence progress, https://github.com/npm/npm/issues/14413
+  },
+
+  /**
+   * Loads a set of flat dependencies using iff a flat dependency set is not
+   * already provided from a lockfile
+   * @param {array<Pkg>} flatLockfileDeps lockfile/shrinkwrap deps
+   * @param {object} [opts]
+   * @returns {Promise} flatPkgs
+   */
+  _maybeLoadDependencies (flatLockfileDeps, opts) {
+    if (flatLockfileDeps) {
+      logger.verbose('using dependency set from lockfile')
+      return Promise.resolve(values(flatLockfileDeps))
+    }
+    return Promise.resolve()
+    .then(this._listPackages.bind(this))
+    .then(rootPkg => this._filterPkgs(rootPkg, opts))
+    .then(this._flattenPkgs.bind(this))
   },
 
   /**
@@ -384,9 +351,8 @@ module.exports = {
     return this._loadNpm()
     .then(this._assertEnv.bind(this))
     .then(this._setLocalsFromEnv.bind(this))
-    .then(this._listPackages.bind(this))
-    .then(rootPkg => this._filterPkgs(rootPkg, opts))
-    .then(this._flattenPkgs.bind(this))
+    .then(depUtil.tryLoadLockfile.bind(depUtil))
+    .then(pkgs => this._maybeLoadDependencies(pkgs, opts))
     .then(pkgs => this._limitPkgs(pkgs, opts))
     .then(pkgs => pkgs.sort((pA, pB) => {
       const a = pA.name.toLowerCase()
@@ -411,7 +377,7 @@ module.exports = {
    * @param {boolean} opts.dryRun
    * @returns Promise
    */
-  _syncPackage (pkg: IPkg, opts) {
+  _syncPackage (pkg: IPkg, opts): Promise<any> {
     opts = opts || {}
     /* istanbul ignore next */
     if (!pkg || !pkg.name) {
@@ -468,7 +434,7 @@ module.exports = {
    * @param {boolean} opts.dryRun
    * @returns Promise resolves when all packages synced
    */
-  _syncPackages (pkgs, opts) {
+  _syncPackages (pkgs, opts): Promise<any> {
     opts = opts || {}
     const concurrency = opts.concurrency || 8
     logger.verbose(`sync concurrency set to ${concurrency}`)
@@ -496,12 +462,13 @@ module.exports = {
    * @param {*} response
    * @param {*} pkg
    */
-  _throwResponseError (response: any, pkg: any, copyUri: string) {
+  _throwResponseError (response: any, pkg: any, copyUri: string): void {
     logger.progressMode = false
     console.log('\n')
     const body = JSON.parse(response.body)
     if (pkg.name.match('@')) {
-      return logger.error(`unable to copy scoped packages due to artifactory bug: ${pkg.name}`)
+      logger.error(`unable to copy scoped packages due to artifactory bug: ${pkg.name}`)
+      return
     }
     throw new Error([
       `sync-package [${pkg.name}]: failed to copy ${copyUri}.\n`,
@@ -520,9 +487,38 @@ module.exports = {
    * @description npm ls call. get all package deps
    * @returns Promise
    */
-  _listPackages () {
+  _listPackages (): Promise<any> {
     const ls = pify(npm.commands.ls)
     return ls(null, true)
+  },
+
+  _warnForBadlyResolvedPackages (): void {
+    const posts = logger.getPosts()
+    const npmResolved = posts[NPM_RESOLVED_KEY]
+    const notResolved = posts[NO_URL_RESOLVED_KEY]
+    const gitResolved = posts[GIT_RESOLVED_KEY]
+    if (npmResolved && npmResolved.length) {
+      logger.requestFlush()
+      logger.warn([
+        `${npmResolved.length} packages resolved from npmjs.org. will attempt to find`,
+        `and copy them from artifactory. see the ${NPM_RESOLVED_KEY} in ripcord.log`
+      ].join(' '))
+    }
+    if (notResolved && notResolved.length) {
+      logger.requestFlush()
+      logger.warn([
+        `${notResolved.length} packages have no source/resolved URL. do you have any`,
+        'pacakges `npm link`ed? will attempt to find and copy them from',
+        `artifactory. see the ${NO_URL_RESOLVED_KEY} in ripcord.log`
+      ].join(' '))
+    }
+    if (gitResolved && gitResolved.length) {
+      logger.requestFlush()
+      logger.warn([
+        `${gitResolved.length} packages are sourced from github/gitlab.`,
+        `these packages will be skipped. see the ${GIT_RESOLVED_KEY} in ripcord.log`
+      ].join(' '))
+    }
   }
 
 }

@@ -6,7 +6,7 @@ const npm = require('requireg')('npm')
 const pify = require('pify')
 const loadNpm = pify(npm.load)
 const writeFileP = pify(writeFile)
-const logger = require('./logger')
+import logger from './logger'
 
 /* istanbul ignore next */
 export function run (opts: any): Promise<any> {

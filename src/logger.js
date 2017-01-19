@@ -1,24 +1,22 @@
+"use strict";
 const chalk = require('chalk');
 const readline = require('readline');
 const fs = require('fs');
 const path = require('path');
 const counsel = require('counsel');
+let flushRequested = true;
+/**
+ * @module logger
+ * @description provide colorified console-only logging interface
+ */
 /* istanbul ignore next */
-const logger = {
-    /**
-     * tid bits of helpful debug info to be logged to file. _
-     * @private
-     */
-    _posts: {},
-    _history: [],
-    _logLevel: 2,
-    /**
-     * @property progressMode
-     * @type boolean
-     * @description all stdout writes will clear current line and write back into
-     * it. toggle it ad-hoc to use for a progress bar.
-     */
-    progressMode: false,
+class Logger {
+    constructor() {
+        this._posts = {};
+        this._history = [];
+        this._logLevel = 2;
+        this.progressMode = false;
+    }
     /**
      * post a value to a key'd post
      * @param {string} k
@@ -29,10 +27,16 @@ const logger = {
         const set = this._posts[k] = this._posts[k] ? this._posts[k] : [];
         set.push(v);
         return set.length;
-    },
+    }
+    /**
+     * Write history and post messages to ripcord.log
+     */
     flush() {
         fs.writeFileSync(path.join(process.cwd(), 'ripcord.log'), JSON.stringify({ history: this._history, posts: this._posts }, null, 2));
-    },
+    }
+    getPosts() {
+        return this._posts;
+    }
     /**
      * set the log level, using npm world-style log levels
      * @param {string} level ['error', 'warn', 'info', 'verbose', 'debug']
@@ -51,7 +55,7 @@ const logger = {
                 `valid levels: ${levels.join(', ')}`
             ].join(' '));
         }
-    },
+    }
     /**
      * @param {...any} args
      * @returns undefined
@@ -60,7 +64,7 @@ const logger = {
         if (this._logLevel === 0)
             return;
         this._log('stderr', chalk.bold.red, ...args);
-    },
+    }
     /**
      * @param {...any} args
      * @returns undefined
@@ -69,7 +73,7 @@ const logger = {
         if (this._logLevel < 1)
             return;
         this._log('stdout', chalk.yellow, ...args);
-    },
+    }
     /**
      * @param {...any} args
      * @returns undefined
@@ -78,7 +82,7 @@ const logger = {
         if (this._logLevel < 2)
             return;
         this._log('stdout', chalk.blue, ...args);
-    },
+    }
     /**
      * @param {...any} args
      * @returns undefined
@@ -87,7 +91,7 @@ const logger = {
         if (this._logLevel < 3)
             return;
         this._log('stdout', chalk.bold.cyan, ...args);
-    },
+    }
     /**
      * @param {...any} args
      * @returns undefined
@@ -96,7 +100,7 @@ const logger = {
         if (this._logLevel < 3)
             return;
         this._log('stdout', chalk.bold.cyan, ...args);
-    },
+    }
     /**
      * @private
      */
@@ -120,9 +124,19 @@ const logger = {
         }
         console.log.apply(console, [...args].map(msg => colorFn(msg)));
     }
-};
+    /**
+     * Request the the ripcord log be flushed to disk on exit, regardless
+     * of exit code
+     */
+    requestFlush() {
+        flushRequested = true;
+    }
+}
+const logger = new Logger();
 process.on('exit', code => {
-    logger.flush();
+    if (code || flushRequested)
+        logger.flush();
 });
-module.exports = logger;
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.default = logger;
 //# sourceMappingURL=logger.js.map

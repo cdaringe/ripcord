@@ -7,7 +7,7 @@ require('./app');
 const counsel = require('counsel');
 const pkg = require('../package.json');
 const report = require('./report');
-const logger = require('./logger');
+const logger_1 = require('./logger');
 const rules = require('./rules');
 const scmcycle = require('./scmcycle');
 const syncPackages = require('./sync-packages-to-registry');
@@ -21,7 +21,7 @@ const ripcord = {
     /**
      * @property {module} logger
      */
-    logger: logger,
+    logger: logger_1.default,
     /**
      * @property {Rule[]} set of rules to apply/check
      */

@@ -4,7 +4,7 @@ const pkg_1 = require('./model/pkg');
 const path = require('path');
 const pify = require('pify');
 const checker = pify(require('license-checker'));
-const logger = require('./logger');
+const logger_1 = require('./logger');
 const fs = require('fs');
 const json2csv = require('json2csv');
 const _ = require('lodash');
@@ -26,7 +26,7 @@ module.exports = {
     _appendDevPackages(prdPkgs, opts) {
         // if (!opts.dev) return prdPkgs
         const devOverride = Object.assign(opts, { production: false, development: true });
-        logger.verbose('scraping devevelopment license metadata');
+        logger_1.default.verbose('scraping devevelopment license metadata');
         return this._getLicenses(devOverride)
             .then(devPkgs => Object.assign(devPkgs, prdPkgs));
     },
@@ -78,7 +78,7 @@ module.exports = {
         const isDevOnly = !!get(pkg, `${counsel.configKey}.devOnly`);
         /* istanbul ignore next */
         if (isDevOnly && !opts.force) {
-            logger.info('devOnly, waiving license check');
+            logger_1.default.info('devOnly, waiving license check');
             return Promise.resolve();
         }
         return this.getLicenses(opts, ripcord)
@@ -103,8 +103,8 @@ module.exports = {
             this._writeReport(Object.assign({ txt: rptText, basename: 'license-check', ripcord }, opts));
         }
         else {
-            logger.error(`${errMsg}:\n`);
-            logger.error(rptText); // stream report to stderr
+            logger_1.default.error(`${errMsg}:\n`);
+            logger_1.default.error(rptText); // stream report to stderr
         }
         /* istanbul ignore else */
         if (opts.throwOnFail)
@@ -140,7 +140,7 @@ module.exports = {
                 this._writeReport(Object.assign({ txt: dumpTxt, basename: 'license-dump', ripcord }, opts));
             }
             else {
-                logger.info(dumpTxt); // stream report to stderr
+                logger_1.default.info(dumpTxt); // stream report to stderr
             }
             return dumpTxt;
         });
@@ -155,7 +155,7 @@ module.exports = {
         opts = opts || {};
         const isUiBuild = opts.uiBuild;
         opts.uiBuild = false;
-        logger.verbose('scraping production license metadata');
+        logger_1.default.verbose('scraping production license metadata');
         // ^ get deps _first_ sans web transform. after we merge our license info into
         // our package tree, then webtransform
         const licensePkgsP = this._getLicenses(opts) // @TODO, tidy API.  take opts.licenseOpts or something, not the app level opts
@@ -204,7 +204,7 @@ module.exports = {
      * @returns {IPkgSet}
      */
     _mergeLicensesToPkgSet(lPkgs, pkgs, opts) {
-        logger.verbose('combining license dependency report and logical dependency report');
+        logger_1.default.verbose('combining license dependency report and logical dependency report');
         const flatPkgs = pkg_1.flattenPkgs({ pkgs, flatSet: null, root: true });
         const keyedLPkgs = keyBy(lPkgs, lPkg => pkg_1.key(lPkg));
         for (let lKey in keyedLPkgs) {
@@ -252,7 +252,7 @@ module.exports = {
         const defaultFilename = `${basename}.${(csv ? 'csv' : 'json')}`;
         const dest = ripcord._getDest(output, defaultFilename);
         fs.writeFileSync(dest, txt);
-        logger.info(`license report written to: ${dest}`);
+        logger_1.default.info(`license report written to: ${dest}`);
     }
 };
 //# sourceMappingURL=licenses.js.map
