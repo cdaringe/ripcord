@@ -5,6 +5,7 @@
  */
 "use strict";
 const path = require('path');
+const logger_1 = require('./logger');
 const cp = require('child_process');
 const ghpages = require('gh-pages');
 const rmdir = (path) => { try {
@@ -13,9 +14,6 @@ const rmdir = (path) => { try {
 catch (e) { } };
 const counsel = require('counsel');
 const pify = require('pify');
-const jsdocBin = require('resolve-jsdoc-bin');
-const logger = require('./logger');
-let jsdocBinFilename = jsdocBin.resolve(__dirname);
 module.exports = {
     _clean() {
         const { dest } = this._getDocsMetaData();
@@ -39,6 +37,8 @@ module.exports = {
      * @returns Promise
      */
     build(opts) {
+        const jsdocBin = require('resolve-jsdoc-bin');
+        let jsdocBinFilename = jsdocBin.resolve(__dirname);
         try {
             const { jsdocConfigFilename, projectReadmeFilename, dest, sourceDirname, projectRootDirname, templateDirname } = this._getDocsMetaData();
             const cmd = jsdocBinFilename;
@@ -64,7 +64,7 @@ module.exports = {
         }
         catch (err) {
             /* istanbul ignore next */
-            logger.error(err.message);
+            logger_1.default.error(err.message);
             process.exit(1);
         }
         return Promise.resolve();

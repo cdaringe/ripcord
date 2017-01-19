@@ -5,15 +5,12 @@
  */
 
 import * as path from 'path'
+import logger from './logger'
 const cp = require('child_process')
 const ghpages = require('gh-pages')
 const rmdir = (path) => { try { cp.execSync(`rm -rf ${path}`) } catch (e) { /* pass */ } }
 const counsel = require('counsel')
 const pify = require('pify')
-const jsdocBin = require('resolve-jsdoc-bin')
-const logger = require('./logger')
-
-let jsdocBinFilename = jsdocBin.resolve(__dirname)
 
 module.exports = {
 
@@ -42,6 +39,8 @@ module.exports = {
    * @returns Promise
    */
   build (opts) {
+    const jsdocBin = require('resolve-jsdoc-bin')
+    let jsdocBinFilename = jsdocBin.resolve(__dirname)
     try {
       const {
         jsdocConfigFilename,
