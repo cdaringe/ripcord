@@ -127,8 +127,10 @@ module.exports = {
     const post = pify(request.post)
     return post(copyUri, this._getRequestHeaders())
     .then(response => {
+      const okStatusCodes = [200, 409]
+      const isOKResonse = okStatusCodes.indexOf(response.statusCode) > -1
       /* istanbul ignore next */
-      if (response.statusCode !== 200) {
+      if (!isOKResonse) {
         this._throwResponseError(response, pkg, copyUri)
       }
       pkg.status = STATUS_EXISTS
@@ -473,10 +475,6 @@ module.exports = {
     logger.progressMode = false
     console.log('\n')
     const body = JSON.parse(response.body)
-    if (pkg.name.match('@')) {
-      logger.error(`unable to copy scoped packages due to artifactory bug: ${pkg.name}`)
-      return
-    }
     throw new Error([
       `sync-package [${pkg.name}]: failed to copy ${copyUri}.\n`,
       `unexpected response: ${response.statusCode}`,
