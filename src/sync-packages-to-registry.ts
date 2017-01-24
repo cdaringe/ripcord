@@ -237,7 +237,7 @@ module.exports = {
 
   /**
    * @private
-   * get relative path to artifactory rootPkg
+   * @description get relative path to artifactory rootPkg
    * @example
    * <artifactory-host>/<path>
    * where <path> is the remote relative path to the desired npm tarball
@@ -379,7 +379,7 @@ module.exports = {
 
   /**
    * @private
-   * @descrition Sync individual package from src to dest repository
+   * @description Sync individual package from src to dest repository
    * @param {object} pkg
    * @param {string} pkg.name
    * @param {Symbol|null} pkg.status
