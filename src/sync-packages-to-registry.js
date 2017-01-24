@@ -121,7 +121,7 @@ module.exports = {
         const post = pify(request.post);
         return post(copyUri, this._getRequestHeaders())
             .then(response => {
-            const okStatusCodes = [200, 409];
+            const okStatusCodes = [200];
             const isOKResonse = okStatusCodes.indexOf(response.statusCode) > -1;
             /* istanbul ignore next */
             if (!isOKResonse) {
