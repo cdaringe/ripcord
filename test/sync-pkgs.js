@@ -89,8 +89,8 @@ noCITest('sync - full sync, mocked backend', t => {
     }, t.end);
 });
 tape('artifactory storage suffixes', t => {
-    t.equals(sync._getScopedPkgLocalUriSuffix('pkg', '0.0.1'), `pkg/-/pkg-0.0.1.tgz`, 'non-scoped package suffix');
-    t.equals(sync._getScopedPkgLocalUriSuffix('@scoped/pkg', '0.0.1'), `@scoped/pkg/-/pkg-0.0.1.tgz`, 'scoped package suffix');
+    t.equals(sync._getRemoteRelativePath('pkg', '0.0.1'), `pkg/-/pkg-0.0.1.tgz`, 'non-scoped package suffix');
+    t.equals(sync._getRemoteRelativePath('@scoped/pkg', '0.0.1'), `@scoped/pkg/-/pkg-0.0.1.tgz`, 'scoped package suffix');
     t.end();
 });
 //# sourceMappingURL=sync-pkgs.js.map

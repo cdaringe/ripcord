@@ -107,16 +107,15 @@ module.exports = {
      * @returns Promise
      */
     _copyPackage(pkg) {
-        /* istanbul ignore next */
-        if (!pkg.tarballBasename) {
-            throw new ReferenceError('`.tarball` field missing. unable to copy pkg');
-        }
+        const pkgRemotePath = this._getRemoteRelativePath(pkg.name, pkg.version);
         const copyUri = [
             npm.config.get('ARTIFACTORY_URI'),
             'api/copy',
             npm.config.get('NPM_REGISTRY_SRC_CACHE'),
-            `${pkg.tarballBasename}?to=/${this._destRepoName}`,
-            pkg.tarballBasename
+            // @note
+            // artifactory's API once handled just using tarball filename. now,
+            // we must prefix `${pkg.name}/-/` to match the file structure.
+            `${pkgRemotePath}?to=/${this._destRepoName}/${pkgRemotePath}`
         ].join('/');
         const post = pify(request.post);
         return post(copyUri, this._getRequestHeaders())
@@ -124,9 +123,8 @@ module.exports = {
             const okStatusCodes = [200];
             const isOKResonse = okStatusCodes.indexOf(response.statusCode) > -1;
             /* istanbul ignore next */
-            if (!isOKResonse) {
+            if (!isOKResonse)
                 this._throwResponseError(response, pkg, copyUri);
-            }
             pkg.status = STATUS_EXISTS;
         });
     },
@@ -214,9 +212,8 @@ module.exports = {
     _getPackage(name, version, registryName) {
         const get = pify(request);
         const base = npm.config.get('ARTIFACTORY_URI');
-        const suffix = this._getScopedPkgLocalUriSuffix(name, version);
+        const suffix = this._getRemoteRelativePath(name, version);
         const uri = `${base}/api/storage/${registryName}/${suffix}`;
-        // logger.verbose(`testing for package "${name}@${version} at ${uri}`)
         return get(uri, this._getRequestHeaders());
     },
     /**
@@ -227,7 +224,17 @@ module.exports = {
     _getRequestHeaders() {
         return { headers: { Authorization: `Basic ${npm.config.get('_auth')}` }, strictSSL: false };
     },
-    _getScopedPkgLocalUriSuffix(name, version) {
+    /**
+     * @private
+     * get relative path to artifactory rootPkg
+     * @example
+     * <artifactory-host>/<path>
+     * where <path> is the remote relative path to the desired npm tarball
+     * @param {string} name
+     * @param {string} version
+     * @returns {string} relativePath
+     */
+    _getRemoteRelativePath(name, version) {
         const isScopedPkg = name.trim().charAt(0) === '@';
         if (isScopedPkg) {
             const sanScopeName = name.match(/@.+\/(.*$)/)[1];
@@ -339,10 +346,6 @@ module.exports = {
      */
     sync(opts) {
         opts = opts || {};
-        logger_1.default.warn([
-            '🚨 this feature is untested, use with caution.',
-            'npm registries are not yet operational 🚨'
-        ].join(' '));
         return this._loadNpm()
             .then(this._assertEnv.bind(this))
             .then(this._setLocalsFromEnv.bind(this))
@@ -462,11 +465,13 @@ module.exports = {
             `sync-package [${pkg.name}]: failed to copy ${copyUri}.\n`,
             `unexpected response: ${response.statusCode}`,
             body.messages.map(m => m.message).join(', '),
-            '\n',
-            'Local caching may prevent the registry cache from caching packages.',
+            '\n\n',
+            '1. Local caching may prevent the remote registry cache from caching packages.',
             'Try `npm cache clear` followed by re-installing packages against the',
-            'npm cache in order to populate the cache.  See ripcord.log for a list',
-            'of npmjs.org resolved packages.'
+            'remote repository in order to populate the cache.  See ripcord.log for a list',
+            'of npmjs.org resolved packages.\n',
+            '2. Periodically, 409s occur because of lag between repositories after copy',
+            'operations.  If you received a 409, consider trying again momentarily.\n\n'
         ].join(' '));
     },
     /**
