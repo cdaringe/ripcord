@@ -142,13 +142,22 @@ module.exports = {
         const npmRegistrySrcUri = 'https://registry.npmjs.org';
         const pkgsByKey = {};
         const tagged = pkgs.filter((pkg, ndx) => {
-            const resolvedUri = get(pkg, 'dist.tarball') || pkg.resolved; // dist.tarball from npm package.jsons, resolved from yarn.lock
+            let resolvedUri = get(pkg, 'dist.tarball') || pkg.resolved; // dist.tarball from npm package.jsons, resolved from yarn.lock
             if (!resolvedUri) {
-                throw new Error([
-                    'unable to determine where package was resolved from.',
-                    'this generally occurs if you have a dirty node_modules directory.',
-                    'please tidy your node_modules directory and try again.'
-                ].join(' '));
+                if (pkg.peerMissing) {
+                    logger_1.default.warn([
+                        `required peek package missing: ${pkg.name}. package will`,
+                        'not be sync\'d'
+                    ].join(' '));
+                    resolvedUri = 'unresolved-missing-peering-package';
+                }
+                else {
+                    throw new Error([
+                        `unable to determine where package was resolved from: ${pkg.name}.`,
+                        'this generally occurs if you have a dirty node_modules directory.',
+                        'please tidy your node_modules directory and try again.'
+                    ].join(' '));
+                }
             }
             const isResolvedArtifactory = !!resolvedUri.match(/artifactory/);
             const isResolvedNPM = !!resolvedUri.match(/registry\.npmjs\.org/);
