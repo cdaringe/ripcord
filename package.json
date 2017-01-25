@@ -13,8 +13,8 @@
     "commander": "^2.9.0",
     "commander-pojo": "^1.0.1",
     "counsel": "0.0.29",
-    "counsel-precommit": "^0.0.24",
-    "counsel-script": "^0.0.28",
+    "counsel-precommit": "^0.0.29",
+    "counsel-script": "^0.0.29",
     "gh-pages": "^0.12.0",
     "jsdoc": "^3.4.2",
     "json2csv": "^3.7.1",
@@ -34,7 +34,7 @@
   "devDependencies": {
     "@semantic-release/condition-codeship": "^1.1.0",
     "@semantic-release/release-notes-generator": "^2.0.0",
-    "@types/node": "^6.0.48",
+    "@types/node": "^7.0.4",
     "@types/npm": "^2.0.28",
     "coveralls": "^2.11.14",
     "license-checker": "^8.0.0",
@@ -47,7 +47,7 @@
     "standard": "^8.6.0",
     "tape": "^4.6.2",
     "tslint": "^4.0.2",
-    "tslint-config-standard": "^2.0.0",
+    "tslint-config-standard": "^3.0.0",
     "typescript": "^2.0.10",
     "validate-commit-msg": "^2.8.2",
     "webpack": "^1.13.3"
