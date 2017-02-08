@@ -48,7 +48,7 @@
     "tape": "^4.6.2",
     "tslint": "^4.0.2",
     "tslint-config-standard": "^3.0.0",
-    "typescript": "^2.0.10",
+    "typescript": "^2.1.6",
     "validate-commit-msg": "^2.8.2",
     "webpack": "^1.13.3"
   },
