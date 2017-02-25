@@ -1,6 +1,7 @@
 "use strict";
-const path = require('path');
-const common_1 = require('./util/common');
+Object.defineProperty(exports, "__esModule", { value: true });
+const path = require("path");
+const common_1 = require("./util/common");
 const tape = require('tape');
 const sinon = require('sinon');
 const ripcord = require('../');

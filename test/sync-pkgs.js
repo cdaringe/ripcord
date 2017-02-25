@@ -1,9 +1,10 @@
 "use strict";
-const logger_1 = require('../src/logger');
+Object.defineProperty(exports, "__esModule", { value: true });
+const logger_1 = require("../src/logger");
 const tape = require('tape');
 const sinon = require('sinon');
 const sync = require('../src/sync-packages-to-registry');
-const npm = require('requireg')('npm');
+const npm = require('npm');
 const nock = require('nock');
 const ARTIFACTORY_URI = 'http://www.bogus.com/artifactory';
 const NPM_REGISTRY_SRC = 'src';

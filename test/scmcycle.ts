@@ -1,6 +1,6 @@
 const pify = require('pify')
 const ripcord = require('../')
-const npm = require('requireg')('npm')
+const npm = require('npm')
 const scmcycle = require('../src/scmcycle')
 const sinon = require('sinon')
 const tape = require('tape')

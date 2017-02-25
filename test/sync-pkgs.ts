@@ -3,7 +3,7 @@ import logger from '../src/logger'
 const tape = require('tape')
 const sinon = require('sinon')
 const sync = require('../src/sync-packages-to-registry')
-const npm = require('requireg')('npm')
+const npm = require('npm')
 const nock = require('nock')
 
 const ARTIFACTORY_URI = 'http://www.bogus.com/artifactory'

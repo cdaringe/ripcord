@@ -1,6 +1,7 @@
 "use strict";
-const path = require('path');
-const depUtil = require('../src/dep-util');
+Object.defineProperty(exports, "__esModule", { value: true });
+const path = require("path");
+const depUtil = require("../src/dep-util");
 const ripcord = require('../'); // include to bootstrap ripcord constants
 const tape = require('tape');
 const fs = require('fs');

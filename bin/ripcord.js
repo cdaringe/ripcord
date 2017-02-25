@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 'use strict';
-const path = require('path');
+Object.defineProperty(exports, "__esModule", { value: true });
+const path = require("path");
 const perish = require('perish');
 const app = require('../src/app');
-const post_process_report_1 = require('./post-process-report');
+const post_process_report_1 = require("./post-process-report");
 const program = require('commander');
 const pkgPath = path.resolve(__dirname, '../package.json');
 const pkg = require(pkgPath);

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const { clone, values } = require('lodash');
 /**
  * flatten deps and devDep into key:value pairs where key ~= name;version.

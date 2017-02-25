@@ -4,12 +4,13 @@
  * @description syncs packages from one npm artifactory registry to another
  */
 "use strict";
-const depUtil = require('./dep-util');
-const logger_1 = require('./logger');
+Object.defineProperty(exports, "__esModule", { value: true });
+const depUtil = require("./dep-util");
+const logger_1 = require("./logger");
 const bb = require('bluebird');
 const { get, values } = require('lodash');
 const pify = require('pify');
-const npm = require('requireg')('npm');
+const npm = require('npm');
 const request = require('request');
 const STATUS_NOT_EXISTS = 'STATUS_NOT_EXISTS';
 const STATUS_EXISTS = 'STATUS_EXISTS';
@@ -149,7 +150,7 @@ module.exports = {
                         `required peek package missing: ${pkg.name}. package will`,
                         'not be sync\'d'
                     ].join(' '));
-                    resolvedUri = 'unresolved-missing-peering-package';
+                    resolvedUri = 'unresolved-missing-peering-packagePureComponent';
                 }
                 else {
                     throw new Error([

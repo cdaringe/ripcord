@@ -1,10 +1,11 @@
 "use strict";
-const counsel = require('counsel');
-const pkg_1 = require('./model/pkg');
-const path = require('path');
+Object.defineProperty(exports, "__esModule", { value: true });
+const counsel = require("counsel");
+const pkg_1 = require("./model/pkg");
+const path = require("path");
 const pify = require('pify');
 const checker = pify(require('license-checker'));
-const logger_1 = require('./logger');
+const logger_1 = require("./logger");
 const fs = require('fs');
 const json2csv = require('json2csv');
 const _ = require('lodash');
