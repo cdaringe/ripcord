@@ -1,6 +1,7 @@
 "use strict";
-const fs_1 = require('fs');
-const logger_1 = require('./logger');
+Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = require("fs");
+const logger_1 = require("./logger");
 const pify = require('pify');
 const parseNameAtVersion = require('parse-name-at-version');
 const pyl = require('parse-yarn-lock');

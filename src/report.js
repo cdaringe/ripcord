@@ -1,7 +1,8 @@
 "use strict";
-const app_1 = require('./app');
-const counsel = require('counsel');
-const logger_1 = require('./logger');
+Object.defineProperty(exports, "__esModule", { value: true });
+const app_1 = require("./app");
+const counsel = require("counsel");
+const logger_1 = require("./logger");
 const resolveDeps = require('snyk-resolve-deps');
 const uiBuild = require('./ui-build');
 const _ = require('lodash');

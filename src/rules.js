@@ -1,5 +1,6 @@
 "use strict";
-const path = require('path');
+Object.defineProperty(exports, "__esModule", { value: true });
+const path = require("path");
 const fs = require('fs');
 const PreCommitRule = require('counsel-precommit');
 const ScriptRule = require('counsel-script');
