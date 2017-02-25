@@ -51,7 +51,7 @@
     "typescript": "^2.2.1",
     "tslint-config-standard": "^3.0.0",
     "validate-commit-msg": "^2.8.2",
-    "webpack": "^1.13.3"
+    "webpack": "^2.2.1"
   },
   "description": "project scaffolding and opinion enforcer!",
   "ripcord": {
