@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 require('perish');
 Error.stackTraceLimit = 100;
 const bb = require('bluebird');

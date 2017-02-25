@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const chalk = require('chalk');
 const readline = require('readline');
 const fs = require('fs');
@@ -137,6 +138,5 @@ process.on('exit', code => {
     if (code || flushRequested)
         logger.flush();
 });
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = logger;
 //# sourceMappingURL=logger.js.map

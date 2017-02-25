@@ -1,5 +1,6 @@
 "use strict";
-const path = require('path');
+Object.defineProperty(exports, "__esModule", { value: true });
+const path = require("path");
 require('perish');
 require('source-map-support').install(); // silly typescript, source-maps are for kids!
 const cp = require('child_process');

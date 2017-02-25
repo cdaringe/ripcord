@@ -1,5 +1,6 @@
 "use strict";
-const path = require('path');
+Object.defineProperty(exports, "__esModule", { value: true });
+const path = require("path");
 const bin = path.join(__dirname, '../bin/ripcord.js');
 const cp = require('child_process');
 const tape = require('tape');

@@ -1,13 +1,14 @@
 "use strict";
-const app_1 = require('./app');
-const counsel = require('counsel');
-const fs_1 = require('fs');
-const child_process_1 = require('child_process');
-const npm = require('requireg')('npm');
+Object.defineProperty(exports, "__esModule", { value: true });
+const app_1 = require("./app");
+const counsel = require("counsel");
+const fs_1 = require("fs");
+const child_process_1 = require("child_process");
+const npm = require('npm');
 const pify = require('pify');
 const loadNpm = pify(npm.load);
 const writeFileP = pify(fs_1.writeFile);
-const logger_1 = require('./logger');
+const logger_1 = require("./logger");
 /* istanbul ignore next */
 function run(opts) {
     return loadNpm().then(_run);

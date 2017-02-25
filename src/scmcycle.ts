@@ -2,7 +2,7 @@ import { pkgId } from './app'
 import * as counsel from 'counsel'
 import { writeFile } from 'fs'
 import { spawnSync } from 'child_process'
-const npm = require('requireg')('npm')
+const npm = require('npm')
 const pify = require('pify')
 const loadNpm = pify(npm.load)
 const writeFileP = pify(writeFile)

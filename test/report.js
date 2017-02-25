@@ -1,6 +1,7 @@
 "use strict";
-const path = require('path');
-const post_process_report_1 = require('../bin/post-process-report');
+Object.defineProperty(exports, "__esModule", { value: true });
+const path = require("path");
+const post_process_report_1 = require("../bin/post-process-report");
 const uiBuild = require('../src/ui-build');
 const ripcord = require('../');
 const tape = require('tape');

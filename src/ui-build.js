@@ -1,11 +1,12 @@
 "use strict";
-const pkg_1 = require('./model/pkg');
+Object.defineProperty(exports, "__esModule", { value: true });
+const pkg_1 = require("./model/pkg");
 const path = require('path');
 const pify = require('pify');
 const { uniqBy, values, keyBy, set, forEach } = require('lodash');
 const readPkgUp = require('read-pkg-up');
 const bb = require('bluebird');
-const logger_1 = require('./logger');
+const logger_1 = require("./logger");
 const counsel = require('counsel');
 module.exports = {
     /**

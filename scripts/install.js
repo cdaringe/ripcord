@@ -1,7 +1,8 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 process.env.RIPCORD_INSTALL = true;
-const path_1 = require('path');
-const counsel_1 = require('counsel');
+const path_1 = require("path");
+const counsel_1 = require("counsel");
 const ripcord = require('../src/index');
 Promise.resolve()
     .then(() => counsel_1.project.findProjectRoot(path_1.resolve(__dirname, '..', '..')))

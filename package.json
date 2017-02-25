@@ -21,13 +21,13 @@
     "license-checker": "^8.0.0",
     "lodash": "^4.17.2",
     "minami": "^1.1.1",
+    "npm": "^4.3.0",
     "parse-name-at-version": "^1.0.0",
     "parse-yarn-lock": "^1.0.2",
     "perish": "^1.0.1",
     "pify": "^2.3.0",
     "read-pkg-up": "^2.0.0",
     "request": "^2.75.0",
-    "requireg": "^0.1.6",
     "resolve-jsdoc-bin": "^1.0.0",
     "snyk-resolve-deps": "^1.8.0"
   },
@@ -48,7 +48,7 @@
     "tape": "^4.6.2",
     "tslint": "^4.0.2",
     "tslint-config-standard": "^4.0.0",
-    "typescript": "^2.0.10",
+    "typescript": "^2.2.1",
     "validate-commit-msg": "^2.8.2",
     "webpack": "^1.13.3"
   },

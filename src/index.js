@@ -2,12 +2,13 @@
  * @module ripcord
  */
 "use strict";
-const path = require('path');
+Object.defineProperty(exports, "__esModule", { value: true });
+const path = require("path");
 require('./app');
 const counsel = require('counsel');
 const pkg = require('../package.json');
 const report = require('./report');
-const logger_1 = require('./logger');
+const logger_1 = require("./logger");
 const rules = require('./rules');
 const scmcycle = require('./scmcycle');
 const syncPackages = require('./sync-packages-to-registry');

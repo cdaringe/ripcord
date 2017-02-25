@@ -1,4 +1,5 @@
 'use strict';
+Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require('fs');
 const ripcord = require('../');
 exports.REPORT_NAME_DEFAULT = 'tw-dependencies.json';
@@ -19,6 +20,5 @@ function postProcess(action, result) {
         process.stdout.write(resultJson);
     }
 }
-Object.defineProperty(exports, "__esModule", { value: true });
 exports.default = postProcess;
 //# sourceMappingURL=post-process-report.js.map
