@@ -38,7 +38,7 @@
     "@types/npm": "^2.0.28",
     "coveralls": "^2.11.14",
     "license-checker": "^8.0.0",
-    "nock": "^9.0.0",
+    "nock": "^9.0.9",
     "nsp": "^2.6.2",
     "nyc": "^10.0.0",
     "semantic-release": "^6.3.2",
