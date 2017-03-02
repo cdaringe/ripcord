@@ -91,7 +91,10 @@ class Logger {
    */
   error (...args) {
     if (this._logLevel === 0) return
+    const prevMode : boolean = this.progressMode
+    this.progressMode = false
     this._log('stderr', chalk.bold.red, ...args)
+    this.progressMode = prevMode
   }
 
   /**
@@ -100,7 +103,10 @@ class Logger {
    */
   warn (...args) {
     if (this._logLevel < 1) return
+    const prevMode : boolean = this.progressMode
+    this.progressMode = false
     this._log('stdout', chalk.yellow, ...args)
+    this.progressMode = prevMode
   }
 
   /**
