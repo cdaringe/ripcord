@@ -42,7 +42,7 @@
     "nsp": "^2.6.2",
     "nyc": "^10.0.0",
     "semantic-release": "^6.3.2",
-    "sinon": "^1.17.6",
+    "sinon": "^2.0.0",
     "source-map-support": "^0.4.6",
     "standard": "^9.0.0",
     "tape": "^4.6.2",
