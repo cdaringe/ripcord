@@ -43,7 +43,7 @@
     "nyc": "^10.0.0",
     "semantic-release": "^6.3.2",
     "sinon": "^1.17.6",
-    "source-map-support": "^0.4.6",
+    "source-map-support": "^0.4.14",
     "standard": "^9.0.0",
     "tape": "^4.6.2",
     "tslint": "^4.0.2",
