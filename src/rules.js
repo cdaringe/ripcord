@@ -9,27 +9,27 @@ module.exports = [
     // @note: apply first, as rule sniffs for git-root. if missing, fails, so should
     // occur first before waiting for long dependency install rules
     new PreCommitRule({
-        name: 'precommit-script',
-        preCommitTasks: ['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure', 'docs']
+        name: 'precommit',
+        preCommitTasks: ['validate', 'lint', 'test', 'secure']
     }),
     // validate!
     new ScriptRule({
-        name: 'validate-script',
+        name: 'validate',
         scriptName: 'validate',
-        scriptCommand: 'npm ls && ripcord counsel check',
+        scriptCommand: 'ripcord counsel check',
         scriptCommandVariants: ['*']
     }),
     // secure!
     new ScriptRule({
-        name: 'security-check-script',
+        name: 'check-vulnerablities',
         devDependencies: ['nsp'],
-        scriptName: 'secure',
+        scriptName: 'check-vulnerablities',
         scriptCommand: 'nsp check',
         scriptCommandVariants: ['*']
     }),
     // lint!
     new ScriptRule({
-        name: 'lint-script',
+        name: 'lint',
         devDependencies: ['standard'],
         scriptName: 'lint',
         scriptCommand: 'standard',
@@ -37,14 +37,14 @@ module.exports = [
     }),
     // test and coverage!
     new ScriptRule({
-        name: 'test-script',
+        name: 'test',
         devDependencies: ['nyc'],
         scriptName: 'test',
         scriptCommand: 'nyc --reporter=lcov node test/',
         scriptCommandVariants: ['*']
     }),
     new ScriptRule({
-        name: 'coverage-script',
+        name: 'coverage',
         devDependencies: ['nyc'],
         scriptName: 'check-coverage',
         scriptCommand: 'nyc check-coverage --lines 90 --functions 90 --branches 90',
@@ -66,51 +66,20 @@ module.exports = [
     })(),
     // developer docs
     new ScriptRule({
-        name: 'api-docs-generate-script',
+        name: 'api-docs-generate',
         scriptName: 'docs',
         scriptCommand: 'ripcord docs',
         scriptCommandVariants: ['*']
     }),
     new ScriptRule({
-        name: 'api-docs-publish-script',
+        name: 'api-docs-publish',
         scriptName: 'docs-publish',
         scriptCommand: 'ripcord docs --publish',
         scriptCommandVariants: ['*']
     }),
-    new ScriptRule({
-        name: 'postpublish-api-docs-script',
-        scriptName: 'postpublish',
-        scriptCommand: 'npm run docs-publish',
-        scriptCommandVariants: ['*']
-    }),
-    // safe publishing
-    new ScriptRule({
-        name: 'preversion-script',
-        scriptName: 'preversion',
-        scriptCommand: 'git checkout master && git pull',
-        scriptCommandVariants: ['*']
-    }),
-    new ScriptRule({
-        name: 'publish-patch-script',
-        scriptName: 'publish-patch',
-        scriptCommand: 'npm run preversion && npm version patch && git push origin master --tags && npm publish',
-        scriptCommandVariants: ['*']
-    }),
-    new ScriptRule({
-        name: 'publish-minor-script',
-        scriptName: 'publish-minor',
-        scriptCommand: 'npm run preversion && npm version minor && git push origin master --tags && npm publish',
-        scriptCommandVariants: ['*']
-    }),
-    new ScriptRule({
-        name: 'publish-major-script',
-        scriptName: 'publish-major',
-        scriptCommand: 'npm run preversion && npm version major && git push origin master --tags && npm publish',
-        scriptCommandVariants: ['*']
-    }),
     // licenses
     new ScriptRule({
-        name: 'verify-licenses-script',
+        name: 'check-licenses',
         scriptName: 'check-licenses',
         scriptCommand: 'ripcord licenses check',
         scriptCommandVariants: ['*']

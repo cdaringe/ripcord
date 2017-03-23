@@ -5,7 +5,10 @@ import { project } from 'counsel'
 const ripcord = require('../src/index')
 
 Promise.resolve()
-.then(() => project.findProjectRoot(resolve(__dirname, '..', '..')))
+.then(() => {
+  var start : string = process.env.RC_LINKED ? process.cwd() : resolve(__dirname, '..', '..')
+  return project.findProjectRoot(start)
+})
 .catch(err => {
   // if ENOPKG detected, assume global install or uninitialized package.
   // proceed gracefully, vs crash.

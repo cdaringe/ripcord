@@ -318,11 +318,11 @@
       "sourceMaps": true
     },
     {
-      "type": "node2",
+      "type": "node",
       "request": "attach",
-      "name": "Attach to Port - 9229",
+      "name": "Attach (Inspector Protocol)",
       "port": 9229,
-      "sourceMaps": true
+      "protocol": "inspector"
     }
   ]
 }

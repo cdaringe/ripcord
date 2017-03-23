@@ -5,7 +5,10 @@ const path_1 = require("path");
 const counsel_1 = require("counsel");
 const ripcord = require('../src/index');
 Promise.resolve()
-    .then(() => counsel_1.project.findProjectRoot(path_1.resolve(__dirname, '..', '..')))
+    .then(() => {
+    var start = process.env.RC_LINKED ? process.cwd() : path_1.resolve(__dirname, '..', '..');
+    return counsel_1.project.findProjectRoot(start);
+})
     .catch(err => {
     // if ENOPKG detected, assume global install or uninitialized package.
     // proceed gracefully, vs crash.
