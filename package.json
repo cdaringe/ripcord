@@ -13,7 +13,7 @@
     "commander": "^2.9.0",
     "commander-pojo": "^1.0.1",
     "counsel": "0.0.29",
-    "counsel-precommit": "^0.0.29",
+    "counsel-precommit": "^0.1.0",
     "counsel-script": "^0.0.29",
     "gh-pages": "^0.12.0",
     "jsdoc": "^3.4.2",
