@@ -17,6 +17,7 @@ const cpojo = require('commander-pojo') // see ripcord#39
 // ripcord's library entry point (ref, src/index.js)
 let action = { name: null, arg: null, options: null }
 
+/* istanbul ignore next */
 function fromCSV (v) { return v.split(',').map(s => s.trim()) }
 
 // attempt usage of local ripcord, if present
@@ -118,11 +119,11 @@ function prog () {
 
   // configure logging
   perish.printStacktrace = false
-  if (program.verbose) {
-    program.logLevel = 'verbose'
-  }
+  /* istanbul ignore next */
+  if (program.verbose) program.logLevel = 'verbose'
   counsel.logger.transports.console.level = program.logLevel || app.logLevel
   ripcord.logger.setLogLevel(program.logLevel || app.logLevel)
+  /* istanbul ignore next */
   if (ripcord.logger._logLevel > 2) perish.printStacktrace = true
 
   // go.

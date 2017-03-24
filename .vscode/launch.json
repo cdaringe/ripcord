@@ -311,6 +311,16 @@
       "sourceMaps": true
     },
     {
+      "name": "install (dogfood)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceRoot}/scripts/install.ts",
+      "cwd": "${workspaceRoot}",
+      "runtimeArgs": [ "--nolazy" ],
+      "env": { "NODE_ENV": "development", "PROJECT_ROOT": "${workspaceRoot}" },
+      "sourceMaps": true
+    },
+    {
       "type": "node",
       "request": "attach",
       "name": "Attach to Port - 5858",

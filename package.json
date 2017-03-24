@@ -44,7 +44,6 @@
     "semantic-release": "^6.3.2",
     "sinon": "^1.17.6",
     "source-map-support": "^0.4.6",
-    "standard": "^9.0.0",
     "tape": "^4.6.2",
     "tslint": "^4.0.2",
     "typescript": "^2.2.1",
@@ -63,10 +62,10 @@
   },
   "scripts": {
     "install": "node scripts/install.js",
-    "validate": "validate-commit-msg && npm ls && bin/ripcord.js counsel check",
+    "validate": "validate-commit-msg && bin/ripcord.js counsel check",
     "lint": "tslint -c tslint.json src/**/*.ts bin/**/*.ts test/**/*.ts",
     "test": "tsc && nyc --reporter=lcov node test/",
-    "check-coverage": "nyc check-coverage --lines 90 --functions 80 --branches 65",
+    "check-coverage": "nyc check-coverage --lines 80 --functions 80 --branches 65",
     "secure": "nsp check",
     "preversion": "git checkout master && git pull && npm run validate",
     "publish-patch": "npm run preversion && npm version patch && git push origin master --tags && npm publish",
@@ -77,7 +76,8 @@
     "scmcycle": "node bin/ripcord.js scmcycle",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
     "docs": "bin/ripcord.js docs",
-    "docs-publish": "bin/ripcord.js docs --publish"
+    "docs-publish": "bin/ripcord.js docs --publish",
+    "check-vulnerablities": "nsp check"
   },
   "pre-commit": [
     "validate",
@@ -85,7 +85,6 @@
     "tsc",
     "test",
     "check-coverage",
-    "check-licenses",
     "secure",
     "docs"
   ],

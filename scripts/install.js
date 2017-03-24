@@ -6,7 +6,7 @@ const counsel_1 = require("counsel");
 const ripcord = require('../src/index');
 Promise.resolve()
     .then(() => {
-    var start = process.env.RC_LINKED ? process.cwd() : path_1.resolve(__dirname, '..', '..');
+    var start = process.env.PROJECT_ROOT ? process.cwd() : path_1.resolve(__dirname, '..', '..');
     return counsel_1.project.findProjectRoot(start);
 })
     .catch(err => {
