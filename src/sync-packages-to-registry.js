@@ -21,6 +21,9 @@ const ACTION_SYNC = 'ACTION_SYNC';
 const NPM_RESOLVED_KEY = 'npm-resolved';
 const NO_URL_RESOLVED_KEY = 'no-url-resolved';
 const GIT_RESOLVED_KEY = 'git-resolved';
+function getPackageTarballURL(pkg) {
+    return get(pkg, 'dist.tarball') || null;
+}
 module.exports = {
     /**
      * @private
@@ -143,8 +146,18 @@ module.exports = {
         const npmRegistrySrcUri = 'https://registry.npmjs.org';
         const pkgsByKey = {};
         const tagged = pkgs.filter((pkg, ndx) => {
-            let resolvedUri = get(pkg, 'dist.tarball') || pkg.resolved; // dist.tarball from npm package.jsons, resolved from yarn.lock
+            let resolvedUri = getPackageTarballURL(pkg) || pkg._resolved || pkg.resolved; // dist.tarball from npm package.jsons, resolved from yarn.lock
             if (!resolvedUri) {
+                // in rare cases, a pkg can be in the cache & have the same dep in the
+                // current project tree that was not installed from the cache.
+                var hasDuplicateSibling = pkgs.some(tPkg => {
+                    return pkg.name === tPkg.name && pkg.version === tPkg.version && !getPackageTarballURL(tPkg);
+                });
+                if (hasDuplicateSibling)
+                    return false;
+                if (pkg._inCache) {
+                    logger_1.default.warn(`${pkg.name} installed from cache`);
+                }
                 if (pkg.peerMissing) {
                     logger_1.default.warn([
                         `required peek package missing: ${pkg.name}. package will`,
@@ -155,8 +168,9 @@ module.exports = {
                 else {
                     throw new Error([
                         `unable to determine where package was resolved from: ${pkg.name}.`,
-                        'this generally occurs if you have a dirty node_modules directory.',
-                        'please tidy your node_modules directory and try again.'
+                        'this generally occurs if you:\n',
+                        '\t- have a dirty node_modules directory. please tidy your node_modules directory and try again. or,\n',
+                        '\t- have modules that came from the cache.  `npm cache clear` should help.'
                     ].join(' '));
                 }
             }

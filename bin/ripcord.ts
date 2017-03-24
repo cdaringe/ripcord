@@ -26,7 +26,12 @@ function prog () {
     let localRipcordFilename = path.join(process.cwd(), 'node_modules', 'ripcord', 'bin', 'ripcord')
     localRipcordFilename = require.resolve(localRipcordFilename)
     /* istanbul ignore next */
-    if (__filename !== localRipcordFilename) return require(localRipcordFilename)
+    if (
+      !process.env.GLOBAL_RIPCORD &&
+      __filename !== localRipcordFilename
+    ) {
+      return require(localRipcordFilename)
+    }
   } catch (err) { /* pass */ }
 
   // expose and digest CLI

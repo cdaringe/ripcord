@@ -47,7 +47,7 @@
     "tape": "^4.6.2",
     "tslint": "^4.0.2",
     "typescript": "^2.2.1",
-    "validate-commit-msg": "^2.8.2",
+    "validate-commit-msg": "^2.11.2",
     "webpack": "^1.13.3"
   },
   "description": "project scaffolding and opinion enforcer!",
