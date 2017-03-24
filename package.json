@@ -42,12 +42,11 @@
     "nsp": "^2.6.2",
     "nyc": "^10.0.0",
     "semantic-release": "^6.3.2",
-    "sinon": "^1.17.6",
+    "sinon": "^2.1.0",
     "source-map-support": "^0.4.6",
     "tape": "^4.6.2",
     "tslint": "^4.0.2",
     "typescript": "^2.2.1",
-    "tslint-config-standard": "^3.0.0",
     "validate-commit-msg": "^2.8.2",
     "webpack": "^1.13.3"
   },
