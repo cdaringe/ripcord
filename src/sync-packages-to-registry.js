@@ -460,8 +460,8 @@ module.exports = {
      */
     _syncPackages(pkgs, opts) {
         opts = opts || {};
-        const concurrency = opts.concurrency || 8;
-        logger_1.default.verbose(`sync concurrency set to ${concurrency}`);
+        const concurrency = opts.concurrency || 1;
+        logger_1.default.verbose(`sync concurrency set to ${concurrency}. increase with --concurrency=<int>`);
         logger_1.default.progressMode = true;
         return bb.map(pkgs, (pkg, ndx) => {
             logger_1.default.verbose([

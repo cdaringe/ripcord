@@ -469,8 +469,8 @@ module.exports = {
    */
   _syncPackages (pkgs, opts): Promise<any> {
     opts = opts || {}
-    const concurrency = opts.concurrency || 8
-    logger.verbose(`sync concurrency set to ${concurrency}`)
+    const concurrency = opts.concurrency || 1
+    logger.verbose(`sync concurrency set to ${concurrency}. increase with --concurrency=<int>`)
     logger.progressMode = true
     return bb.map(
       pkgs,
