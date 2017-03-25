@@ -9,7 +9,7 @@ module.exports = [
   // occur first before waiting for long dependency install rules
   new PreCommitRule({
     name: 'precommit',
-    preCommitTasks: ['validate', 'lint', 'test', 'secure']
+    preCommitTasks: ['validate', 'lint', 'test', 'check-vulnerablities']
   }),
 
   // validate!
