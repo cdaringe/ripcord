@@ -122,6 +122,7 @@ module.exports = {
             `${pkgRemotePath}?to=/${this._destRepoName}/${pkgRemotePath}`
         ].join('/');
         const post = pify(request.post);
+        logger_1.default.debug(`copy: ${copyUri}`);
         return post(copyUri, this._getRequestHeaders())
             .then(response => {
             const okStatusCodes = [200];
@@ -180,17 +181,20 @@ module.exports = {
             /* istanbul ignore next */
             if (isResolvedNPM) {
                 logger_1.default.post(NPM_RESOLVED_KEY, `${pkg.name}@${pkg.version}`);
+                logger_1.default.verbose(`${pkg.name}@${pkg.version} resolved from npm`);
             }
             else if (!isResolvedArtifactory) {
                 if (isResolvedGithub) {
                     logger_1.default.post(GIT_RESOLVED_KEY, `${pkg.name}@${pkg.version}`);
                     pkg.action = ACTION_SKIP;
                     pkg.status = STATUS_INVALID_RESOLVE_GIT;
+                    logger_1.default.verbose(`${pkg.name}@${pkg.version} resolved from github`);
                 }
                 else {
                     logger_1.default.post(NO_URL_RESOLVED_KEY, `${pkg.name}@${pkg.version}`);
                     pkg.action = ACTION_SKIP;
                     pkg.status = STATUS_INVALID_RESOLVE_URI;
+                    logger_1.default.verbose(`${pkg.name}@${pkg.version} resolved UNKNOWN`);
                 }
                 return true;
             }
@@ -293,6 +297,33 @@ module.exports = {
         ].join(''));
         return pkgs;
     },
+    /* istanbul ignore next */
+    _handleTestForExistingResponse({ targetResponse, cacheResponse, pkg, opts }) {
+        if (cacheResponse.statusCode !== 200) {
+            logger_1.default.warn([
+                `package not found in cache: ${pkg.name}@${pkg.version},`,
+                cacheResponse.request.href
+            ].join(' '));
+            logger_1.default.post('cache-miss-packages', `${pkg.name}@${pkg.version}`);
+            pkg.status = STATUS_NOT_EXISTS;
+            pkg.action = ACTION_SKIP;
+            return Promise.resolve();
+        }
+        if (targetResponse.statusCode === 200) {
+            pkg.status = STATUS_EXISTS;
+            pkg.action = ACTION_SKIP;
+            logger_1.default.debug(`package exists: ${pkg.name}@${pkg.version} [${targetResponse.request.href}]`);
+            return Promise.resolve();
+        }
+        if (targetResponse.statusCode === 404) {
+            pkg.action = ACTION_SYNC;
+            pkg.status = STATUS_NOT_EXISTS;
+            if (opts.dryRun)
+                return Promise.resolve();
+            return this._copyPackage(pkg);
+        }
+        return Promise.reject(new Error(`sync-package [${pkg.name}]: unexpected response ${targetResponse.statusCode}`));
+    },
     /**
      * convert an array to text.  enables specification of a limit of how many
      * items in the set to convert to text, and truncates in a friendly way,
@@ -353,6 +384,10 @@ module.exports = {
     _setLocalsFromEnv() {
         try {
             this._destRepoName = npm.config.get('NPM_REGISTRY_DEST').match(/[^\/]*$/)[0];
+            if (npm.config.get('dev')) {
+                logger_1.default.warn('`dev` is truthy. squashing to false');
+                npm.config.set('dev', false);
+            }
         }
         catch (err) {
             /* istanbul ignore next */
@@ -402,6 +437,8 @@ module.exports = {
      */
     _syncPackage(pkg, opts) {
         opts = opts || {};
+        const npmDest = npm.config.get('NPM_REGISTRY_DEST');
+        const npmCache = npm.config.get('NPM_REGISTRY_SRC_CACHE');
         /* istanbul ignore next */
         if (!pkg || !pkg.name) {
             if (pkg.status === STATUS_INVALID_RESOLVE_URI) {
@@ -416,37 +453,11 @@ module.exports = {
         }
         if (pkg.action === ACTION_SKIP)
             return Promise.resolve();
-        /* istanbul ignore next */
-        const handleResponse = ([targetResponse, cacheResponse]) => {
-            if (cacheResponse.statusCode !== 200) {
-                logger_1.default.warn([
-                    `package not found in cache: ${pkg.name}@${pkg.version},`,
-                    cacheResponse.request.href
-                ].join(' '));
-                logger_1.default.post('cache-miss-packages', `${pkg.name}@${pkg.version}`);
-                pkg.status = STATUS_NOT_EXISTS;
-                pkg.action = ACTION_SKIP;
-                return Promise.resolve();
-            }
-            if (targetResponse.statusCode === 200) {
-                pkg.status = STATUS_EXISTS;
-                pkg.action = ACTION_SKIP;
-                return Promise.resolve();
-            }
-            if (targetResponse.statusCode === 404) {
-                pkg.action = ACTION_SYNC;
-                pkg.status = STATUS_NOT_EXISTS;
-                if (opts.dryRun)
-                    return Promise.resolve();
-                return this._copyPackage(pkg);
-            }
-            throw new Error(`sync-package [${pkg.name}]: unexpected response ${targetResponse.statusCode}`);
-        };
         return Promise.all([
-            this._getPackage(pkg.name, pkg.version, npm.config.get('NPM_REGISTRY_DEST')),
-            this._getPackage(pkg.name, pkg.version, npm.config.get('NPM_REGISTRY_SRC_CACHE'))
+            this._getPackage(pkg.name, pkg.version, npmDest),
+            this._getPackage(pkg.name, pkg.version, npmCache)
         ])
-            .then(handleResponse.bind(this));
+            .then(([targetResponse, cacheResponse]) => this._handleTestForExistingResponse({ targetResponse, cacheResponse, pkg, opts }));
     },
     /**
      * @private
@@ -462,7 +473,8 @@ module.exports = {
         opts = opts || {};
         const concurrency = opts.concurrency || 1;
         logger_1.default.verbose(`sync concurrency set to ${concurrency}. increase with --concurrency=<int>`);
-        logger_1.default.progressMode = true;
+        if (logger_1.default._logLevel <= 2)
+            logger_1.default.progressMode = true;
         return bb.map(pkgs, (pkg, ndx) => {
             logger_1.default.verbose([
                 `${opts.dryRun ? '[dry-run]' : ''}`,

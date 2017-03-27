@@ -34,6 +34,7 @@ function prog() {
     program
         .option('-l, --log-level [error|warn|info|verbose|debug|silly]', 'set the log level. default info')
         .option('--verbose', 'set the log level to verbose')
+        .option('--debug', 'set the log level to debug')
         .option('-u, --no-ui-build', 'disable web ui build if web build tooling detected')
         .option('-w, --webpack-config <filename>', 'path to webpack config file');
     program
@@ -108,6 +109,9 @@ function prog() {
     /* istanbul ignore next */
     if (program.verbose)
         program.logLevel = 'verbose';
+    if (program.debug) {
+        program.logLevel = 'debug';
+    }
     counsel.logger.transports.console.level = program.logLevel || app.logLevel;
     ripcord.logger.setLogLevel(program.logLevel || app.logLevel);
     /* istanbul ignore next */
