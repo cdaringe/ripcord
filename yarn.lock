@@ -777,27 +777,27 @@ core-util-is@^1.0.1, core-util-is@~1.0.0:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/core-util-is/-/core-util-is-1.0.2.tgz#b5fd54220aa2bc5ab57aab7140c940754503c1a7"
 
-counsel-precommit@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/counsel-precommit/-/counsel-precommit-0.1.3.tgz#ef5e622e4b59c7a38d46feecb77178f42b55d946"
+counsel-precommit@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/counsel-precommit/-/counsel-precommit-0.1.4.tgz#60d310449a37253e88245e138944d85af2a6bab4"
   dependencies:
-    counsel-rule "^0.1.3"
+    counsel-rule "^0.1.4"
 
-counsel-rule@^0.1.1, counsel-rule@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/counsel-rule/-/counsel-rule-0.1.3.tgz#4fb79ebb217967f6f63ec91d912bffcfa4d9fe90"
+counsel-rule@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/counsel-rule/-/counsel-rule-0.1.4.tgz#19d3231686b750dc57fdc90d899a46981ece1952"
 
-counsel-script@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/counsel-script/-/counsel-script-0.1.1.tgz#9a3c0cc3f725c47c238de69a5f6e9f5243e5c9a1"
+counsel-script@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/counsel-script/-/counsel-script-0.1.4.tgz#fa99c514fbb43d489a34f4a848b9479c314b9d62"
   dependencies:
-    counsel-rule "^0.1.1"
+    counsel-rule "^0.1.4"
 
-counsel@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/counsel/-/counsel-0.1.3.tgz#f1a5d9f0a53f52f9b512d0349b2ef03f43a86df5"
+counsel@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/counsel/-/counsel-0.1.4.tgz#8dededdd70f69d6fc09b0187b871eda940972792"
   dependencies:
-    counsel-rule "^0.1.3"
+    counsel-rule "^0.1.4"
     lodash.clonedeep "^4.5.0"
     lodash.uniq "^4.5.0"
     winston "^2.2.0"
