@@ -12,8 +12,8 @@
     "chalk": "^1.1.3",
     "commander": "^2.9.0",
     "commander-pojo": "^1.0.1",
-    "counsel": "^0.1.1",
-    "counsel-precommit": "^0.1.1",
+    "counsel": "^0.1.3",
+    "counsel-precommit": "^0.1.3",
     "counsel-script": "^0.1.1",
     "gh-pages": "^0.12.0",
     "jsdoc": "^3.4.2",
@@ -46,6 +46,7 @@
     "source-map-support": "^0.4.6",
     "tape": "^4.6.2",
     "tslint": "^4.0.2",
+    "tslint-config-standard": "^4.0.0",
     "typescript": "^2.2.1",
     "webpack": "^1.13.3"
   },
