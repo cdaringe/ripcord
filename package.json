@@ -65,7 +65,7 @@
     "validate": "bin/ripcord.js counsel check",
     "lint": "tslint -c tslint.json src/**/*.ts bin/**/*.ts test/**/*.ts",
     "test": "tsc && nyc --reporter=lcov node test/",
-    "check-coverage": "nyc check-coverage --lines 80 --functions 80 --branches 65",
+    "check-coverage": "nyc check-coverage --lines 80 --functions 80 --branches 60",
     "secure": "nsp check",
     "preversion": "git checkout master && git pull && npm run validate",
     "publish-patch": "npm run preversion && npm version patch && git push origin master --tags && npm publish",
