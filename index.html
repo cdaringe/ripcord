@@ -23,7 +23,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-app.html">app</a></li><li><a href="module-logger.html">logger</a><ul class='methods'><li data-type='method'><a href="module-logger.html#.debug">debug</a></li><li data-type='method'><a href="module-logger.html#.error">error</a></li><li data-type='method'><a href="module-logger.html#.info">info</a></li><li data-type='method'><a href="module-logger.html#.setLogLevel">setLogLevel</a></li><li data-type='method'><a href="module-logger.html#.verbose">verbose</a></li><li data-type='method'><a href="module-logger.html#.warn">warn</a></li></ul></li><li><a href="module-ripcord.html">ripcord</a><ul class='methods'><li data-type='method'><a href="module-ripcord.html#.counsel">counsel</a></li><li data-type='method'><a href="module-ripcord.html#.docs">docs</a></li><li data-type='method'><a href="module-ripcord.html#.licenses">licenses</a></li><li data-type='method'><a href="module-ripcord.html#.report">report</a></li><li data-type='method'><a href="module-ripcord.html#.scmcycle">scmcycle</a></li><li data-type='method'><a href="module-ripcord.html#.syncPackages">syncPackages</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-logger.html">logger</a></li><li><a href="module-ripcord.html">ripcord</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_handleSnykDepTypeBugPrdWhitelist">_handleSnykDepTypeBugPrdWhitelist</a></li><li><a href="global.html#flattenPkgs">flattenPkgs</a></li><li><a href="global.html#getDependencies">getDependencies</a></li><li><a href="global.html#handleSnykDepTypeBug">handleSnykDepTypeBug</a></li><li><a href="global.html#normalizeYarnLock">normalizeYarnLock</a></li><li><a href="global.html#twFormat">twFormat</a></li><li><a href="global.html#validatePrereqs">validatePrereqs</a></li></ul>
 </nav>
 
 <div id="main">
@@ -48,8 +48,8 @@
 
     <section class="readme">
         <article><p><img src="https://raw.githubusercontent.com/cdaringe/ripcord/master/img/parachute.png" /></p>
-<h1>ripcord</h1><p>project scaffolding and opinion enforcer!</p>
-<p><a href="https://app.codeship.com/projects/177795"> <img src="https://app.codeship.com/projects/8944d7f0-6e6a-0134-4108-3672b74a6b59/status?branch=master" alt="Codeship Status for cdaringe/ripcord"></a> <img src="https://img.shields.io/badge/standardjs-%E2%9C%93-brightgreen.svg" alt=""> <a href="https://coveralls.io/github/cdaringe/ripcord?branch=master"><img src="https://coveralls.io/repos/github/cdaringe/ripcord/badge.svg?branch=master" alt="Coverage Status"></a></p>
+<h1>ripcord</h1><p>project scaffolding, opinion enforcer, and build tooling!</p>
+<p><a href="https://app.codeship.com/projects/177795"> <img src="https://app.codeship.com/projects/8944d7f0-6e6a-0134-4108-3672b74a6b59/status?branch=master" alt="Codeship Status for cdaringe/ripcord"></a> <a href="https://coveralls.io/github/cdaringe/ripcord?branch=master"><img src="https://coveralls.io/repos/github/cdaringe/ripcord/badge.svg?branch=master" alt="Coverage Status"></a> <img src="https://img.shields.io/badge/standardjs-%E2%9C%93-brightgreen.svg" alt=""> <a href="https://github.com/semantic-release/semantic-release"><img src="https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg" alt="semantic-release"></a> <a href="https://greenkeeper.io/"><img src="https://badges.greenkeeper.io/cdaringe/ripcord.svg" alt="Greenkeeper badge"></a></p>
 <h2>install</h2><p><code>npm install --save-dev ripcord</code></p>
 <h2>what</h2><p>what does <code>ripcord</code> <em>really</em> do?</p>
 <ul>
@@ -59,16 +59,17 @@
 </ul>
 </li>
 <li>:lock: enforces those rules, on request.</li>
-<li>:memo: exposes tooling for report generation!</li>
+<li>:memo: exposes tooling for report generation! depencency reports, license reports and checking are included.</li>
 </ul>
 <p>what rules &amp; opinions does ripcord apply? see <a href="https://github.com/cdaringe/ripcord/blob/master/src/index.js">module.exports.rules</a>, or the below rules section for a high level summarization.</p>
-<h2>usage</h2><ul>
-<li>to install <code>ripcord</code> rules into to your project, simply install it or update it!</li>
+<h2>usage</h2><p>here are some hypothetical use cases:</p>
+<ul>
+<li>to install <code>ripcord</code> rules into to your project, simply install it or update it into your project!</li>
 <li>to manually apply rules, run <code>ripcord counsel apply</code></li>
 <li>to check if ripcord's rules are honored, run <code>ripcord counsel check</code></li>
 <li>to generate a depedency report, run <code>ripcord report [-o /path/to/report]</code></li>
 </ul>
-<p>pro tip: if you install ripcord globally (<code>[sudo] npm i -g ripcord</code>) <em>and</em> have <code>ripcord</code> installed locally, you can simply run <code>ripcord [cmd]</code> in your project.  <code>ripcord</code> will <a href="https://github.com/cdaringe/ripcord/blob/ebd59305bb27f92febe69f5760f21c2a1bbc21d5/bin/ripcord#L19">detect a local copy</a> and run that version. rad+!</p>
+<p><strong>pro tip</strong>: if you install ripcord globally (<code>[sudo] npm i -g ripcord</code>) <em>and</em> have <code>ripcord</code> installed locally, you can simply run <code>ripcord [cmd]</code> in your project.  <code>ripcord</code> will <a href="https://github.com/cdaringe/ripcord/blob/ebd59305bb27f92febe69f5760f21c2a1bbc21d5/bin/ripcord#L19">detect a local copy</a> and run that version. rad+!</p>
 <p>what else can it do?</p>
 <p><code>[node_modules/.bin/]ripcord --help</code></p>
 <p><strong>api docs</strong> found <a href="https://cdaringe.github.io/ripcord/">here</a></p>
@@ -77,10 +78,7 @@
 <li><p>general package validation (on pre-commit)</p>
 <ul>
 <li><code>npm ls</code> - validate package declaration matches <em>actual</em> package content</li>
-<li><code>ripcord counsel check</code> - enforce all rules below that implement a <code>check</code> method<ul>
-<li>options: <code>scriptCommandVariants: [/nsm ls/]</code></li>
-</ul>
-</li>
+<li><code>ripcord counsel check</code> - enforce all rules below that implement a <code>check</code> method</li>
 </ul>
 </li>
 <li><p>security check (on pre-commit)</p>
@@ -136,10 +134,41 @@
 </ul>
 </li>
 </ul>
+<p>rules can be ignored or overridden per the <a href="https://github.com/cdaringe/counsel/tree/master/packages/counsel-rule">counsel-rule docs</a>.</p>
+<h2>tooling</h2><h3>dependency reporting</h3><p>generate dependency report.  operates in two modes:</p>
+<ul>
+<li>node/npm project mode<ul>
+<li>uses your <code>package.json</code> depedencies &amp; devDependencies as sole source of external depedencies</li>
+</ul>
+</li>
+<li>ui build (e.g. webpack build)<ul>
+<li>uses ui build compiler output as declaration of which <code>dependencies</code> are used, and uses remaining <code>devDependencies</code> as source of external devDependencies</li>
+<li>see <code>ripcord report --help</code> for more info</li>
+</ul>
+</li>
+</ul>
+<h3>rule application and checking</h3><p>deploy or check  project conventions via counsel. <code>counsel &lt;apply|check&gt;</code></p>
+<h2>license checking</h2><p>check or dump (output) project licenses. only outputs licenses for <code>dependencies</code> not <code>devDependencies</code> by default.</p>
+<p><code>licenses [options] &lt;check|dump&gt;</code></p>
+<h2>npm repo package syncning</h2><p>sync packages from npm repo to repo. current implementation assumes artifactory API present to successfully copy!</p>
+<p><code>ripcord sync-packages --help</code></p>
 <h2>considerations</h2><ul>
 <li><a href="https://github.com/semantic-release/semantic-release">semantic-release</a></li>
 </ul>
-<h2>logo</h2><p><a href="https://github.com/margdking">margdking</a></p></article>
+<h2>development</h2><ul>
+<li>this project uses Microsoft TypeScript.  if you are editing <code>.ts</code>, be mindful that they must be compiled.  simply running <code>tsc --watch</code> or <code>node_modules/.bin/tsc --watch</code> will fire off the compiler and auto-watch the ts files.  fear not, the compiled files include source maps, so you can debug the TypeScript content naturally.</li>
+<li>if you do not have editor preference, it is recommended to use <code>VSCode</code>.  this package bundles some helpful workspace settings:<ul>
+<li>easy debug using the pre-defined launch tasks</li>
+<li>debug using the built source maps</li>
+<li>hide .js and .map files from the source tree.</li>
+</ul>
+</li>
+</ul>
+<h2>yarn compatibility</h2><p>this modules digs deep into your <code>node_modules</code>.  hence, consistent structure and content are imperative for reporting and license features to work.  consequently, we recommend only <em>officially</em> using npm, at least for builds.</p>
+<h2>logo</h2><p><a href="https://github.com/margdking">margdking</a></p>
+<h2>todo</h2><ul>
+<li>ui build support for license checking</li>
+</ul></article>
     </section>
 
 
@@ -152,7 +181,7 @@
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> using the Minami theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>

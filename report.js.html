@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>report.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-logger.html">logger</a></li><li><a href="module-ripcord.html">ripcord</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_handleSnykDepTypeBugPrdWhitelist">_handleSnykDepTypeBugPrdWhitelist</a></li><li><a href="global.html#flattenPkgs">flattenPkgs</a></li><li><a href="global.html#getDependencies">getDependencies</a></li><li><a href="global.html#handleSnykDepTypeBug">handleSnykDepTypeBug</a></li><li><a href="global.html#normalizeYarnLock">normalizeYarnLock</a></li><li><a href="global.html#twFormat">twFormat</a></li><li><a href="global.html#validatePrereqs">validatePrereqs</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">report.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const app_1 = require("./app");
+const counsel = require("counsel");
+const logger_1 = require("./logger");
+const resolveDeps = require('snyk-resolve-deps');
+const uiBuild = require('./ui-build');
+const _ = require('lodash');
+const values = _.values;
+const get = _.get;
+function generate(action, opts) {
+    const rptPkg = counsel.targetProjectPackageJson;
+    /* istanbul ignore next */
+    if (!rptPkg.name || !rptPkg.version) {
+        throw new ReferenceError('package name and version required in package.json');
+    }
+    /* istanbul ignore next */
+    if (!rptPkg.license)
+        throw new ReferenceError('package requires a license in package.json');
+    return getDependencies(opts)
+        .then(deps => twFormat(rptPkg, deps));
+}
+exports.generate = generate;
+/**
+ * @export
+ * @param {any} opts
+ * @param {string} [opts.targetProjectRoot] project root to get dependencies from (defaults to counsel.targetProjectRoot)
+ * @param {boolean} [opts.retainUnused]
+ * @returns {Promise} Promise&lt;IPkgSet>
+ */
+function getDependencies(opts) {
+    opts = opts || {};
+    const projectRoot = opts.targetProjectRoot || counsel.targetProjectRoot;
+    const licenserConfig = {
+        dev: true,
+        extraFields: [app_1.pkgId, 'author', 'maintainer', 'maintainers']
+    };
+    const resDepsP = resolveDeps(projectRoot, licenserConfig);
+    logger_1.default.verbose('getting logical dependencies');
+    return Promise.resolve(resDepsP)
+        .then(rootPkg => {
+        handleSnykDepTypeBug({ pkgs: rootPkg.dependencies, root: true });
+        return rootPkg.dependencies;
+    })
+        .then(pkgs => mapSnykPkgSetToPkgSet(pkgs))
+        .then(pkgs => uiBuild.applyWebBuildTransform(pkgs, opts));
+}
+exports.getDependencies = getDependencies;
+function getAuthorOrMaintainers(pkg) {
+    let [author, mtn, mtns] = [get(pkg, 'author'), get(pkg, 'maintainer'), get(pkg, 'maintainers')];
+    if (author) {
+        if (typeof author === 'string')
+            return author;
+        let _author = `${author.name || 'UNKNOWN'}`;
+        if (author.email)
+            _author = `${_author}&lt;${author.email}>`;
+        return _author;
+    }
+    if (mtn)
+        return mtn.name || mtn;
+    if (Array.isArray(mtns)) {
+        let names = [];
+        mtns.forEach(mtn => {
+            if (typeof mtn === 'string')
+                names.push(mtn);
+            if (mtn.name) {
+                let _mtn = `${mtn.name}`;
+                if (mtn.email)
+                    _mtn = `${_mtn}&lt;${mtn.email}>`;
+                names.push(_mtn);
+            }
+        });
+        return names.join('; ');
+    }
+    return '';
+}
+exports.getAuthorOrMaintainers = getAuthorOrMaintainers;
+/**
+ * see https://github.com/Snyk/resolve-deps/issues/28
+ * @param {object} opts
+ * @param {IPkgSet} opts.pkgs
+ * @param {boolean} [opts.root]
+ * @return {IPkgSet} pkgs
+ */
+function handleSnykDepTypeBug({ pkgs, root }) {
+    _handleSnykDepTypeBugPrdWhitelist({ pkgs, root });
+    _handleSnykDepTypeBugMarkDevDepsAsDev({ pkgs, root });
+}
+exports.handleSnykDepTypeBug = handleSnykDepTypeBug;
+/**
+ * traverse tree, marking all prd pkgs as prd, s.t. dev marker won't erroronesously flag as dev
+ * @param {any} { pkgs, root }
+ * @returns {object} pkgs
+ */
+function _handleSnykDepTypeBugPrdWhitelist({ pkgs, root }) {
+    let _pkgs = values(pkgs || []);
+    if (root)
+        _pkgs = _pkgs.filter(pkg => pkg.depType.match(/prod/));
+    _pkgs.forEach(pkg => {
+        pkg.production = true;
+        pkg.depType = 'prod';
+        if (!pkg._syncDepTypeBugIsProd)
+            _handleSnykDepTypeBugPrdWhitelist({ pkgs: pkg.dependencies, root: false });
+        Object.defineProperty(pkg, '_syncDepTypeBugIsProd', { enumerable: false, writable: true, value: true });
+    });
+    return pkgs;
+}
+function _handleSnykDepTypeBugMarkDevDepsAsDev({ pkgs, root }) {
+    let _pkgs = values(pkgs || []);
+    if (root)
+        _pkgs = _pkgs.filter(pkg => !pkg.depType.match(/prod/));
+    _pkgs.forEach(pkg => {
+        if (pkg._syncDepTypeBugIsProd)
+            return;
+        pkg.production = false;
+        pkg.depType = 'dev';
+        if (!pkg._syncDepTypeBugHandled)
+            _handleSnykDepTypeBugMarkDevDepsAsDev({ pkgs: pkg.dependencies, root: false });
+        Object.defineProperty(pkg, '_syncDepTypeBugHandled', { enumerable: false, writable: true, value: true });
+    });
+    return pkgs;
+}
+/**
+ * mutates the snyk dep report in place to include only a small subset of keys for
+ * noise reduction and ease of parsing for people interested in the report.
+ * @private
+ * @param {object} depSet snyk dep set
+ * @returns {object}
+ */
+function mapSnykPkgSetToPkgSet(sSet) {
+    let pSet = null;
+    let pkgName;
+    let pkg;
+    let sPkg;
+    let i = 0;
+    if (!sSet || !Object.keys(sSet).length)
+        return null;
+    pSet = {};
+    for (pkgName in sSet) {
+        ++i;
+        sPkg = sSet[pkgName];
+        if (sPkg.depType === 'extraneous') { }
+        else {
+            const dSet = mapSnykPkgSetToPkgSet(sPkg.dependencies);
+            // ^^ .dependencies _has_ deps and devDeps
+            pkg = {
+                author: getAuthorOrMaintainers(sPkg),
+                from: sPkg.from,
+                dependencies: dSet,
+                license: sPkg.license,
+                licenses: [sPkg.license],
+                name: sPkg.name,
+                production: !!sPkg.depType.match(/prod/),
+                [app_1.pkgId]: sPkg[app_1.pkgId] || '',
+                requestedVersion: sPkg.dep || '',
+                version: sPkg.version
+            };
+            pSet[pkgName] = pkg;
+        }
+    }
+    return pSet || null;
+}
+exports.mapSnykPkgSetToPkgSet = mapSnykPkgSetToPkgSet;
+/**
+ * apply formatting to snyk deps
+ * @param {object} deps snyk deps
+ * @returns {object} deps
+ */
+function twFormat(rptPkg, deps) {
+    const prd = {};
+    const dev = {};
+    for (let pkgName in deps) {
+        let pkg = deps[pkgName];
+        if (pkg.production)
+            prd[pkgName] = pkg;
+        else
+            dev[pkgName] = pkg;
+    }
+    return {
+        package: {
+            author: getAuthorOrMaintainers(rptPkg),
+            name: rptPkg.name,
+            version: rptPkg.version,
+            license: rptPkg.license
+        },
+        configurations: {
+            compile: prd,
+            testCompile: dev
+        }
+    };
+}
+//# sourceMappingURL=report.js.map</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> using the Minami theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

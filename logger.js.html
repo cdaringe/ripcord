@@ -23,7 +23,7 @@
 <label for="nav-trigger" class="overlay"></label>
 
 <nav>
-    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-app.html">app</a></li><li><a href="module-logger.html">logger</a><ul class='methods'><li data-type='method'><a href="module-logger.html#.debug">debug</a></li><li data-type='method'><a href="module-logger.html#.error">error</a></li><li data-type='method'><a href="module-logger.html#.info">info</a></li><li data-type='method'><a href="module-logger.html#.setLogLevel">setLogLevel</a></li><li data-type='method'><a href="module-logger.html#.verbose">verbose</a></li><li data-type='method'><a href="module-logger.html#.warn">warn</a></li></ul></li><li><a href="module-ripcord.html">ripcord</a><ul class='methods'><li data-type='method'><a href="module-ripcord.html#.counsel">counsel</a></li><li data-type='method'><a href="module-ripcord.html#.docs">docs</a></li><li data-type='method'><a href="module-ripcord.html#.licenses">licenses</a></li><li data-type='method'><a href="module-ripcord.html#.report">report</a></li><li data-type='method'><a href="module-ripcord.html#.scmcycle">scmcycle</a></li><li data-type='method'><a href="module-ripcord.html#.syncPackages">syncPackages</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-logger.html">logger</a></li><li><a href="module-ripcord.html">ripcord</a></li></ul><h3>Global</h3><ul><li><a href="global.html#_handleSnykDepTypeBugPrdWhitelist">_handleSnykDepTypeBugPrdWhitelist</a></li><li><a href="global.html#flattenPkgs">flattenPkgs</a></li><li><a href="global.html#getDependencies">getDependencies</a></li><li><a href="global.html#handleSnykDepTypeBug">handleSnykDepTypeBug</a></li><li><a href="global.html#normalizeYarnLock">normalizeYarnLock</a></li><li><a href="global.html#twFormat">twFormat</a></li><li><a href="global.html#validatePrereqs">validatePrereqs</a></li></ul>
 </nav>
 
 <div id="main">
@@ -38,112 +38,154 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>'use strict'
-
+            <pre class="prettyprint source linenums"><code>"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const chalk = require('chalk');
+const readline = require('readline');
+const fs = require('fs');
+const path = require('path');
+const counsel = require('counsel');
+let flushRequested = true;
 /**
  * @module logger
  * @description provide colorified console-only logging interface
  */
-
-const chalk = require('chalk')
-const readline = require('readline')
-
 /* istanbul ignore next */
-module.exports = {
-
-  _logLevel: 2,
-
-  /**
-   * @property progressMode
-   * @type boolean
-   * @description all stdout writes will clear current line and write back into
-   * it. toggle it ad-hoc to use for a progress bar.
-   */
-  progressMode: false,
-
-  /**
-   * set the log level, using npm world-style log levels
-   * @param {string} level ['error', 'warn', 'info', 'verbose', 'debug']
-   */
-  setLogLevel (level) {
-    if (level.toLowerCase() === 'silent') {
-      this._logLevel = -1
-      return
+class Logger {
+    constructor() {
+        this._posts = {};
+        this._history = [];
+        this._logLevel = 2;
+        this.progressMode = false;
     }
-    const levels = ['error', 'warn', 'info', 'verbose', 'debug']
-    this._logLevel = levels.indexOf(level)
-    if (this._logLevel === -1) {
-      throw new Error([
-        `could not find matching log level for: ${level}.`,
-        `valid levels: ${levels.join(', ')}`
-      ].join(' '))
+    /**
+     * post a value to a key'd post
+     * @param {string} k
+     * @param {string} v
+     * @returns {number}
+     */
+    post(k, v) {
+        const set = this._posts[k] = this._posts[k] ? this._posts[k] : [];
+        set.push(v);
+        return set.length;
     }
-  },
-
-  /**
-   * @param {...any} args
-   * @returns undefined
-   */
-  error (...args) {
-    if (this._logLevel === 0) return
-    this._log('stderr', chalk.bold.red, ...args)
-  },
-
-  /**
-   * @param {...any} args
-   * @returns undefined
-   */
-  warn (...args) {
-    if (this._logLevel &lt; 1) return
-    this._log('stdout', chalk.yellow, ...args)
-  },
-
-  /**
-   * @param {...any} args
-   * @returns undefined
-   */
-  info (...args) {
-    if (this._logLevel &lt; 2) return
-    this._log('stdout', chalk.blue, ...args)
-  },
-
-  /**
-   * @param {...any} args
-   * @returns undefined
-   */
-  verbose (...args) {
-    if (this._logLevel &lt; 3) return
-    this._log('stdout', chalk.bold.cyan, ...args)
-  },
-
-  /**
-   * @param {...any} args
-   * @returns undefined
-   */
-  debug (...args) {
-    if (this._logLevel &lt; 3) return
-    this._log('stdout', chalk.bold.cyan, ...args)
-  },
-
-  /**
-   * @private
-   */
-  _log (streamName, colorFn, ...args) {
-    if (this._logLevel === -1) return
-    if (streamName === 'stderr') {
-      ;[ ...args ].forEach(msg => console.error(colorFn(msg)))
-      return
+    /**
+     * Write history and post messages to ripcord.log
+     */
+    flush() {
+        fs.writeFileSync(path.join(process.cwd(), 'ripcord.log'), JSON.stringify({ history: this._history, posts: this._posts }, null, 2));
     }
-    if (this.progressMode) {
-      readline.clearLine(process.stdout)
-      readline.cursorTo(process.stdout, 0)
-      process.stdout.write(args[0])
-      return
+    getPosts() {
+        return this._posts;
     }
-    console.log.apply(console, [ ...args ].map(msg => colorFn(msg)))
-  }
+    /**
+     * set the log level, using npm world-style log levels
+     * @param {string} level ['error', 'warn', 'info', 'verbose', 'debug']
+     */
+    setLogLevel(level) {
+        if (level.toLowerCase() === 'silent') {
+            this._logLevel = -1;
+            return;
+        }
+        const levels = ['error', 'warn', 'info', 'verbose', 'debug'];
+        this._logLevel = levels.indexOf(level);
+        counsel.logger.level = level;
+        if (this._logLevel === -1) {
+            throw new Error([
+                `could not find matching log level for: ${level}.`,
+                `valid levels: ${levels.join(', ')}`
+            ].join(' '));
+        }
+    }
+    /**
+     * @param {...any} args
+     * @returns undefined
+     */
+    error(...args) {
+        if (this._logLevel === 0)
+            return;
+        const prevMode = this.progressMode;
+        this.progressMode = false;
+        this._log('stderr', chalk.bold.red, ...args);
+        this.progressMode = prevMode;
+    }
+    /**
+     * @param {...any} args
+     * @returns undefined
+     */
+    warn(...args) {
+        if (this._logLevel &lt; 1)
+            return;
+        const prevMode = this.progressMode;
+        this.progressMode = false;
+        this._log('stdout', chalk.yellow, ...args);
+        this.progressMode = prevMode;
+    }
+    /**
+     * @param {...any} args
+     * @returns undefined
+     */
+    info(...args) {
+        if (this._logLevel &lt; 2)
+            return;
+        this._log('stdout', chalk.blue, ...args);
+    }
+    /**
+     * @param {...any} args
+     * @returns undefined
+     */
+    verbose(...args) {
+        if (this._logLevel &lt; 3)
+            return;
+        this._log('stdout', chalk.bold.cyan, ...args);
+    }
+    /**
+     * @param {...any} args
+     * @returns undefined
+     */
+    debug(...args) {
+        if (this._logLevel &lt; 3)
+            return;
+        this._log('stdout', chalk.bold.cyan, ...args);
+    }
+    /**
+     * @private
+     */
+    _log(streamName, colorFn, ...args) {
+        if (this._logLevel === -1)
+            return;
+        this._history.push({
+            timestamp: (new Date()).toISOString(),
+            message: [...args]
+        });
+        if (streamName === 'stderr') {
+            ;
+            [...args].forEach(msg => console.error(colorFn(msg)));
+            return;
+        }
+        if (this.progressMode) {
+            readline.clearLine(process.stdout);
+            readline.cursorTo(process.stdout, 0);
+            process.stdout.write(args[0]);
+            return;
+        }
+        console.log.apply(console, [...args].map(msg => colorFn(msg)));
+    }
+    /**
+     * Request the the ripcord log be flushed to disk on exit, regardless
+     * of exit code
+     */
+    requestFlush() {
+        flushRequested = true;
+    }
 }
-</code></pre>
+const logger = new Logger();
+process.on('exit', code => {
+    if (code || flushRequested)
+        logger.flush();
+});
+exports.default = logger;
+//# sourceMappingURL=logger.js.map</code></pre>
         </article>
     </section>
 
@@ -155,7 +197,7 @@ module.exports = {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.2</a> using the Minami theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> using the Minami theme.
 </footer>
 
 <script>prettyPrint();</script>
