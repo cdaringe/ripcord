@@ -67,12 +67,14 @@ module.exports = [
     // developer docs
     new ScriptRule({
         name: 'api-docs-generate',
+        devDependencies: ['jsdoc', 'minami', 'resolve-jsdoc-bin'],
         scriptName: 'docs',
         scriptCommand: 'ripcord docs',
         scriptCommandVariants: ['*']
     }),
     new ScriptRule({
         name: 'api-docs-publish',
+        devDependencies: ['gh-pages'],
         scriptName: 'docs-publish',
         scriptCommand: 'ripcord docs --publish',
         scriptCommandVariants: ['*']
