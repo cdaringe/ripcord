@@ -29,7 +29,7 @@ module.exports = {
     }
   },
 
-  get _ghPublish () { return pify(require('gh-pages').publish) },
+  _ghPublish () { return pify(require('gh-pages').publish) },
 
   /**
    * build api docs, crash hard if invalid!
@@ -76,7 +76,7 @@ module.exports = {
 
   publish (opts) {
     const { dest } = this._getDocsMetaData()
-    return this._ghPublish(dest)
+    return this._ghPublish()(dest)
     .then(() => this._clean())
     .then(() => console.log('docs successfully published'))
   }

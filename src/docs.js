@@ -29,7 +29,7 @@ module.exports = {
             templateDirname: path.dirname(require.resolve('minami'))
         };
     },
-    get _ghPublish() { return pify(require('gh-pages').publish); },
+    _ghPublish() { return pify(require('gh-pages').publish); },
     /**
      * build api docs, crash hard if invalid!
      * @TODO do things async. come on.
@@ -71,7 +71,7 @@ module.exports = {
     },
     publish(opts) {
         const { dest } = this._getDocsMetaData();
-        return this._ghPublish(dest)
+        return this._ghPublish()(dest)
             .then(() => this._clean())
             .then(() => console.log('docs successfully published'));
     }

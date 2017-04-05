@@ -8,7 +8,7 @@ const sinon = require('sinon')
 tape('generates & publishes docs', t => {
   t.plan(3)
   const outputDirname = path.join(__dirname, '../docs')
-  const stub = sinon.stub(docs, '_ghPublish').returns(Promise.resolve())
+  const stub = sinon.stub(docs, '_ghPublish').returns(() => Promise.resolve())
   return Promise.resolve()
   .then(() => docs._clean())
   .then(() => ripcord.docs(null, { publish: false }))
