@@ -29,7 +29,7 @@ module.exports = {
     }
   },
 
-  _ghPublish: pify(require('gh-pages').publish),
+  get _ghPublish () { return pify(require('gh-pages').publish) },
 
   /**
    * build api docs, crash hard if invalid!
