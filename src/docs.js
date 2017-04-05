@@ -8,7 +8,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const logger_1 = require("./logger");
 const cp = require('child_process');
-const ghpages = require('gh-pages');
 const rmdir = (path) => { try {
     cp.execSync(`rm -rf ${path}`);
 }
@@ -30,7 +29,7 @@ module.exports = {
             templateDirname: path.dirname(require.resolve('minami'))
         };
     },
-    _ghPublish: pify(ghpages.publish),
+    _ghPublish: pify(require('gh-pages').publish),
     /**
      * build api docs, crash hard if invalid!
      * @TODO do things async. come on.

@@ -7,7 +7,6 @@
 import * as path from 'path'
 import logger from './logger'
 const cp = require('child_process')
-const ghpages = require('gh-pages')
 const rmdir = (path) => { try { cp.execSync(`rm -rf ${path}`) } catch (e) { /* pass */ } }
 const counsel = require('counsel')
 const pify = require('pify')
@@ -30,7 +29,7 @@ module.exports = {
     }
   },
 
-  _ghPublish: pify(ghpages.publish),
+  _ghPublish: pify(require('gh-pages').publish),
 
   /**
    * build api docs, crash hard if invalid!
