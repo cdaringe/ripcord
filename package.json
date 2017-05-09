@@ -33,7 +33,7 @@
     "@types/node": "^7.0.4",
     "@types/npm": "^2.0.28",
     "coveralls": "^2.11.14",
-    "gh-pages": "^0.12.0",
+    "gh-pages": "^1.0.0",
     "jsdoc": "^3.4.3",
     "license-checker": "^8.0.0",
     "minami": "^1.1.1",
