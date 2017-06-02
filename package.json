@@ -39,7 +39,7 @@
     "minami": "^1.1.1",
     "nock": "^9.0.0",
     "nsp": "^2.6.2",
-    "nyc": "^10.0.0",
+    "nyc": "^11.0.1",
     "resolve-jsdoc-bin": "^1.0.0",
     "semantic-release": "^6.3.2",
     "sinon": "^2.1.0",
