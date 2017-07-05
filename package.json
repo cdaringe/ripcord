@@ -45,7 +45,7 @@
     "sinon": "^2.1.0",
     "source-map-support": "^0.4.6",
     "tape": "^4.6.2",
-    "tslint": "^4.0.2",
+    "tslint": "^5.5.0",
     "tslint-config-standard": "^4.0.0",
     "typescript": "^2.2.1",
     "webpack": "^1.13.3"
