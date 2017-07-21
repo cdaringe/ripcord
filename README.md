@@ -29,8 +29,8 @@ what rules & opinions does ripcord apply? see [module.exports.rules](https://git
 here are some hypothetical use cases:
 
 - to install `ripcord` rules into to your project, simply install it or update it into your project!
-- to manually apply rules, run `ripcord counsel apply`
-- to check if ripcord's rules are honored, run `ripcord counsel check`
+- to manually apply rules, run `ripcord apply`
+- to check if ripcord's rules are honored, run `ripcord check`
 - to generate a depedency report, run `ripcord report [-o /path/to/report]`
 
 **pro tip**: if you install ripcord globally (`[sudo] npm i -g ripcord`) _and_ have `ripcord` installed locally, you can simply run `ripcord [cmd]` in your project.  `ripcord` will [detect a local copy](https://github.com/cdaringe/ripcord/blob/ebd59305bb27f92febe69f5760f21c2a1bbc21d5/bin/ripcord#L19) and run that version. rad+!
