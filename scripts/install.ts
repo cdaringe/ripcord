@@ -1,4 +1,4 @@
-process.env.RIPCORD_INSTALL = true
+process.env.RIPCORD_INSTALL = 'true'
 import * as cp from 'child_process'
 import { resolve } from 'path'
 import { project } from 'counsel'
