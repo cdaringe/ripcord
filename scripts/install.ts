@@ -25,6 +25,6 @@ Promise.resolve()
   if (typeof rootPath !== 'string') return // do no rule application if we found no project
   ripcord._counsel.setTargetPackageMeta()
   ripcord.logger.setLogLevel('verbose')
-  return ripcord.counsel('apply', null)
+  return ripcord.apply(null)
 })
 .then(() => ripcord._counsel.logger.info('install success'))
