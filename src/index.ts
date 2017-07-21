@@ -31,23 +31,25 @@ const ripcord = {
   rules: rules,
 
   /**
-   * apply or check ripcord's counsel rules in project.
-   * @param {string} action 'apply' or 'check'
+   * apply ripcord's counsel rules in project.
+   * @param {string} action apply
    * @param {Commander} opts
    * @returns {Promise}
    */
-  counsel (action: string, opts: any) {
+  apply (action: string, opts: any) : Promise<any> {
     /* istanbul ignore next */
-    if (action === 'apply') {
-      return counsel.apply(this.rules)
-    } else if (action === 'check') {
-      return counsel.check(this.rules)
-    } else {
-      let errMsg = `"${action}" not a valid ripcord counsel argument`
-      if (!action) errMsg = 'ripcord counsel requires an argument'
-      counsel.logger.error(errMsg)
-      process.exit(1)
-    }
+    return counsel.apply(this.rules)
+  },
+
+  /**
+   * check ripcord's counsel rules in project.
+   * @param {string} action check
+   * @param {Commander} opts
+   * @returns {Promise}
+   */
+  check (action: string, opts: any) : Promise<any> {
+    /* istanbul ignore next */
+    return counsel.check(this.rules)
   },
 
   /**

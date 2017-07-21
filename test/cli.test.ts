@@ -12,7 +12,7 @@ ava('cli - bogus cmd', t => {
 })
 
 ava('cli - valid cmd', t => {
-  const helpRun = cp.spawnSync(bin, ['--log-level', 'verbose', 'counsel', 'check'])
+  const helpRun = cp.spawnSync(bin, ['--log-level', 'verbose', 'check'])
   if (helpRun.status) {
     return t.fail(`unable to run ripcord command. err message: ${helpRun.stderr}`)
   }

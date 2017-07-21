@@ -62,7 +62,7 @@
   "scripts": {
     "build": "tsc",
     "install": "node scripts/install.js",
-    "validate": "bin/ripcord.js counsel check",
+    "validate": "bin/ripcord.js check",
     "lint": "tslint -c tslint.json src/**/*.ts bin/**/*.ts test/**/*.ts",
     "test": "tsc && nyc ava --serial test/**/*.test.js",
     "check-coverage": "nyc check-coverage --lines 80 --functions 80 --branches 60",
