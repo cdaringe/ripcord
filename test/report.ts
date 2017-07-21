@@ -27,7 +27,7 @@ tape('report - node/lib', t => {
 
 tape('report - web-build', t => {
   t.plan(3)
-  const stub = sinon.stub(uiBuild, 'hasUiBuild', () => true)
+  const stub = sinon.stub(uiBuild, 'hasUiBuild').callsFake(() => true)
   // ^^ flag that we have webpack even though we haven't installed it in the test
   // project.  it will be imported for build from our root project!
   linkWebpack()

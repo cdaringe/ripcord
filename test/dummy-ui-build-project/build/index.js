@@ -42,14 +42,14 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	module.exports = __webpack_require__(1);
 
 
-/***/ },
+/***/ }),
 /* 1 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	'use strict'
 
@@ -61,9 +61,9 @@
 	console.log(dummyPkgFn(), dummyPkgUsedDepFn(), dummyPkgUsedTwice(), ("production"), beep.bop())
 
 
-/***/ },
+/***/ }),
 /* 2 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	const usedDepFn = __webpack_require__(3)
 	module.exports = function () {
@@ -72,18 +72,18 @@
 	}
 
 
-/***/ },
+/***/ }),
 /* 3 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function () {
 	  console.log('dummy-pkg-used-dep-0.0.1')
 	}
 
 
-/***/ },
+/***/ }),
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
 	const dummyPkgUsedTwice = __webpack_require__(5)
 	module.exports = function () {
@@ -92,18 +92,18 @@
 	}
 
 
-/***/ },
+/***/ }),
 /* 5 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = function () {
 	  console.log('dummy-pkg-used-twice')
 	}
 
 
-/***/ },
+/***/ }),
 /* 6 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	module.exports = {
 	  bop () {
@@ -112,5 +112,5 @@
 	}
 
 
-/***/ }
+/***/ })
 /******/ ]);

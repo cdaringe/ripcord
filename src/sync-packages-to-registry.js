@@ -1,9 +1,9 @@
+"use strict";
 /**
  * @private
  * @module sync-packages-to-registry
  * @description syncs packages from one npm artifactory registry to another
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const depUtil = require("./dep-util");
 const logger_1 = require("./logger");

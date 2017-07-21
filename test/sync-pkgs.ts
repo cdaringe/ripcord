@@ -49,7 +49,7 @@ noCITest('setup', t => {
 
 noCITest('sync env params valid', t => {
   setupNpmConfig()
-  const stub = sinon.stub(npm.config, 'get', () => null)
+  const stub = sinon.stub(npm.config, 'get').callsFake(() => null)
   t.throws(
     () => sync._assertEnv(),
     /missing/,
@@ -85,7 +85,7 @@ noCITest('sync - full sync, mocked backend', t => {
   nock(`${ARTIFACTORY_URI}/api/copy/${NPM_REGISTRY_SRC_CACHE}`).post(/.*/).times(5000).reply(200, {})
   t.plan(2)
   const realSyncPackage = sync._syncPackage
-  const syncPkgStub = sinon.stub(sync, '_syncPackage', (pkg) => {
+  const syncPkgStub = sinon.stub(sync, '_syncPackage').callsFake((pkg) => {
     pkg.artifactoryTarball = 'bananas/-/bananas@0.0.1.tgz'
     pkg._resolved = `${ARTIFACTORY_URI}/bananas@0.0.1.tgz/${pkg.artifactoryTarball}`
     pkg.action = 'ACTION_SYNC'

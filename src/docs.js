@@ -1,9 +1,9 @@
+"use strict";
 /**
  * build and publish developer api docs to a project's github pages
  * @module docs
  * @private
  */
-"use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const logger_1 = require("./logger");
