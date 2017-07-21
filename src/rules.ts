@@ -4,19 +4,20 @@ const PreCommitRule = require('counsel-precommit')
 const ScriptRule = require('counsel-script')
 
 module.exports = [
-  // tie 'em up!
-  // @note: apply first, as rule sniffs for git-root. if missing, fails, so should
-  // occur first before waiting for long dependency install rules
-  new PreCommitRule({
+
+  new ScriptRule({
+    devDependencies: ['npm-run-all', 'husky'],
     name: 'precommit',
-    preCommitTasks: ['validate', 'lint', 'test', 'check-vulnerablities']
+    scriptName: 'precommit',
+    scriptCommand: 'run-p validate lint test check-vulnerablities',
+    scriptCommandVariants: ['*']
   }),
 
   // validate!
   new ScriptRule({
     name: 'validate',
     scriptName: 'validate',
-    scriptCommand: 'ripcord counsel check',
+    scriptCommand: 'ripcord check',
     scriptCommandVariants: ['*']
   }),
 
@@ -73,14 +74,14 @@ module.exports = [
   new ScriptRule({
     name: 'api-docs-generate',
     devDependencies: ['jsdoc', 'minami', 'resolve-jsdoc-bin'],
-    scriptName: 'docs',
+    scriptName: 'docs:build',
     scriptCommand: 'ripcord docs',
     scriptCommandVariants: ['*']
   }),
   new ScriptRule({
     name: 'api-docs-publish',
     devDependencies: ['gh-pages'],
-    scriptName: 'docs-publish',
+    scriptName: 'docs:publish',
     scriptCommand: 'ripcord docs --publish',
     scriptCommandVariants: ['*']
   }),
