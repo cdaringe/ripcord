@@ -6,7 +6,7 @@ const sinon = require('sinon');
 const tape = require('tape');
 tape('scmcycle entry point', t => {
     t.plan(1);
-    const stub = sinon.stub(scmcycle, 'run', t.pass('stubbed'));
+    const stub = sinon.stub(scmcycle, 'run').callsFake(t.pass('stubbed'));
     ripcord.scmcycle();
     t.end();
 });

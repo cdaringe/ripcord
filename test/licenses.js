@@ -11,7 +11,7 @@ const fs = require('fs');
 const counsel = require('counsel');
 tape('license check', t => {
     const origHandleGetLicensesCheck = licenses._checkLicenses;
-    const stub = sinon.stub(licenses, '_checkLicenses', (pkgs, opts, rc) => {
+    const stub = sinon.stub(licenses, '_checkLicenses').callsFake((pkgs, opts, rc) => {
         pkgs = { 'dummy-pkg': { name: 'dummy-pkg', version: '0.0.1', from: ['blah', 'blah'] } };
         return origHandleGetLicensesCheck.apply(licenses, [pkgs, opts, ripcord]);
     });
@@ -45,7 +45,7 @@ tape('license check, web-build', t => {
     };
     t.plan(2);
     const wStub = uiBuild.applyWebBuildTransform;
-    const transformStub = sinon.stub(uiBuild, 'applyWebBuildTransform', (pkgs, opts) => {
+    const transformStub = sinon.stub(uiBuild, 'applyWebBuildTransform').callsFake((pkgs, opts) => {
         pkgs.webpack = common_1.wpStub;
         return wStub.call(uiBuild, pkgs, opts);
     });
@@ -71,7 +71,7 @@ tape('license dump, web-build', t => {
     };
     t.plan(2);
     const wStub = uiBuild.applyWebBuildTransform;
-    const stub = sinon.stub(uiBuild, 'applyWebBuildTransform', (pkgs, opts) => {
+    const stub = sinon.stub(uiBuild, 'applyWebBuildTransform').callsFake((pkgs, opts) => {
         pkgs.webpack = common_1.wpStub;
         return wStub.call(uiBuild, pkgs, opts);
     });
