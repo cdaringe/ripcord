@@ -18,7 +18,7 @@
     "json2csv": "3.7.3",
     "license-checker": "^8.0.0",
     "lodash": "^4.17.2",
-    "npm": "^4.3.0",
+    "npm": "^5.0.4",
     "parse-name-at-version": "^1.0.0",
     "parse-yarn-lock": "^1.0.2",
     "perish": "^1.0.1",
