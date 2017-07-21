@@ -1,6 +1,6 @@
 import * as assert from 'assert'
 const common = require('./util/common')
-const tape = require('tape')
+import ava from 'ava'
 const uiBuild = require('../src/ui-build')
 const report = require('../src/report')
 const sinon = require('sinon')
@@ -21,38 +21,37 @@ const getDummyPkgs = function (opts) {
 }
 
 // will fail on windows machines! @TODO update paths to be windows friendly
-tape('webpack - name extaction', t => {
-  t.throws(() => uiBuild._extractWebpackNodeModulePackageName('..'), 'biffs on no pkg name')
-  t.throws(() => uiBuild._extractWebpackNodeModulePackageName('../~'), 'biffs on no pkg name')
-  t.throws(() => uiBuild._extractWebpackNodeModulePackageName('node_modules/~'), 'biffs on no pkg name')
-  t.throws(() => uiBuild._extractWebpackNodeModulePackageName('~/node_modules'), 'biffs on no pkg name')
-  t.equals(
+ava('webpack - name extraction', t => {
+  t.throws(() => uiBuild._extractWebpackNodeModulePackageName('..'), Error, 'biffs on no pkg name')
+  t.throws(() => uiBuild._extractWebpackNodeModulePackageName('../~'), Error, 'biffs on no pkg name')
+  t.throws(() => uiBuild._extractWebpackNodeModulePackageName('node_modules/~'), Error, 'biffs on no pkg name')
+  t.throws(() => uiBuild._extractWebpackNodeModulePackageName('~/node_modules'), Error, 'biffs on no pkg name')
+  t.is(
     uiBuild._extractWebpackNodeModulePackageName('/beep/bop/~/boop/blah'),
     'boop',
     'detects pkg name'
   )
-  t.equals(
+  t.is(
     uiBuild._extractWebpackNodeModulePackageName('../~/boop/blah'),
     'boop',
     'detects pkg name'
   )
-  t.equals(
+  t.is(
     uiBuild._extractWebpackNodeModulePackageName('../~/@beep/bop/bif'),
     '@beep/bop',
     'detects pkg name'
   )
-  t.equals(
+  t.is(
     uiBuild._extractWebpackNodeModulePackageName('../!!!0#)@(*/node_modules/@beep/bop'),
     '@beep/bop',
     'detects pkg name'
   )
-  t.end()
 })
 
-tape('ui build fails without build config', t => {
+ava('ui build fails without build config', t => {
   t.plan(1)
   // let hasUiBuildStub = sinon.stub(uiBuild, 'hasUiBuild', () => true)
-  Promise.resolve()
+  return Promise.resolve()
   .then(() => getDummyPkgs({ uiBuild: false }))
   .then(pkgs => {
     pkgs.webpack = wpStub // stub in dummy webpack dependency to IPkgSet report
@@ -60,17 +59,16 @@ tape('ui build fails without build config', t => {
   })
   .then(t.fail)
   .catch(err => {
-    t.ok(
+    t.truthy(
       err.message.match('build configuration'),
       'errors if no ui build configuration passed'
     )
   })
-  .then(t.end, t.end)
 })
 
-tape('ui dependencies transform flatly', t => {
+ava('ui dependencies transform flatly', t => {
   t.plan(2)
-  const prevRoot = counsel.targetProjectRoot
+  const prevRoot : string = counsel.targetProjectRoot
   linkWebpack()
   counsel.targetProjectRoot = dummyUiBuildProjectDirname
   return Promise.resolve()
@@ -83,7 +81,7 @@ tape('ui dependencies transform flatly', t => {
     )
   })
   .then(pkgs => {
-    t.equal(pkgs['dummy-pkg;0.0.1'].production, true, 'devDep consumed by build transfers to prod dep')
+    t.is(pkgs['dummy-pkg;0.0.1'].production, true, 'devDep consumed by build transfers to prod dep')
   })
   .then(() => {
     counsel.targetProjectRoot = prevRoot

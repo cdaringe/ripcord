@@ -38,3 +38,7 @@ license-dump.json
 license-dump.csv
 *.map
 *.ts
+!*.js
+!**/*.js
+!src/*.js
+!bin/*.js

@@ -7,8 +7,6 @@ const path = require('path')
 const development = false // test prd only
 
 module.exports = {
-  json: true,
-  profile: true,
   context: path.join(__dirname),
   plugins: [
     new webpack.DefinePlugin({
@@ -19,6 +17,6 @@ module.exports = {
     path.join(__dirname, 'src', 'index.js')
   ],
   output: {
-    filename: path.join(__dirname, 'build', 'index.js')
+    filename: path.join('build', 'index.js')
   }
 }

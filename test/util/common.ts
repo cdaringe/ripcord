@@ -6,7 +6,11 @@ const counsel = require('counsel')
 counsel.setTargetPackageMeta()
 export const dummyUiBuildProjectDirname = path.join(__dirname, '..', 'dummy-ui-build-project')
 export function linkWebpack () {
-  cp.execSync('ln -s $PWD/node_modules/webpack $PWD/test/dummy-ui-build-project/node_modules/webpack')
+  try {
+    cp.execSync('ln -s $PWD/node_modules/webpack $PWD/test/dummy-ui-build-project/node_modules/webpack')
+  } catch (err) {
+    if (!err.message.match(/file exists/i)) throw err
+  }
 }
 export function unlinkWebpack () {
   cp.execSync('rm -f $PWD/test/dummy-ui-build-project/node_modules/webpack')

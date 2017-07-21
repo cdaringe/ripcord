@@ -1,7 +1,7 @@
 import { IPkg, IPkgSet, flattenPkgs, key } from './model/pkg'
 const path = require('path')
 const pify = require('pify')
-const { uniqBy, values, keyBy, set, forEach } = require('lodash')
+const { uniq, uniqBy, values, keyBy, set, forEach } = require('lodash')
 const readPkgUp = require('read-pkg-up')
 const bb = require('bluebird')
 import logger from './logger'
@@ -20,41 +20,41 @@ module.exports = {
    * @param {boolean} [opts.opts.retainUnused]
    * @returns {object} pkgs
    */
-  applyWebBuildTransform (pkgs : IPkgSet, opts : any) {
+  async applyWebBuildTransform (pkgs : IPkgSet, opts : any) : Promise<any> {
     opts = opts || {}
     const flatPkgs = flattenPkgs({ pkgs, flatSet: null, root: true })
     const hasUiBuild = this.hasUiBuild(flatPkgs, opts)
     if (!hasUiBuild) return Promise.resolve(pkgs)
-    return this.getWebpackDeps(opts)
-    .then(wpDeps => {
-      logger.verbose('transforming native build to web-build')
-      const flatPkgValues = values(flatPkgs)
-      flatPkgValues.forEach(pkg => pkg.production = false) // production is flagged by ui built pkgs _only_
-      const flatPkgsByKey = keyBy(flatPkgValues, key) // our critical set!
-      const wpDepsByKey = keyBy(wpDeps, key)
-      // mark all included deps as production
-      for (let wpKey in wpDepsByKey) {
-        let pkg = flatPkgsByKey[wpKey]
-        if (pkg) {
-          pkg.production = true
-          flatPkgsByKey[wpKey] = pkg
+    const wpDeps = await this.getWebpackDeps(opts)
+    logger.verbose('transforming native build to web-build')
+    const flatPkgValues = values(flatPkgs)
+    flatPkgValues.forEach(pkg => pkg.production = false) // production is flagged by ui built pkgs _only_
+    const flatPkgsByKey = keyBy(flatPkgValues, key) // our critical set!
+    const wpDepsByKey = keyBy(wpDeps, key)
+    // mark all included deps as production
+    for (let wpKey in wpDepsByKey) {
+      let pkg = flatPkgsByKey[wpKey]
+      if (pkg) {
+        pkg.production = true
+        flatPkgsByKey[wpKey] = pkg
+      } else {
+        logger.warn(`package ${wpKey} found by webpack, but not by npm/yarn`)
+      }
+    }
+    // remove production dependencies that were _not_ bundled
+    const flatProdPkgsByKey = keyBy(flatPkgValues.filter(p => p.production), key)
+    for (let prodKey in flatProdPkgsByKey) {
+      let prdPkg = flatProdPkgsByKey[prodKey]
+      delete flatPkgsByKey[prodKey].dependencies // all deps now how an explicity entry, so don't nest
+      if (!wpDepsByKey[prodKey]) {
+        if (opts.retainUnused) {
+          set(flatProdPkgsByKey, `_unusedPkgs.${prodKey}`, prdPkg)
+        } else {
+          delete flatPkgsByKey[prodKey]
         }
       }
-      // remove production dependencies that were _not_ bundled
-      const flatProdPkgsByKey = keyBy(flatPkgValues.filter(p => p.production), key)
-      for (let prodKey in flatProdPkgsByKey) {
-        let prdPkg = flatProdPkgsByKey[prodKey]
-        delete flatPkgsByKey[prodKey].dependencies // all deps now how an explicity entry, so don't nest
-        if (!wpDepsByKey[prodKey]) {
-          if (opts.retainUnused) {
-            set(flatProdPkgsByKey, `_unusedPkgs.${prodKey}`, prdPkg)
-          } else {
-            delete flatPkgsByKey[prodKey]
-          }
-        }
-      }
-      return flatPkgsByKey
-    })
+    }
+    return flatPkgsByKey
   },
 
   /**
@@ -110,7 +110,7 @@ module.exports = {
       ? opts.webpackConfig
       : path.resolve(process.cwd(), opts.webpackConfig)
     config = this._getBabelConfig(configFilename)
-    return this._getWebpackedNodeModules({
+    return this._getWebpackedModules({
       webpackDir: counsel.targetProjectRoot,
       webpackConfig: config
     })
@@ -123,12 +123,10 @@ module.exports = {
    * @param {string[]} filenames
    * @returns {Promise} resolves to { requestedFilename: string, package: { ... } }
    */
-  _getUpstreamPackageJsons (filenames) {
-    const bundledRequestAndPkg = function (filename) {
-      return readPkgUp({ cwd: filename })
-      .then(function extraPackageJsons(res) {
-        return { request: filename, pkg: res.pkg, pkgJsonFilename: res.path }
-      })
+  _getUpstreamPackageJsons (filenames : string[]) : Promise<any> {
+    const bundledRequestAndPkg = async function (filename) : Promise<any> {
+      var res = await readPkgUp({ cwd: filename })
+      return { request: filename, pkg: res.pkg, pkgJsonFilename: res.path }
     }
     return bb.map(filenames, bundledRequestAndPkg, { concurrency: 20 })
   },
@@ -139,16 +137,17 @@ module.exports = {
    * @param {any} { webpackDir, webpackConfig }
    * @returns {Promise} Promise<any>
    */
-  _getWebpackedNodeModules ({ webpackDir, webpackConfig }) {
+  async _getWebpackedModules ({ webpackDir, webpackConfig }) {
     const webpackPath = path.join(counsel.targetProjectRoot, 'node_modules', 'webpack')
     const wp = require(webpackPath) // naughty daddy...
-    const wpJsonProfileConfig = Object.assign(webpackConfig, { profile: true, json: true })
+    const wpJsonProfileConfig = Object.assign({}, webpackConfig) //  { profile: true, json: true }
     // ^^ --json & --profile config options enable easy parsing of bundled packages
     logger.verbose('compiling webpack project')
-    return pify(wp)(wpJsonProfileConfig)
-    .then(stats =>  this._wpStatsToPkgMeta({ stats, webpackDir, webpackPath }))
-    .then(pkgReqs =>  this._wpPkgMetaToBundleSet(pkgReqs))
-    .catch(err => {
+    try {
+      var stats = await pify(wp)(wpJsonProfileConfig)
+      var pkgReqs = await this._wpStatsToPkgMeta({ stats, webpackDir, webpackPath })
+      return this._wpPkgMetaToBundleSet(pkgReqs)
+    } catch (err) {
       if (err instanceof Error) throw err
       if (typeof err === 'string') {
         throw new Error([
@@ -166,7 +165,7 @@ module.exports = {
         'provide any more helpful information.'
       ].join(' '))
       throw err
-    })
+    }
   },
 
   /**
@@ -174,19 +173,20 @@ module.exports = {
    * @param {any} modules
    * @returns {string[]} absolute pathed filenames
    */
-  _getWebpackedNodeModulesFilenames ({ modules, webpackDir }) {
-    const wpSep = `${path.sep}~${path.sep}`
-    const wpNm = `${path.sep}node_modules${path.sep}`
-    return modules
-    .filter(pkg => pkg.name.match('~'))
-    .map(pkg => {
-      let relRoot = pkg.name.substr(pkg.name.indexOf(wpSep) + 3)
-      while (relRoot.indexOf(wpSep) >= 0) relRoot = relRoot.replace(wpSep, wpNm)
-      return relRoot
-    })
-    .map(assetRelativePath => {
-      return path.resolve(webpackDir, 'node_modules', assetRelativePath)
-    })
+  _getWebpackedModulesFilenames ({ modules, webpackDir }) : string[] {
+    // const wpSep = `${path.sep}~${path.sep}`
+    // const wpNm = `${path.sep}node_modules${path.sep}`
+    return uniq(modules.map(mod => mod.identifier.replace(/^multi /, '')))
+    // return modules
+    // .filter(pkg => pkg.name.match('~'))
+    // .map(pkg => {
+    //   let relRoot = pkg.name.substr(pkg.name.indexOf(wpSep) + 3)
+    //   while (relRoot.indexOf(wpSep) >= 0) relRoot = relRoot.replace(wpSep, wpNm)
+    //   return relRoot
+    // })
+    // .map(assetRelativePath => {
+    //   return path.resolve(webpackDir, 'node_modules', assetRelativePath)
+    // })
   },
 
 
@@ -247,9 +247,9 @@ module.exports = {
    * @param {any} stats
    * @returns {Promise}
    */
-  _wpStatsToPkgMeta ({ stats, webpackDir, webpackPath }) {
+  _wpStatsToPkgMeta ({ stats, webpackDir, webpackPath }) : Promise<any> {
     const modules = stats.toJson().modules
-    const packedNodeModuleFilenames = this._getWebpackedNodeModulesFilenames({ modules, webpackDir })
+    const packedNodeModuleFilenames : string[] = this._getWebpackedModulesFilenames({ modules, webpackDir })
     const packedFilenames = [ webpackPath, ...packedNodeModuleFilenames ]
     // ^ webpack modules.toJson() filters its own injected source. stub it back in
     return this._getUpstreamPackageJsons(packedFilenames)

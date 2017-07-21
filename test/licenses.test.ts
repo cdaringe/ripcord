@@ -6,7 +6,7 @@ import {
   linkWebpack,
   unlinkWebpack
 } from './util/common'
-const tape = require('tape')
+import ava from 'ava'
 const sinon = require('sinon')
 const ripcord = require('../')
 const licenses = require('../src/licenses')
@@ -14,38 +14,32 @@ const uiBuild = require('../src/ui-build')
 const fs = require('fs')
 const counsel = require('counsel')
 
-tape('license check', t => {
+ava('fails with unapproved licenses', async t => {
   const origHandleGetLicensesCheck = licenses._checkLicenses
   const stub = sinon.stub(licenses, '_checkLicenses').callsFake((pkgs, opts, rc) => {
     pkgs = { 'dummy-pkg': { name: 'dummy-pkg', version: '0.0.1', from: ['blah', 'blah'] } }
     return origHandleGetLicensesCheck.apply(licenses, [pkgs, opts, ripcord])
   })
-  t.plan(2)
-  Promise.resolve()
-  .then(() => ripcord.licenses('check', { force: true, throwOnFail: true, uiBuild: false }))
-  .then(t.fail)
-  .catch(err => {
-    t.ok(err.message.match(/unapproved/), 'biffs on unapproved licenses')
-  })
-  .then(() => stub.restore())
-  .then(() => t.pass('license check teardown'))
-  .then(t.end, t.end)
+  try {
+    await ripcord.licenses('check', { force: true, throwOnFail: true, uiBuild: false })
+    t.fail('should fail w/ bogus licenses')
+  } catch (err) {
+    t.truthy(err.message.match(/unapproved/), 'biffs on unapproved licenses')
+  }
+  stub.restore()
 })
 
-tape('license dump', t => {
-  t.plan(1)
+ava('license dump', async t => {
   const destDir = fs.mkdtempSync('/tmp' + path.sep)
   const destFilename = path.join(destDir, 'test-dump.csv')
-  Promise.resolve()
-  .then(() => ripcord.licenses(
+  await ripcord.licenses(
     'dump',
     { csv: true, dev: true, throwOnFail: true, output: destFilename, uiBuild: false }
-  ))
-  .then(() => t.ok(fs.existsSync(destFilename, 'dump generated')))
-  .then(t.end, t.end)
+  )
+  t.truthy(fs.existsSync(destFilename, 'dump generated'))
 })
 
-tape('license check, web-build', t => {
+ava('license check, web-build', async t => {
   const opts = {
     dev: true,
     force: true,
@@ -53,24 +47,22 @@ tape('license check, web-build', t => {
     targetProjectRoot: dummyUiBuildProjectDirname,
     webpackConfig: webpackConfigFilename
   }
-  t.plan(2)
+  t.plan(1)
   const wStub = uiBuild.applyWebBuildTransform
   const transformStub = sinon.stub(uiBuild, 'applyWebBuildTransform').callsFake((pkgs, opts) => {
     pkgs.webpack = wpStub
     return wStub.call(uiBuild, pkgs, opts)
   })
-  Promise.resolve()
-  .then(() => ripcord.licenses('check', opts))
-  .then(t.fail)
-  .catch(err => t.ok(err.message.match(/unapproved/), 'biffs on unapproved licenses'))
-  .then(() => {
-    transformStub.restore()
-    t.pass('license check teardown')
-  })
-  .then(t.end, t.end)
+  try {
+    await ripcord.licenses('check', opts)
+    t.fail('should fail w/ bogus licenses')
+  } catch (err) {
+    t.truthy(err.message.match(/unapproved/), 'biffs on unapproved licenses')
+  }
+  transformStub.restore()
 })
 
-tape('license dump, web-build', t => {
+ava('license dump, web-build', async t => {
   const opts = {
     csv: true,
     dev: true,
@@ -80,7 +72,7 @@ tape('license dump, web-build', t => {
     targetProjectRoot: dummyUiBuildProjectDirname,
     webpackConfig: webpackConfigFilename
   }
-  t.plan(2)
+  t.plan(1)
   const wStub = uiBuild.applyWebBuildTransform
   const stub = sinon.stub(uiBuild, 'applyWebBuildTransform').callsFake((pkgs, opts) => {
     pkgs.webpack = wpStub
@@ -93,17 +85,10 @@ tape('license dump, web-build', t => {
 
   unlinkWebpack()
   linkWebpack()
-  return Promise.resolve()
-  .then(() => ripcord.licenses('dump', opts))
-  .then(dump => {
-    t.equals(dump.trim(), goldenDump, 'ui build dump matches golden dump')
-  })
-  .then(() => {
-    counsel.targetProjectRoot = oldTargetProjectRoot
-    stub.restore()
-    unlinkWebpack()
-    t.pass('teardown!')
-  })
-  .then(t.end, t.end)
+  var dump = await ripcord.licenses('dump', opts)
+  t.is(dump.trim(), goldenDump, 'ui build dump matches golden dump')
+  counsel.targetProjectRoot = oldTargetProjectRoot
+  stub.restore()
+  unlinkWebpack()
 })
 
