@@ -22,7 +22,7 @@ what does `ripcord` _really_ do?
 - :lock: enforces those rules, on request.
 - :memo: exposes tooling for report generation! depencency reports, license reports and checking are included.
 
-what rules & opinions does ripcord apply? see [module.exports.rules](https://github.com/cdaringe/ripcord/blob/master/src/index.js), or the below rules section for a high level summarization.
+what rules & opinions does ripcord apply? see [module.exports.rules](https://github.com/cdaringe/ripcord/blob/master/src/index.js).
 
 ## usage
 
@@ -47,43 +47,8 @@ absolutely. :tada:
 
 ## applied rules
 
-- general package validation (on pre-commit)
-  - `npm ls` - validate package declaration matches _actual_ package content
-  - `ripcord counsel check` - enforce all rules below that implement a `check` method
-
-- security check (on pre-commit)
-  - `nsp check` - check pkg deps for vulns
-
-- linting
-  - `standard`
-
-- test and coverage
-  - enforces `test` task defined. prefers wrapping tests with `nyc` pacakge
-  - encourages coverage enforcement on common metrics @90%
-
-- user docs
-  - mandates `README.md`
-
-- api docs (onpublish)
-  - generate JSDoc pages, themed, published to `gh-pages`
-
-- package publish behavior
-  - apply version bumping using npm and git tooling
-    - **no manual** version number bumping
-  - use git tags/releases
-  - e.g. `npm run publish-patch`
-
-- license validation (on pre-commit)
-  - assert licenses are _approved_! does not guarantee you've been given permission to use them :)
-  - configuration:
-    - `"ripcord": { "devOnly": true }` waives license accountability. if your package is for development only, you certify that it will never ship in production
-
-- pre-commit actions
-  - summarization of the above
-  - on pre-commit: `['validate', 'lint', 'test', 'check-coverage', 'check-licenses', 'secure']`
-})
-
-rules can be ignored or overridden per the [counsel-rule docs](https://github.com/cdaringe/counsel/tree/master/packages/counsel-rule).
+- please see the latest [module.exports.rules](https://github.com/cdaringe/ripcord/blob/master/src/index.js)
+- rules in ripcord can be ignored, or overridden, as specified in the [counsel-rule docs](https://github.com/cdaringe/counsel/tree/master/packages/counsel-rule).
 
 ## tooling
 
@@ -99,7 +64,7 @@ generate dependency report.  operates in two modes:
 
 ### rule application and checking
 
-deploy or check  project conventions via counsel. `counsel <apply|check>`
+deploy or check project conventions thanks to counsel. `ripcord <apply|check>`
 
 ## license checking
 
