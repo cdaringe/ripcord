@@ -13,7 +13,7 @@
     "commander": "^2.9.0",
     "commander-pojo": "^1.0.1",
     "counsel": "^0.1.4",
-    "counsel-precommit": "^0.1.4",
+    "counsel-precommit": "^0.2.0",
     "counsel-script": "^0.1.4",
     "json2csv": "^3.9.1",
     "license-checker": "^13.0.2",
