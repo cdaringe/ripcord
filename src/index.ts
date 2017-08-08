@@ -4,7 +4,7 @@
 
 import * as path from 'path'
 require('./app')
-const counsel = require('counsel')
+import * as counsel from 'counsel'
 const pkg = require('../package.json')
 const report = require('./report')
 import logger from './logger'

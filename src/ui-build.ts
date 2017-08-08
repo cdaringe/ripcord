@@ -12,7 +12,7 @@ module.exports = {
   /**
    * If UI build detected, filter out all unused production deps from our
    * license report. Futher, because UI builds often inject undeclared dependencies
-   * to support the bundle runtime, classify those as production.
+   * to support the bundle runtime, classify those as used in production.
    * @note
    * @param {object} opts
    * @param {object|null} opts.pkgs packages
@@ -249,6 +249,7 @@ module.exports = {
    */
   _wpStatsToPkgMeta ({ stats, webpackDir, webpackPath }) : Promise<any> {
     const modules = stats.toJson().modules
+    debugger
     const packedNodeModuleFilenames : string[] = this._getWebpackedModulesFilenames({ modules, webpackDir })
     const packedFilenames = [ webpackPath, ...packedNodeModuleFilenames ]
     // ^ webpack modules.toJson() filters its own injected source. stub it back in
