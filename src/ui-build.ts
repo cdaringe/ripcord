@@ -249,7 +249,6 @@ module.exports = {
    */
   _wpStatsToPkgMeta ({ stats, webpackDir, webpackPath }) : Promise<any> {
     const modules = stats.toJson().modules
-    debugger
     const packedNodeModuleFilenames : string[] = this._getWebpackedModulesFilenames({ modules, webpackDir })
     const packedFilenames = [ webpackPath, ...packedNodeModuleFilenames ]
     // ^ webpack modules.toJson() filters its own injected source. stub it back in
