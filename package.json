@@ -20,7 +20,7 @@
     "lodash": "^4.17.2",
     "npm": "^4.3.0",
     "parse-name-at-version": "^1.0.0",
-    "parse-yarn-lock": "^1.0.2",
+    "parse-yarn-lock": "0.28.4",
     "perish": "^1.0.1",
     "pify": "^3.0.0",
     "read-pkg-up": "^2.0.0",

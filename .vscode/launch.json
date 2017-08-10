@@ -27,7 +27,7 @@
       "name": "test - dep-util",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceRoot}/test/dep-util.ts",
+      "program": "${workspaceRoot}/test/dep-util.test.ts",
       "cwd": "${workspaceRoot}",
       "runtimeArgs": [ "--nolazy" ],
       "env": { "NODE_ENV": "development" },

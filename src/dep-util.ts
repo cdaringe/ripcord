@@ -3,7 +3,7 @@ import { readFile, lstat } from 'fs'
 import logger from './logger'
 const pify = require('pify')
 const parseNameAtVersion = require('parse-name-at-version')
-const pyl = require('parse-yarn-lock')
+const pyl = require('parse-yarn-lock').default
 const findIndex = require('lodash/findIndex')
 
 const readFileP = pify(readFile)
@@ -24,12 +24,13 @@ export function getFirstFile (files: Array<String>): Promise<(null|String)> {
   })
 }
 
-export function maybeLoadLockfile (lockfile: String) {
+export async function maybeLoadLockfile (lockfile: String) {
   if (!lockfile) return null
   if (lockfile.indexOf('yarn.lock') >= 0) {
-    return readFileP(lockfile)
-    .then(lockContent => pify(pyl.parse.bind(pyl))(lockContent.toString()))
-    .then(normalizeYarnLock)
+    const lockContent = await readFileP(lockfile)
+    let parsed = pyl(lockContent.toString())
+    if (parsed) parsed = parsed.object || parsed
+    return normalizeYarnLock(parsed)
   } else {
     logger.warn([
       'using npm-shrinkwrap.json as an optimization to speedy dependency lookup',
