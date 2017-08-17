@@ -93,7 +93,9 @@ module.exports = {
       throw new Error([
         `missing package detected: ${pkg.name}@${pkg.version}. this can`,
         'generally confirmed by running `npm ls`/`yarn list`.',
-        'please tidy your dependencies'
+        'please tidy your dependencies.  you may also consider purging any',
+        'lockfiles (package-lock.json, yarn.lock) and reinstalling dependencies',
+        'to repopulate the cache.'
       ].join(' '))
     }
     if (!pkg.name) {

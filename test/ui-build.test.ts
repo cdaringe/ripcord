@@ -7,17 +7,15 @@ const sinon = require('sinon')
 const { dummyUiBuildProjectDirname, webpackConfigFilename, wpStub, linkWebpack, unlinkWebpack } = common
 const counsel = require('counsel')
 
-const getDummyPkgs = function (opts) {
+async function getDummyPkgs (opts) {
   const dOpts = Object.assign(
     { targetProjectRoot: dummyUiBuildProjectDirname },
     opts || {}
   )
-  return report.getDependencies(dOpts)
-  .then(deps => {
-    assert.ok(deps['dummy-pkg'], 'dummy-pkg located')
-    assert.ok(deps['unused-pkg'], 'unused-pkg located')
-    return deps
-  })
+  const deps = await report.getDependencies(dOpts)
+  assert.ok(deps['dummy-pkg'], 'dummy-pkg located')
+  assert.ok(deps['unused-pkg'], 'unused-pkg located')
+  return deps
 }
 
 // will fail on windows machines! @TODO update paths to be windows friendly
@@ -48,44 +46,32 @@ ava('webpack - name extraction', t => {
   )
 })
 
-ava('ui build fails without build config', t => {
-  t.plan(1)
+ava('ui build fails without build config', async t => {
   // let hasUiBuildStub = sinon.stub(uiBuild, 'hasUiBuild', () => true)
-  return Promise.resolve()
-  .then(() => getDummyPkgs({ uiBuild: false }))
-  .then(pkgs => {
-    pkgs.webpack = wpStub // stub in dummy webpack dependency to IPkgSet report
-    return uiBuild.applyWebBuildTransform(Object.assign({}, pkgs))
-  })
-  .then(t.fail)
-  .catch(err => {
+  const pkgs = await getDummyPkgs({ uiBuild: false })
+  pkgs.webpack = wpStub // stub in dummy webpack dependency to IPkgSet report
+  try {
+    await uiBuild.applyWebBuildTransform(Object.assign({}, pkgs))
+    t.fail('build shoud fail')
+  } catch (err) {
     t.truthy(
       err.message.match('build configuration'),
       'errors if no ui build configuration passed'
     )
-  })
+  }
 })
 
-ava('ui dependencies transform flatly', t => {
-  t.plan(2)
+ava('ui dependencies transform flatly', async t => {
   const prevRoot : string = counsel.targetProjectRoot
-  linkWebpack()
+  await linkWebpack()
   counsel.targetProjectRoot = dummyUiBuildProjectDirname
-  return Promise.resolve()
-  .then(() => getDummyPkgs({ uiBuild: false }))
-  .then(pkgs => {
-    pkgs.webpack = wpStub // stub in webpack
-    return uiBuild.applyWebBuildTransform(
-      Object.assign({}, pkgs),
-      { uiBuild: true, webpackConfig: webpackConfigFilename }
-    )
-  })
-  .then(pkgs => {
-    t.is(pkgs['dummy-pkg;0.0.1'].production, true, 'devDep consumed by build transfers to prod dep')
-  })
-  .then(() => {
-    counsel.targetProjectRoot = prevRoot
-    unlinkWebpack()
-    t.pass('teardown')
-  })
+  const pkgs = await getDummyPkgs({ uiBuild: false })
+  pkgs.webpack = wpStub // stub in webpack
+  const webTransformedPkgs = await uiBuild.applyWebBuildTransform(
+    pkgs,
+    { uiBuild: true, webpackConfig: webpackConfigFilename }
+  )
+  t.is(webTransformedPkgs['dummy-pkg;0.0.1'].production, true, 'devDep consumed by build transfers to prod dep')
+  counsel.targetProjectRoot = prevRoot
+  await unlinkWebpack()
 })

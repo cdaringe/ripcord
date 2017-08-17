@@ -1,19 +1,27 @@
 import * as path from 'path'
+import * as execa from 'execa'
+import * as fs from 'fs-extra'
+
+// setup test env
 require('perish')
 require('source-map-support').install() // silly typescript, source-maps are for kids!
 const cp = require('child_process')
 const counsel = require('counsel')
 counsel.setTargetPackageMeta()
+
 export const dummyUiBuildProjectDirname = path.join(__dirname, '..', 'dummy-ui-build-project')
-export function linkWebpack () {
+const RIPCORD_WEBPACK_INSTALL_DIR = path.resolve(__dirname, '..', '..', 'node_modules', 'webpack')
+const DUMMY_PROJECT_WEBPACK_INSTALL_DIR = path.resolve(dummyUiBuildProjectDirname, 'node_modules/webpack')
+
+export async function linkWebpack () {
   try {
-    cp.execSync('ln -s $PWD/node_modules/webpack $PWD/test/dummy-ui-build-project/node_modules/webpack')
+    return await fs.symlink(RIPCORD_WEBPACK_INSTALL_DIR, DUMMY_PROJECT_WEBPACK_INSTALL_DIR)
   } catch (err) {
-    if (!err.message.match(/file exists/i)) throw err
+    if (err.code !== 'EEXIST') throw err
   }
 }
-export function unlinkWebpack () {
-  cp.execSync('rm -f $PWD/test/dummy-ui-build-project/node_modules/webpack')
+export async function unlinkWebpack () {
+  return await fs.remove(DUMMY_PROJECT_WEBPACK_INSTALL_DIR)
 }
 export const webpackConfigFilename = path.join(dummyUiBuildProjectDirname, 'webpack.config.js')
 export const wpStub = {
