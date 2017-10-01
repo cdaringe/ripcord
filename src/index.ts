@@ -3,16 +3,14 @@
  */
 
 import * as path from 'path'
+import logger from './logger'
 require('./app')
 const counsel = require('counsel')
 const pkg = require('../package.json')
 const report = require('./report')
-import logger from './logger'
-const rules = require('./rules')
 const scmcycle = require('./scmcycle')
 const syncPackages = require('./sync-packages-to-registry')
 const licenses = require('./licenses')
-const docs = require('./docs')
 
 const ripcord = {
   /**
@@ -24,45 +22,6 @@ const ripcord = {
    * @property {module} logger
    */
   logger: logger,
-
-  /**
-   * @property {Rule[]} set of rules to apply/check
-   */
-  rules: rules,
-
-  /**
-   * apply ripcord's counsel rules in project.
-   * @param {string} action apply
-   * @param {Commander} opts
-   * @returns {Promise}
-   */
-  apply (action: string, opts: any) : Promise<any> {
-    /* istanbul ignore next */
-    return counsel.apply(this.rules)
-  },
-
-  /**
-   * check ripcord's counsel rules in project.
-   * @param {string} action check
-   * @param {Commander} opts
-   * @returns {Promise}
-   */
-  check (action: string, opts: any) : Promise<any> {
-    /* istanbul ignore next */
-    return counsel.check(this.rules)
-  },
-
-  /**
-   * generate and optionally publish developer docs.
-   * @param {any} action unused
-   * @param {object} opts Commander
-   * @param {boolean} opts.publish publish to gh-pages branch if using a github install
-   * @returns {Promise}
-   */
-  docs (action, opts) {
-    return docs.build(opts)
-    .then(() => opts.publish ? docs.publish(opts) : null)
-  },
 
   _getDest (outputPath, defaultBasename) {
     let dest = path.isAbsolute(outputPath) ? outputPath : path.resolve(process.cwd(), outputPath)

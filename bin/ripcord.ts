@@ -54,20 +54,6 @@ function prog () {
   })
 
   program
-  .command('apply')
-  .description('deploy project conventions via counsel')
-  .action((arg, opts) => {
-    action = { name: 'apply', arg: arg, options: opts }
-  })
-
-  program
-  .command('check')
-  .description('deploy project conventions via counsel')
-  .action((arg, opts) => {
-    action = { name: 'check', arg: arg, options: opts }
-  })
-
-  program
   .command('licenses <check|dump>')
   .option('-f, --force', 'force dep report, even if package marked as `devOnly`')
   .option('-o, --output <dir|filename>', 'output to dir or to file when check fails, or on dump request')
@@ -96,15 +82,6 @@ function prog () {
   .action((opts) => {
     /* istanbul ignore next */
     action = { name: 'syncPackages', arg: null, options: opts }
-  })
-
-  program
-  .command('docs')
-  .description('generate dev docs')
-  .option('-p, --publish', 'generate docs and publish them to github pages')
-  .action((opts) => {
-    /* istanbul ignore next */
-    action = { name: 'docs', arg: null, options: opts }
   })
 
   program

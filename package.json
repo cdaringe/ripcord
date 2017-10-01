@@ -1,8 +1,12 @@
 {
   "name": "ripcord",
   "version": "0.0.0-semantically-released",
+  "description": "project scaffolding and opinion enforcer!",
   "bin": {
     "ripcord": "bin/ripcord.js"
+  },
+  "engines": {
+    "node": ">=8.6.0"
   },
   "main": "src/index.js",
   "author": "cdaringe",
@@ -37,13 +41,10 @@
     "fs-extra": "^4.0.1",
     "gh-pages": "^1.0.0",
     "husky": "^0.14.3",
-    "jsdoc": "^3.4.3",
-    "minami": "^1.1.1",
     "nock": "^9.0.0",
     "npm-run-all": "^4.0.2",
     "nsp": "^2.6.2",
     "nyc": "^11.0.3",
-    "resolve-jsdoc-bin": "^1.0.0",
     "semantic-release": "^8.0.0",
     "sinon": "^3.0.0",
     "source-map-support": "^0.4.6",
@@ -53,47 +54,14 @@
     "typescript": "^2.2.1",
     "webpack": "^3.3.0"
   },
-  "description": "project scaffolding and opinion enforcer!",
-  "ripcord": {
-    "overrides": {
-      "preversion-script": null,
-      "publish-patch-script": null,
-      "publish-minor-script": null,
-      "publish-major-script": null
-    }
-  },
   "scripts": {
     "build": "tsc",
-    "install": "node scripts/install.js",
-    "validate": "bin/ripcord.js check",
     "lint": "tslint -c tslint.json src/**/*.ts bin/**/*.ts test/**/*.ts",
     "test": "tsc && nyc ava --serial test/**/*.test.js",
-    "check-coverage": "nyc check-coverage --lines 80 --functions 80 --branches 60",
-    "secure": "nsp check",
-    "preversion": "git checkout master && git pull && npm run validate",
-    "publish-patch": "npm run preversion && npm version patch && git push origin master --tags && npm publish",
-    "publish-minor": "npm run preversion && npm version minor && git push origin master --tags && npm publish",
-    "publish-major": "npm run preversion && npm version major && git push origin master --tags && npm publish",
-    "check-licenses": "bin/ripcord.js licenses check",
-    "postpublish": "npm run docs",
     "scmcycle": "node bin/ripcord.js scmcycle",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "docs": "bin/ripcord.js docs",
-    "docs-publish": "bin/ripcord.js docs --publish",
-    "check-vulnerablities": "nsp check",
-    "precommit": "run-p validate lint test check-vulnerablities",
-    "docs:build": "ripcord docs",
-    "docs:publish": "ripcord docs --publish"
+    "precommit": "run-p validate lint test"
   },
-  "pre-commit": [
-    "validate",
-    "lint",
-    "build",
-    "test",
-    "check-coverage",
-    "secure",
-    "docs"
-  ],
   "release": {
     "generateNotes": "./node_modules/@semantic-release/release-notes-generator",
     "verifyConditions": [

@@ -53,7 +53,7 @@ function normalizeYarnLock (lock): IPkgSet {
   return lock
 }
 
-export function tryLoadLockfile (): Promise<IPkgSet> {
-  return getFirstFile(['yarn.lock', 'npm-shrinkwrap.json'])
-  .then(maybeLoadLockfile)
+export async function tryLoadLockfile (): Promise<IPkgSet> {
+  const lockfile = await getFirstFile(['yarn.lock', 'npm-shrinkwrap.json'])
+  return maybeLoadLockfile(lockfile)
 }

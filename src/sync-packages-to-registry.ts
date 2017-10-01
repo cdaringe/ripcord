@@ -159,7 +159,7 @@ module.exports = {
       if (!resolvedUri) {
         // in rare cases, a pkg can be in the cache & have the same dep in the
         // current project tree that was not installed from the cache.
-        var hasDuplicateSibling = pkgs.some(tPkg => {
+        const hasDuplicateSibling = pkgs.some(tPkg => {
           return pkg.name === tPkg.name && pkg.version === tPkg.version && !getPackageTarballURL(tPkg)
         })
         if (hasDuplicateSibling) return false

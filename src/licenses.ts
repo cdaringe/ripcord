@@ -26,7 +26,7 @@ const WHITELIST = [
 
 module.exports = {
 
-  _appendDevPackages (prdPkgs, opts : any) {
+  _appendDevPackages (prdPkgs, opts: any) {
     // if (!opts.dev) return prdPkgs
     const devOverride = Object.assign(opts, { production: false, development: true })
     logger.verbose('scraping devevelopment license metadata')
@@ -34,11 +34,11 @@ module.exports = {
     .then(devPkgs => Object.assign(devPkgs, prdPkgs))
   },
 
-  _appendFields ({ pkgs, production }) : IPkgSet {
+  _appendFields ({ pkgs, production }): IPkgSet {
     /* istanbul ignore if */
     if (!pkgs || !Object.keys(pkgs).length) return pkgs
     for (let nameVersion in pkgs) {
-      const pkg : IPkg = pkgs[nameVersion]
+      const pkg: IPkg = pkgs[nameVersion]
 
       // tidy name, version
       const components = nameVersion.match(/(.*)@(.*)/)
@@ -57,7 +57,7 @@ module.exports = {
 
       // purge commas to assert well behaved csv
       const permittedNonStrFields = [ 'licenses', 'production' ]
-      for (var field in pkg) {
+      for (let field in pkg) {
         if (permittedNonStrFields.indexOf(field) === -1) {
           // licenses field is type array, and is a special case
           // that is handled pre-export (if exporting!)
@@ -68,7 +68,7 @@ module.exports = {
     return pkgs
   },
 
-    /**
+  /**
    * check target project for valid licenses.
    * on invalid licenses, generate a report
    * @param {object} opts
@@ -126,7 +126,7 @@ module.exports = {
    * @param {object[]} pkgs
    * @returns object[] pkgs
    */
-  _cleanLicenseCheckerOutput (pkgs : IPkgSet ) : IPkgSet {
+  _cleanLicenseCheckerOutput (pkgs: IPkgSet ): IPkgSet {
     for (let name in pkgs) {
       let pkg = pkgs[name]
       pkg.licenses = Array.isArray(pkg.licenses) ? pkg.licenses : [ pkg.licenses ]
@@ -216,7 +216,7 @@ module.exports = {
    * @param {IPkgSet} pkgs
    * @returns {IPkgSet}
    */
-  _mergeLicensesToPkgSet (lPkgs : any, pkgs : IPkgSet, opts: any) : IPkgSet {
+  _mergeLicensesToPkgSet (lPkgs: any, pkgs: IPkgSet, opts: any): IPkgSet {
     logger.verbose('combining license dependency report and logical dependency report')
     const flatPkgs = flattenPkgs({ pkgs, flatSet: null, root: true })
     const keyedLPkgs = keyBy(lPkgs, lPkg => key(lPkg))

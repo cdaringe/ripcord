@@ -28,7 +28,7 @@ export function generate (action, opts) {
  * @param {boolean} [opts.retainUnused]
  * @returns {Promise} Promise<IPkgSet>
  */
-export function getDependencies (opts : any) : Promise<IPkgSet> {
+export function getDependencies (opts: any): Promise<IPkgSet> {
   opts = opts || {}
   const projectRoot = opts.targetProjectRoot || counsel.targetProjectRoot
   const licenserConfig = {
@@ -46,7 +46,7 @@ export function getDependencies (opts : any) : Promise<IPkgSet> {
   .then(pkgs => uiBuild.applyWebBuildTransform(pkgs, opts))
 }
 
-export function getAuthorOrMaintainers (pkg : ISnykPkg | IPkg) {
+export function getAuthorOrMaintainers (pkg: ISnykPkg | IPkg) {
   let [ author, mtn, mtns ] = [ get(pkg, 'author'), get(pkg, 'maintainer'), get(pkg, 'maintainers') ]
   if (author) {
     if (typeof author === 'string') return author
@@ -60,7 +60,7 @@ export function getAuthorOrMaintainers (pkg : ISnykPkg | IPkg) {
     mtns.forEach(mtn => {
       if (typeof mtn === 'string') names.push(mtn)
       if (mtn.name) {
-        let _mtn =  `${mtn.name}`
+        let _mtn = `${mtn.name}`
         if (mtn.email) _mtn = `${_mtn}<${mtn.email}>`
         names.push(_mtn)
       }
@@ -87,7 +87,7 @@ export function handleSnykDepTypeBug ({ pkgs, root }) {
  * @param {any} { pkgs, root }
  * @returns {object} pkgs
  */
-function _handleSnykDepTypeBugPrdWhitelist({ pkgs, root }) {
+function _handleSnykDepTypeBugPrdWhitelist ({ pkgs, root }) {
   let _pkgs = values(pkgs || [])
   if (root) _pkgs = _pkgs.filter(pkg => pkg.depType.match(/prod/))
   _pkgs.forEach(pkg => {
@@ -99,7 +99,7 @@ function _handleSnykDepTypeBugPrdWhitelist({ pkgs, root }) {
   return pkgs
 }
 
-function _handleSnykDepTypeBugMarkDevDepsAsDev({ pkgs, root }) {
+function _handleSnykDepTypeBugMarkDevDepsAsDev ({ pkgs, root }) {
   let _pkgs = values(pkgs || [])
   if (root) _pkgs = _pkgs.filter(pkg => !pkg.depType.match(/prod/))
   _pkgs.forEach(pkg => {
@@ -112,7 +112,6 @@ function _handleSnykDepTypeBugMarkDevDepsAsDev({ pkgs, root }) {
   return pkgs
 }
 
-
 /**
  * mutates the snyk dep report in place to include only a small subset of keys for
  * noise reduction and ease of parsing for people interested in the report.
@@ -120,20 +119,21 @@ function _handleSnykDepTypeBugMarkDevDepsAsDev({ pkgs, root }) {
  * @param {object} depSet snyk dep set
  * @returns {object}
  */
-export function mapSnykPkgSetToPkgSet (sSet : ISnykPkgSet) : IPkgSet | null {
-  let pSet : IPkgSet = null
-  let pkgName : string
+export function mapSnykPkgSetToPkgSet (sSet: ISnykPkgSet): IPkgSet | null {
+  let pSet: IPkgSet = null
+  let pkgName: string
   let pkg: IPkg
-  let sPkg : ISnykPkg
-  let i : number = 0
+  let sPkg: ISnykPkg
+  let i: number = 0
   if (!sSet || !Object.keys(sSet).length) return null
   pSet = {}
   for (pkgName in sSet) {
     ++i
     sPkg = sSet[pkgName]
-    if (sPkg.depType === 'extraneous') { /* pass */ }
-    else {
-      const dSet : IPkgSet = mapSnykPkgSetToPkgSet(sPkg.dependencies)
+    if (sPkg.depType === 'extraneous') {
+      // pass
+    } else {
+      const dSet: IPkgSet = mapSnykPkgSetToPkgSet(sPkg.dependencies)
       // ^^ .dependencies _has_ deps and devDeps
       pkg = {
         author: getAuthorOrMaintainers(sPkg),
@@ -158,7 +158,7 @@ export function mapSnykPkgSetToPkgSet (sSet : ISnykPkgSet) : IPkgSet | null {
  * @param {object} deps snyk deps
  * @returns {object} deps
  */
-function twFormat (rptPkg: IPkg , deps : IPkgSet) {
+function twFormat (rptPkg: IPkg , deps: IPkgSet) {
   const prd = {}
   const dev = {}
   for (let pkgName in deps) {

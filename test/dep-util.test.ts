@@ -10,7 +10,7 @@ ava('finds a file', t => {
   t.plan(1)
   return depUtil.getFirstFile([
     path.resolve(__dirname, 'totally-bogus-file'),
-    __filename,
+    __filename
   ])
   .then(result => t.is(result, __filename, 'returns correct file'))
 })

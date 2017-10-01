@@ -4,7 +4,7 @@ const fs = require('fs')
 const path = require('path')
 const counsel = require('counsel')
 
-let flushRequested : boolean = true
+let flushRequested: boolean = true
 
 interface PostMap {
   [key: string]: Array<string>
@@ -16,9 +16,9 @@ interface PostMap {
  */
 /* istanbul ignore next */
 class Logger {
-  _posts: PostMap;
-  _history: any[];
-  _logLevel: number;
+  _posts: PostMap
+  _history: any[]
+  _logLevel: number
 
   /**
    * @property progressMode
@@ -74,7 +74,7 @@ class Logger {
       this._logLevel = -1
       return
     }
-    const levels : Array<string> = ['error', 'warn', 'info', 'verbose', 'debug']
+    const levels: Array<string> = ['error', 'warn', 'info', 'verbose', 'debug']
     this._logLevel = levels.indexOf(level)
     counsel.logger.level = level
     if (this._logLevel === -1) {
@@ -90,8 +90,8 @@ class Logger {
    * @returns undefined
    */
   error (...args) {
-    if (this._logLevel === 0) return
-    const prevMode : boolean = this.progressMode
+    if (this._logLevel !== 0) return
+    const prevMode: boolean = this.progressMode
     this.progressMode = false
     this._log('stderr', chalk.bold.red, ...args)
     this.progressMode = prevMode
@@ -103,7 +103,7 @@ class Logger {
    */
   warn (...args) {
     if (this._logLevel < 1) return
-    const prevMode : boolean = this.progressMode
+    const prevMode: boolean = this.progressMode
     this.progressMode = false
     this._log('stdout', chalk.yellow, ...args)
     this.progressMode = prevMode
@@ -146,7 +146,7 @@ class Logger {
       message: [ ...args ]
     })
     if (streamName === 'stderr') {
-      ;[ ...args ].forEach(msg => console.error(colorFn(msg)))
+      args.forEach(msg => console.error(colorFn(msg)))
       return
     }
     if (this.progressMode) {
