@@ -36,7 +36,7 @@
     "@semantic-release/release-notes-generator": "^3.0.0",
     "@types/node": "^8.0.14",
     "@types/npm": "^2.0.28",
-    "ava": "^0.22.0",
+    "ava": "^0.23.0",
     "coveralls": "^2.11.14",
     "fs-extra": "^4.0.1",
     "gh-pages": "^1.0.0",
