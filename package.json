@@ -33,7 +33,7 @@
   },
   "devDependencies": {
     "@semantic-release/condition-codeship": "^1.1.0",
-    "@semantic-release/release-notes-generator": "^3.0.0",
+    "@semantic-release/release-notes-generator": "^5.0.1",
     "@types/node": "^8.0.14",
     "@types/npm": "^2.0.28",
     "ava": "^0.22.0",
