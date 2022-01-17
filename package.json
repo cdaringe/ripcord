@@ -21,15 +21,16 @@
     "counsel-script": "^0.3.0",
     "json2csv": "^3.9.1",
     "license-checker": "^14.0.0",
-    "lodash": "^4.17.2",
-    "npm": "^5.4.0",
+    "lodash": "^4.17.21",
+    "npm": "^7.0.0",
     "parse-name-at-version": "^1.0.0",
     "parse-yarn-lock": "0.28.4",
     "perish": "^1.0.1",
     "pify": "^3.0.0",
     "read-pkg-up": "^2.0.0",
-    "request": "^2.75.0",
-    "snyk-resolve-deps": "^1.8.0"
+    "request": "^2.88.0",
+    "snyk-resolve-deps": "^1.8.0",
+    "@snyk/protect": "latest"
   },
   "devDependencies": {
     "@semantic-release/condition-codeship": "^1.1.0",
@@ -60,7 +61,9 @@
     "test": "tsc && nyc ava --serial test/**/*.test.js",
     "scmcycle": "node bin/ripcord.js scmcycle",
     "semantic-release": "semantic-release pre && npm publish && semantic-release post",
-    "precommit": "run-p validate lint test"
+    "precommit": "run-p validate lint test",
+    "prepare": "npm run snyk-protect",
+    "snyk-protect": "snyk-protect"
   },
   "release": {
     "generateNotes": "./node_modules/@semantic-release/release-notes-generator",
@@ -71,5 +74,6 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/cdaringe/ripcord.git"
-  }
+  },
+  "snyk": true
 }
